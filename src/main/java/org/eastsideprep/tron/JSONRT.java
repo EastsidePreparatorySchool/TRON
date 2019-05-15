@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.sqldbfz;
+package org.eastsideprep.tron;
 
 import com.google.gson.*;
 import spark.*;
