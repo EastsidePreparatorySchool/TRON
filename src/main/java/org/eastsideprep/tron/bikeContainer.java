@@ -11,6 +11,6 @@ package org.eastsideprep.tron;
  */
 public class bikeContainer { 
     bike bike;
-    //intarray PUT HERE 
+    Integer[] position;
            
 }
