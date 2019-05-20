@@ -1,13 +1,3 @@
-let result = document.getElementById("result");
-let name = document.getElementById("name");
-
-name.addEventListener("keyup", function (event) {
-    if (event.keyCode === 13) { //enter key: 13
-        event.preventDefault();
-        document.getElementById("dump").click();
-    }
-});
-
 //requests xmlhttprequest wrapped in promise
 function request(obj) {
     return new Promise((resolve, reject) => {
@@ -39,29 +29,33 @@ function xmlRequest(verb, url) {
     xhr.send();
 }
 
-//dump table function
-function dump() {
-    name = document.getElementById("name");
-
-    result.innerHTML = name.value + ": <hr>";
-
-    request({ url: "/dumpTable?name=" + name.value, method: "GET" })
+//initialize
+function initialize() {
+    console.log("intializing game...");
+    request({ url: "/getGrid", method: "GET" })
         .then(data => {
-            if (data.length != null) {
-                let res = JSON.parse(data);
-                console.log(res);
-
-                for (var i = 0; i < res.length; i++) {
-                    for (var j = 0; j < res[0].length; j++) {
-                        result.innerHTML += res[i][j] + " ";
-                    }
-                    result.innerHTML += "<br>";
-                }
-            }
+            //parse that yes
         })
         .catch(error => {
-            result.innerHTML += "no such table. try again"
+            console.log(error);
         });
+    request({ url: "/getBikeSpawn", method: "GET" })
+        .then(data => {
+            //parse that yes
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
 
-    document.getElementById("name").value = "";
+//smol updates
+function update() {
+    console.log("updating...");
+    request({ url: "/updateBikes", method: "GET" })
+        .then(data => {
+            //parse that yes
+        })
+        .catch(error => {
+            console.log(error);
+        });
 }
