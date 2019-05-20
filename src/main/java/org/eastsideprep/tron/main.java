@@ -15,17 +15,15 @@ import java.util.ArrayList;
  */
 public class main {
 
-    static Connection conn = null;
-    public final static int LENGTH = 50;
-    
+    public final Object[][] grid;
 
     public static void main(String[] args) {
         staticFiles.location("/public/");
-        connect();
 
         get("/hello", (req, res) -> "hello world");
         get("/getGrid", "application/json", (req, res) -> getGrid(), new JSONRT());
         get("/getBikeSpawn", "application/json", (req, res) -> getBikeSpawn(), new JSONRT());
+        get("/updateBikes", "application/json", (req, res) -> updateBikes(), new JSONRT());
     }
 
     //big bulky update stuff
@@ -33,6 +31,7 @@ public class main {
     public static Object[][] getGrid() {
         try {
             //GET grid
+            return grid;
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -43,6 +42,7 @@ public class main {
     public static Object[] getBikeSpawn() {
         try {
             //GET bikes
+            
         } catch (Exception e) {
             System.out.println(e);
         }
