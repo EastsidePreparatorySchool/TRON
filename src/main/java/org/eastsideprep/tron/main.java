@@ -21,7 +21,7 @@ public class main {
 
     public static void main(String[] args) {
         staticFiles.location("/public/");
-        connect();
+        //connect();
 
         get("/hello", (req, res) -> "hello world");
         get("/getGrid", "application/json", (req, res) -> getGrid(), new JSONRT());
