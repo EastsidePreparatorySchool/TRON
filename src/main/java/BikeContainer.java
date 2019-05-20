@@ -14,6 +14,12 @@ public class BikeContainer {
     int[] currentPosition = new int[2];
     int velocity;
 
+    BikeContainer(Bike b, int[] pos, int v) {
+        bike = b;
+        currentPosition = pos;
+        velocity = v;
+    }
+
     //not used yet
     int fuel;
     int acceleration;

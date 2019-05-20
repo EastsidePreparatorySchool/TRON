@@ -12,6 +12,6 @@ public interface GameEngine {
     
     void randomFayeStuff();
     
-    void getDirection(bikeContainer);
+    void getDirection(BikeContainer bc);
     
 }
