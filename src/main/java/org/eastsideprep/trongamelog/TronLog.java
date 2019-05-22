@@ -5,7 +5,8 @@
  */
 package org.eastsideprep.trongamelog;
 
-import enginePackage.Position;
+import org.eastsideprep.enginePackage.Bike;
+import org.eastsideprep.enginePackage.Position;
 
 /**
  *
@@ -14,4 +15,5 @@ import enginePackage.Position;
 public interface TronLog {
     void UpdatePosition (int id, Position p);
     void KillBike(int id);
+    void Setup(int[][] board, Bike[] bikes);
 }

@@ -1,7 +1,6 @@
-package enginePackage;
+package org.eastsideprep.enginePackage;
 
-
-import enginePackage.Position;
+import org.eastsideprep.enginePackage.Position;
 import java.util.ArrayList;
 
 /*
@@ -25,6 +24,8 @@ public class BikeContainer {
         currentPosition = p;
         velocity = v;
     }
+    
+    
 
     //not used yet
     int fuel;
