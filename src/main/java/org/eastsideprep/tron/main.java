@@ -15,7 +15,6 @@ import java.util.ArrayList;
  */
 public class main {
 
-    public final Object[][] grid;
 
     public static void main(String[] args) {
         staticFiles.location("/public/");
@@ -31,7 +30,7 @@ public class main {
     public static Object[][] getGrid() {
         try {
             //GET grid
-            return grid;
+            return null;
         } catch (Exception e) {
             System.out.println(e);
         }

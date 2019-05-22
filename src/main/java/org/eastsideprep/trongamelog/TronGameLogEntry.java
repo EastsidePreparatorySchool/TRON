@@ -4,69 +4,52 @@
  */
 package org.eastsideprep.trongamelog;
 
+import java.util.ArrayList;
 import org.eastsideprep.gamelog.GameLogEntry;
 
 /**
  *
  * @author gmein
  */
-
 public class TronGameLogEntry extends GameLogEntry {
 
     // to record: moves, acceleration, state change (t,e, orbital, secrets), comm, trade, 
-    public int type;
-    public double newX;
-    public double newY;
-    public double param1;
-    public double param2;
-    public String name;
-    public String speciesName;
-    public int id;
-    public int speciesId;
-    public double energy;
-    public double tech;
+    public class Position {
 
-    public TronGameLogEntry(int type, double newX, double newY, double param1, double param2, String name, String speciesName, int id, int speciesId, double energy, double tech) {
-        this.type = type;
-        this.newX = newX;
-        this.newY = newY;
-        this.param1 = param1;
-        this.param2 = param2;
-        this.energy = energy;
-        this.tech = tech;
-        this.name = name;
-        this.id = id;
-        this.speciesId = speciesId;
-        this.speciesName = speciesName;
+        int x;
+        int y;
     }
 
+    int entryType;
+    int id;
+    Position p;
+
+    public TronGameLogEntry(int id, Position p) {
+        this.entryType = Type.POSUPDATE;
+        this.id = id;
+        this.p = p;
+    }
+
+    public TronGameLogEntry(int id, Position p, ArrayList<Position> trail) {
+        this.entryType = Type.TRAIL;
+        this.id = id;
+        this.p = p;
+    }
+    
+   public TronGameLogEntry(int id) {
+        this.entryType = Type.DEATH;
+        this.id = id;
+    }  
+
     public TronGameLogEntry(TronGameLogEntry sge) {
-        this.type = sge.type;
-        this.newX = sge.newX;
-        this.newY = sge.newY;
-        this.param1 = sge.param1;
-        this.param2 = sge.param2;
-        this.energy = sge.energy;
-        this.tech = sge.tech;
-        this.name = sge.name;
-        this.id = sge.id;
-        this.speciesId = sge.speciesId;
-        this.speciesName = sge.speciesName;
+
     }
 
     public static class Type {
 
-        public static final int ADDSPECIES = 1;
-        public static final int ADDSTAR = 2;
-        public static final int ADDPLANET = 3;
-        public static final int MOVEPLANET = 4;
-        public static final int TURN = 5;
-        public static final int ADD = 6;
-        public static final int MOVE = 7;
-        public static final int KILL = 8;
-        public static final int STATECHANGE = 9;
-        public static final int ORBIT = 10;
-        public static final int FIGHT = 11;
-        public static final int BURN = 12;
+        public static final int POSUPDATE = 1;
+        public static final int DEATH = 2;
+        public static final int TRAIL = 3;
+
     }
 }
