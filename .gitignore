@@ -13,3 +13,5 @@ target/maven-archiver/pom.properties
 target/maven-archiver/pom.properties
 desktop/TRON_DESKTOP/build/classes/tron/TRON.class
 desktop/TRON_DESKTOP/build/built-jar.properties
+target/maven-archiver/pom.properties
+target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
