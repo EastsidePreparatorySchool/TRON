@@ -10,5 +10,6 @@ package org.eastsideprep.trongamelog;
  * @author gmein
  */
 public interface TronLog {
-    
+    void UpdatePosition (int id, Position p);
+    void KillBike(int id);
 }
