@@ -35,17 +35,19 @@ public class AbstractGame {
             b.direction = rand.nextInt(2);//three directions: 0,1,2
             bikes.set(i, new BikeContainer(b, new int[]{x, y}, v));
             board[x][y] = 1;
+
         }
+
     }
 
     private void update() {
-
         //for each bike:
         //  take directions from container
         //  add directions to each position
         //  update trails
         //  check if this bike is dead
         //      if so kill it AND its trail
+
         for (BikeContainer b : bikes) {
             int dir = b.bike.direction;
             int[] pos = b.currentPosition;
