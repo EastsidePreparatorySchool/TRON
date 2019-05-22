@@ -23,7 +23,7 @@ public class BikeContainer {
         currentPosition = pos;
         velocity = v;
     }
-
+    
     //not used yet
     int fuel;
     int acceleration;
