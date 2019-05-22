@@ -44,6 +44,7 @@ public class TRON extends Application {
     }
 
     void makeAllCycleClasses() {
+        
         this.ac = new ArrayList<>();
         this.usedCycleClasses = new ArrayList<>();
 
