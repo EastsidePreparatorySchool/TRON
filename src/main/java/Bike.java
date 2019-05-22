@@ -13,11 +13,10 @@ public class Bike {
     //a bike only knows its direction and starting position, otherwise it could cheat
     int id;
     int direction;
-    int[] startingPosition = new int[2];
+    Position startingPosition;
 
-    Bike(int s, int x, int y) {
+    Bike(int s, Position p) {
         id = s;
-        startingPosition[0] = x;
-        startingPosition[1] = y;
+        startingPosition = p;
     }
 }

@@ -31,9 +31,9 @@ public class AbstractGame {
             int y = rand.nextInt(250);
             int v = rand.nextInt(maxSpeed);
             //make a new bike with random coords on the board, id from 0-3 and with a random velocity up to maxSpeed
-            Bike b = new Bike(i, x, y);
+            Bike b = new Bike(i, new Position(x, y));
             b.direction = rand.nextInt(2);//three directions: 0,1,2
-            bikes.set(i, new BikeContainer(b, new int[]{x, y}, v));
+            bikes.set(i, new BikeContainer(b, new Position(x, y), v));
             board[x][y] = 1;
 
         }
@@ -50,24 +50,24 @@ public class AbstractGame {
 
         for (BikeContainer b : bikes) {
             int dir = b.bike.direction;
-            int[] pos = b.currentPosition;
+            Position pos = b.currentPosition;
 
             //
             b.trail.add(pos);
             //update postions using direction
 
-            if (dir == 0) {
-                pos[0]--;
-            } else if (dir == 1) {
-                pos[1]++;
-            } else if (dir == 2) {
-                pos[0]++;
-            }
-
-            //kill
-            if (pos[0] == 0 || pos[0] == 251 || pos[1] == 0 || pos[1] == 251) {
-                killBike(b);
-            }
+//            if (dir == 0) {
+//                pos.x--;
+//            } else if (dir == 1) {
+//                pos.y++;
+//            } else if (dir == 2) {
+//                pos.x++;
+//            }
+//
+//            //kill
+//            if (pos[0] == 0 || pos[0] == 251 || pos[1] == 0 || pos[1] == 251) {
+//                killBike(b);
+//            }
         }
     }
 

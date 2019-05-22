@@ -1,9 +1,11 @@
+
+import java.util.ArrayList;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author tespelien
@@ -11,15 +13,16 @@
 public class BikeContainer {
 
     Bike bike;
-    int[] currentPosition = new int[2];
+    Position currentPosition;
     int velocity;
+    ArrayList<Position> trail = new ArrayList<>();
 
-    BikeContainer(Bike b, int[] pos, int v) {
+    BikeContainer(Bike b, Position p, int v) {
         bike = b;
-        currentPosition = pos;
+        currentPosition = p;
         velocity = v;
     }
-    
+
     //not used yet
     int fuel;
     int acceleration;
