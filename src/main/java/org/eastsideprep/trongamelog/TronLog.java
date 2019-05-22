@@ -5,6 +5,8 @@
  */
 package org.eastsideprep.trongamelog;
 
+import enginePackage.Position;
+
 /**
  *
  * @author gmein
