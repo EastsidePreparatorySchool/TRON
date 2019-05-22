@@ -1,3 +1,5 @@
+package enginePackage;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -8,10 +10,14 @@
  *
  * @author tespelien
  */
-public interface AbstractGameInterface {
+public class Position {
 
-    void init();
+    int x;
+    int y;
 
-    void update();
+    Position(int x, int y) {
+        x = x;
+        y = y;
+    }
 
 }
