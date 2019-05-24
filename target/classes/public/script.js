@@ -39,13 +39,6 @@ function initialize() {
         .catch(error => {
             console.log(error);
         });
-    request({ url: "/getBikeSpawn", method: "GET" })
-        .then(data => {
-            //parse that yes
-        })
-        .catch(error => {
-            console.log(error);
-        });
 }
 
 //smol updates
