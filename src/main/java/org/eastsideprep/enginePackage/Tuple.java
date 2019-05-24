@@ -5,19 +5,17 @@ package org.eastsideprep.enginePackage;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author tespelien
  */
-public class Position {
+public class Tuple {
 
     int x;
     int y;
 
-    Position(int x, int y) {
+    Tuple(int x, int y) {
         x = x;
         y = y;
     }
-
 }

@@ -1,6 +1,6 @@
 package org.eastsideprep.enginePackage;
 
-import org.eastsideprep.enginePackage.Position;
+import org.eastsideprep.enginePackage.Tuple;
 import java.util.ArrayList;
 
 /*
@@ -15,17 +15,17 @@ import java.util.ArrayList;
 public class BikeContainer {
 
     Bike bike;
-    Position currentPosition;
+    Tuple currentPosition;
+    int id;
     int velocity;
-    ArrayList<Position> trail = new ArrayList<>();
+    ArrayList<Tuple> trail = new ArrayList<>();
 
-    BikeContainer(Bike b, Position p, int v) {
-        bike = b;
-        currentPosition = p;
-        velocity = v;
-    }
-    
-    
+    BikeContainer(Bike b, Tuple p, int v) {
+        this.id = bike.id;
+        this.bike = b;
+        this.currentPosition = p;
+        this.velocity = v;
+    }        
 
     //not used yet
     int fuel;
