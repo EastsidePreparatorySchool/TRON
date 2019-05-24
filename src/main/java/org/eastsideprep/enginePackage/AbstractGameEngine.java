@@ -1,8 +1,5 @@
 package org.eastsideprep.enginePackage;
 
-import org.eastsideprep.enginePackage.Bike;
-import org.eastsideprep.enginePackage.BikeContainer;
-import org.eastsideprep.enginePackage.Position;
 import org.eastsideprep.trongamelog.*;
 import java.util.ArrayList;
 import java.util.Random;
@@ -17,15 +14,23 @@ import java.util.Random;
  * @author tespelien
  */
 public class AbstractGameEngine {
-//GAME CONSTANTS
 
+//GAME CONSTANTS
     private final int size = 252;//the edge will be a wall / border
     private final int maxSpeed = 2;
 
 //IMPORTANT OBJECTS
-    private int[][] board = new int[size][size];
-    private final ArrayList<BikeContainer> bikes = new ArrayList<>();
+    private int[][] board;
+    private final ArrayList<BikeContainer> bikes;
     private TronLog gameTronLog;
+
+    AbstractGameEngine(int size, BikeContainer[] bcArr) {
+        this.bikes = new ArrayList<>();
+        for (BikeContainer bc : bcArr) {
+            bikes.add(bc);
+        }
+        board = new int[size][size];
+    }
 
     //each square on the board will have one of 3 ints:
     //  0 for empty square
@@ -42,9 +47,9 @@ public class AbstractGameEngine {
             int y = rand.nextInt(249) + 1;
             int v = rand.nextInt(maxSpeed);
             //make a new bike with random coords on the board, id from 0-3 and with a random velocity up to maxSpeed
-            Bike b = new Bike(i, new Position(x, y));
+            Bike b = new Bike(i, new Tuple(x, y));
             b.direction = rand.nextInt(3);//four directions: 0,1,2,3
-            bikes.set(i, new BikeContainer(b, new Position(x, y), v));
+            bikes.set(i, new BikeContainer(b, new Tuple(x, y), v));
             board[x][y] = 1;
         }
         gameTronLog.Setup(size);
@@ -61,7 +66,7 @@ public class AbstractGameEngine {
 
         for (BikeContainer b : bikes) {
             int dir = b.bike.direction;
-            Position pos = b.currentPosition;
+            Tuple pos = b.currentPosition;
 
             //
             b.trail.add(pos);

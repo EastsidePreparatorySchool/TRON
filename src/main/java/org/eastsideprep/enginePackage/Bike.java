@@ -1,6 +1,6 @@
 package org.eastsideprep.enginePackage;
 
-import org.eastsideprep.enginePackage.Position;
+import org.eastsideprep.enginePackage.Tuple;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -16,9 +16,9 @@ public class Bike {
     //a bike only knows its direction and starting position, otherwise it could cheat
     int id;
     int direction;
-    Position startingPosition;
+    Tuple startingPosition;
 
-    Bike(int s, Position p) {
+    Bike(int s, Tuple p) {
         id = s;
         startingPosition = p;
     }

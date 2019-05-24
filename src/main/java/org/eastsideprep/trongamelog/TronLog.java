@@ -6,14 +6,14 @@
 package org.eastsideprep.trongamelog;
 
 import org.eastsideprep.enginePackage.Bike;
-import org.eastsideprep.enginePackage.Position;
+import org.eastsideprep.enginePackage.Tuple;
 
 /**
  *
  * @author gmein
  */
 public interface TronLog {
-    void UpdatePosition (int id, Position p);
+    void UpdatePosition (int id, Tuple t);
     void KillBike(int id);
     void Setup(int size);
 }

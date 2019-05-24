@@ -16,6 +16,6 @@ public interface AbstractGameInterface {
 
     void init(TronLog tl);
 
-    void update();
+    void run(int n);//runs n complete games, returns the winners by ID and times won
 
 }
