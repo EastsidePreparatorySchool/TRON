@@ -15,67 +15,32 @@ import java.util.ArrayList;
  */
 public class main {
 
-    static Connection conn = null;
-    public final static int LENGTH = 50;
 
     public static void main(String[] args) {
         staticFiles.location("/public/");
-        connect();
 
         get("/hello", (req, res) -> "hello world");
-        get("/dumpTable", "application/json", (req, res) -> dumpTable(req.queryParams("name")), new JSONRT());
+        get("/getGrid", "application/json", (req, res) -> getGrid(), new JSONRT());
+        get("/updateBikes", "application/json", (req, res) -> updateBikes(), new JSONRT());
     }
 
-    public static void connect() {
+    //big bulky update stuff
+    //sends grid with all ocupied spaces marked
+    public static Object[][] getGrid() {
         try {
-            // db parameters
-            String url = "jdbc:sqlite:chinook.db";
-            // create a connection to the database
-            conn = DriverManager.getConnection(url);
-
-            System.out.println("Connection to SQLite has been established.");
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            //GET grid
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
         }
+        return null;
     }
 
-    public static Object[][] dumpTable(String tableName) {
+    //smol update stuff
+    //send bike position, added trail position of bike
+    public static Object updateBikes() {
         try {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("select * from " + tableName); // select everything in the table
-
-            System.out.println();
-            System.out.println(tableName + ":");
-
-            ResultSetMetaData rsmd = rs.getMetaData();
-            int numberOfColumns = rsmd.getColumnCount();
-            for (int i = 1; i <= numberOfColumns; i++) {
-                System.out.println(rsmd.getColumnName(i) + ",  " + rsmd.getColumnTypeName(i)); // prints column name and type
-            }
-
-            System.out.println();
-            System.out.println("Rows:");
-
-            Object[][] res = new Object[LENGTH][numberOfColumns];
-            int counter = 0;
-            while (rs.next() && counter < LENGTH) { // prints the id and first two columns of all rows
-                //String row = "";
-                for (int j = 1; j <= numberOfColumns; j++) {
-                    /*if(rsmd.getColumnTypeName(j).equals("INTEGER")) {
-                        row += "" + rs.getInt(j);
-                    } else {
-                        row += "" + rs.getString(j);
-                    }*/
-                    res[counter][j-1] = rs.getString(j);
-                    //row += "" + rs.getString(j) + " ";
-                }
-                //System.out.println(row);
-                counter++;
-            }
-
-            //System.out.println();
-            return res;
+            //GET updated move
         } catch (Exception e) {
             System.out.println(e);
         }

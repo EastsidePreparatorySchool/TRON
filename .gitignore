@@ -12,3 +12,8 @@ target/test-classes/.netbeans_automatic_build
 /desktop/TRON_DESKTOP/nbproject/private/
 desktop/TRON_DESKTOP/nbproject/private/private.xml
 target/maven-archiver/pom.properties
+target/maven-archiver/pom.properties
+desktop/TRON_DESKTOP/build/classes/tron/TRON.class
+desktop/TRON_DESKTOP/build/built-jar.properties
+target/maven-archiver/pom.properties
+target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
