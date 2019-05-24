@@ -35,10 +35,9 @@ public class AbstractGameEngine {
         this.gameTronLog = tl;
         //create 4 bikes at random positions
         Random rand = new Random();
-        Bike[] bikesArr = new Bike[bikes.size()];
 
         for (int i = 0; i < bikes.size(); i++) {
-            bikesArr[i] = bikes.get(i).bike;
+
             int x = rand.nextInt(249) + 1;//random int between 1 and 250 inclusive
             int y = rand.nextInt(249) + 1;
             int v = rand.nextInt(maxSpeed);
@@ -48,7 +47,7 @@ public class AbstractGameEngine {
             bikes.set(i, new BikeContainer(b, new Position(x, y), v));
             board[x][y] = 1;
         }
-        gameTronLog.Setup(board, bikesArr);
+        gameTronLog.Setup(size);
 
     }
 

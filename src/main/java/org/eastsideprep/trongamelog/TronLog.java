@@ -15,5 +15,5 @@ import org.eastsideprep.enginePackage.Position;
 public interface TronLog {
     void UpdatePosition (int id, Position p);
     void KillBike(int id);
-    void Setup(int[][] board, Bike[] bikes);
+    void Setup(int size);
 }

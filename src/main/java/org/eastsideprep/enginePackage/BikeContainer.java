@@ -16,13 +16,15 @@ public class BikeContainer {
 
     Bike bike;
     Position currentPosition;
+    int id;
     int velocity;
     ArrayList<Position> trail = new ArrayList<>();
 
     BikeContainer(Bike b, Position p, int v) {
-        bike = b;
-        currentPosition = p;
-        velocity = v;
+        this.id = bike.id;
+        this.bike = b;
+        this.currentPosition = p;
+        this.velocity = v;
     }
     
     
