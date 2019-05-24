@@ -1,6 +1,6 @@
 package org.eastsideprep.enginePackage;
 
-import org.eastsideprep.enginePackage.Tuple;
+import eastsideprep.org.troncommon.Tuple;
 import java.util.ArrayList;
 
 /*

@@ -1,6 +1,7 @@
 package org.eastsideprep.enginePackage;
 
-import org.eastsideprep.enginePackage.Tuple;
+import eastsideprep.org.troncommon.Tuple;
+
 
 /*
  * To change this license header, choose License Headers in Project Properties.

@@ -6,7 +6,7 @@
 package org.eastsideprep.bikes;
 
 import org.eastsideprep.enginePackage.Bike;
-import org.eastsideprep.enginePackage.Tuple;
+import eastsideprep.org.troncommon.Tuple;
 
 /**
  *
