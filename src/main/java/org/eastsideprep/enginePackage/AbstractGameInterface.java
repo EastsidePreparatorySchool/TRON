@@ -16,6 +16,6 @@ public interface AbstractGameInterface {
 
     void init(TronLog tl);
 
-    void run(int n);//runs n complete games, returns the winners by ID and times won
+    Tuple[] run(int n, Bike[] test);//runs n complete games, returns the winners by ID and times won
 
 }
