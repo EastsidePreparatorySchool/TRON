@@ -18,7 +18,7 @@ public class Bike {
     int direction;
     Tuple startingPosition;
 
-    Bike(int s, Tuple p) {
+    public Bike(int s, Tuple p) {
         id = s;
         startingPosition = p;
     }
