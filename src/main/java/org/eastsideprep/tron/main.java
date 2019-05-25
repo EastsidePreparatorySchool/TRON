@@ -21,7 +21,6 @@ public class main {
 
         get("/hello", (req, res) -> "hello world");
         get("/getGrid", "application/json", (req, res) -> getGrid(), new JSONRT());
-        get("/getBikeSpawn", "application/json", (req, res) -> getBikeSpawn(), new JSONRT());
         get("/updateBikes", "application/json", (req, res) -> updateBikes(), new JSONRT());
     }
 
@@ -37,19 +36,8 @@ public class main {
         return null;
     }
 
-    //sends coordinates of all bike spawns
-    public static Object[] getBikeSpawn() {
-        try {
-            //GET bikes
-            
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        return null;
-    }
-
     //smol update stuff
-    //send bike position, added trail position, and isAlive status of bike
+    //send bike position, added trail position of bike
     public static Object updateBikes() {
         try {
             //GET updated move

@@ -1,5 +1,8 @@
 package org.eastsideprep.enginePackage;
 
+import eastsideprep.org.troncommon.TronLogInterface;
+import eastsideprep.org.troncommon.AbstractGameInterface;
+import eastsideprep.org.troncommon.Tuple;
 import org.eastsideprep.trongamelog.*;
 import java.util.ArrayList;
 import java.util.Random;
@@ -22,7 +25,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
 //IMPORTANT OBJECTS
     private int[][] board;
     private final ArrayList<BikeContainer> bikes;
-    private TronLog gameTronLog;
+    private TronLogInterface gameTronLog;
 
     AbstractGameEngine(int size, Bike[] bikeArr) {
         this.bikes = new ArrayList<>();
@@ -37,7 +40,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
     //  1 for bike
     //  2 for wall
     @Override
-    public void init(TronLog tl) {
+    public void init(TronLogInterface tl) {
         this.gameTronLog = tl;
         //create 4 bikes at random positions
         Random rand = new Random();

@@ -1,6 +1,7 @@
-package org.eastsideprep.enginePackage;
+package eastsideprep.org.troncommon;
 
-import org.eastsideprep.trongamelog.TronLog;
+import eastsideprep.org.troncommon.Tuple;
+import org.eastsideprep.enginePackage.Bike;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -14,7 +15,7 @@ import org.eastsideprep.trongamelog.TronLog;
 //probably useless?
 public interface AbstractGameInterface {
 
-    void init(TronLog tl);
+    void init(TronLogInterface tl);
 
     Tuple[] run(int n, Bike[] test);//runs n complete games, returns the winners by ID and times won
 
