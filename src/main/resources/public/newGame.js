@@ -36,19 +36,22 @@ function xmlRequest(verb, url) {
 
 
 function listBikes() {
-
+var tester="";
     request({ url: "/listBikes", method: "GET" })
         .then(data => {
             if (data.length != null) {
                 let res = JSON.parse(data);
-                console.log(res);
+               // console.log(res);
 
                 for (var i = 0; i < res.length; i++) {
                     for (var j = 0; j < res[0].length; j++) {
                         document.getElementById("bikeListOutput").value += res[i][j] + " ";
+                         tester = tester+ res[i][j] + " ";
+                        
                     }
 
                 }
+               // console.log(tester)
             }
         })
         .catch(error => {
@@ -63,9 +66,8 @@ function createGame() {
     for (var i = 0, l = newGameBikeList.length; i < l; ++i) {
         bikes = bikes + "|" + newGameBikeList[i];
     }
-    bikes=bikes+|;
 
-    request({ url: "/createGame?gameName=" + newGameName + "bikeList=" + bikes, method: "POST" })
+    request({ url: "/createGame?newGameId=" + newGameName + "bikeList=" + bikes, method: "POST" })
 }
 
 
@@ -83,12 +85,14 @@ function initialize() {
 }
 
 
-function selectBike(bikeName) {
-    newGameBikeList.push(bikeName);
+function selectBike(bikeID) {
+
+    newGameBikeList.push(bikeID);
 }
 
 function selectGame() {
     var gameid = document.getElementById("userGameId");
     request({ url: "/selectGame?gameid=" + gameid, method: "POST" })
 }
+
 

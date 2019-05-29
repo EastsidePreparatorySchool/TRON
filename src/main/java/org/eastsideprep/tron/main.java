@@ -19,6 +19,7 @@ public class main {
     static Connection conn = null;
 
     public static void main(String[] args) {
+        connect();
         staticFiles.location("/public/");
 
         get("/getGrid", "application/json", (req, res) -> getGrid(), new JSONRT());
@@ -27,6 +28,20 @@ public class main {
         get("/getGames", "application/json", (req, res) -> getGames(), new JSONRT());
 
     }
+     public static void connect() {
+        try {
+            // db parameters
+            String url = "jdbc:sqlite:tron.db";
+            // create a connection to the database
+            conn = DriverManager.getConnection(url);
+
+            System.out.println("Connection to SQLite has been established.");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
 
     //big bulky update stuff
     //sends grid with all ocupied spaces marked
@@ -82,6 +97,7 @@ public class main {
 
             ResultSetMetaData rsmd = rs.getMetaData();
             int numberOfColumns = rsmd.getColumnCount();
+             System.out.println(numberOfColumns);
             for (int i = 1; i <= numberOfColumns; i++) {
                 System.out.println(rsmd.getColumnName(i) + ",  " + rsmd.getColumnTypeName(i)); // prints column name and type
 
@@ -93,6 +109,7 @@ public class main {
             while (rs.next() && count < LENGTH) {
                 for (int j = 1; j <= numberOfColumns; j++) {
                     res[count][j - 1] = rs.getString(j);
+                    System.out.println(rs.getString(j) + "======================");
                 }
                 count++;
             }

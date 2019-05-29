@@ -1,9 +1,7 @@
 
 
 
-
-
-
+//requests xmlhttprequest wrapped in promise
 function request(obj) {
     return new Promise((resolve, reject) => {
         let xhr = new XMLHttpRequest();
@@ -34,59 +32,32 @@ function xmlRequest(verb, url) {
     xhr.send();
 }
 
-
 function getGames() {
-
+    var tester = "";
     request({ url: "/getGames", method: "GET" })
-    .then(data => {
-        if (data != null) {
-            let res = JSON.parse(data);
-            console.log(res);
+        .then(data => {
+            if (data.length != null) {
+                let res = JSON.parse(data);
+                console.log(res);
 
-            for (var i = 0; i < res.length; i++) {
-                for (var j = 0; j < res[0].length; j++) {
-                document.getElementById("gameListOutput").value += res[i][j] + " ";
+                for (var i = 0; i < res.length; i++) {
+                    for (var j = 0; j < res[0].length; j++) {
+                    document.getElementById("gameListOutput").value += res[i][j] + " ";
+                    tester = tester+ res[i][j] + " ";
+                    }
+                    console.log(tester);
+                    
                 }
-                
             }
-        }
-    })
-    .catch(error => {
-        document.getElementById("gameListOutput").value= "Could not find any games."
-    });
+        })
+        .catch(error => {
+            result.innerHTML += "Could not find any games."
+        });
 
-document.getElementById("gameListOutput").value += "";
+    document.getElementById("gameListOutput").value += "";
 }
 
-
-function initialize() {
-                console.log("intializing game...");
-                request({ url: "/getGrid", method: "GET" })
-                    .then(data => {
-                        //parse that yes
-                    })
-                    .catch(error => {
-                        console.log(error);
-
-                    });
-            }
-
-
-
-
-function selectGame() {
-                var gameid = document.getElementById("userGameId");
-                request({ url: "/selectGame?gameid=" + gameid, method: "POST" })
-            }
-//smol updates
-function update() {
-                console.log("updating...");
-                request({ url: "/updateBikes", method: "GET" })
-                    .then(data => {
-                        //parse that yes
-                    })
-                    .catch(error => {
-                        console.log(error);
-                    });
-
-            }
+function selectGame(){
+    var gameid = document.getElementById("userGameId");
+    request({url: "/selectGame?gameid=" + gameid, method: "POST"})
+}
