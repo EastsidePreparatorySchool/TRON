@@ -26,7 +26,7 @@ public class TronGameState   implements GameLogState {
 
     private HashMap<Integer, TronGameLogEntry> bikes = new HashMap<>();
     private ArrayList<TronGameLogEntry> deaths = new ArrayList<>();
-    private ArrayList<SCGameLogEntry> trails = new ArrayList<>();
+    private ArrayList<TronGameLogEntry> trails = new ArrayList<>();
 //    private HashMap<Integer, SCGameLogEntry> planets = new HashMap<>();
 //    private HashMap<Integer, SCGameLogEntry> orbits = new HashMap<>();
 //    private ArrayList<SCGameLogEntry> stars = new ArrayList<>();
@@ -132,7 +132,7 @@ public class TronGameState   implements GameLogState {
                 break;
             case TronGameLogEntry.Type.TRAIL:
                 lastTurn = new TronGameLogEntry(tge);
-                trails.add(new SCGameLogEntry(sge));
+                trails.add(new TronGameLogEntry(tge));
                 break;
             case TronGameLogEntry.Type.GAMETURN:
                 lastTurn = new TronGameLogEntry(tge);
