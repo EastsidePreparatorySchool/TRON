@@ -15,7 +15,7 @@ import org.eastsideprep.gamelog.GameLogState;
  *
  * @author gmein
  */
-public class TronGameState implements GameLogState {
+public class TronGameState   implements GameLogState {
 
     private GameLog log;
     public int entries;
@@ -25,13 +25,13 @@ public class TronGameState implements GameLogState {
     private TronGameLogEntry lastGameState;
 
     private HashMap<Integer, TronGameLogEntry> bikes = new HashMap<>();
+    private ArrayList<TronGameLogEntry> deaths = new ArrayList<>();
+    private ArrayList<SCGameLogEntry> trails = new ArrayList<>();
 //    private HashMap<Integer, SCGameLogEntry> planets = new HashMap<>();
 //    private HashMap<Integer, SCGameLogEntry> orbits = new HashMap<>();
 //    private ArrayList<SCGameLogEntry> stars = new ArrayList<>();
 //    private ArrayList<SCGameLogEntry> species = new ArrayList<>();
-    private ArrayList<TronGameLogEntry> deaths = new ArrayList<>();
 //    private ArrayList<SCGameLogEntry> fights = new ArrayList<>();
-//    private ArrayList<SCGameLogEntry> burns = new ArrayList<>();
 
     // what the console uses initially, 
     // and what "copy" uses internally
@@ -102,7 +102,6 @@ public class TronGameState implements GameLogState {
                 System.err.println("NOBODYWINS: how did we get here?");
                 lastTurn = new TronGameLogEntry(tge);
                 break;
-
             case TronGameLogEntry.Type.POSUPDATE:
                 lastTurn = new TronGameLogEntry(tge);
                 break;
@@ -133,19 +132,18 @@ public class TronGameState implements GameLogState {
                 break;
             case TronGameLogEntry.Type.TRAIL:
                 lastTurn = new TronGameLogEntry(tge);
-                //stars.add(new SCGameLogEntry(sge));
+                trails.add(new SCGameLogEntry(sge));
                 break;
             case TronGameLogEntry.Type.GAMETURN:
                 lastTurn = new TronGameLogEntry(tge);
-                //species.add(sge);
+                totalTurns++;
                 break;
             case TronGameLogEntry.Type.RESET:
                 lastTurn = new TronGameLogEntry(tge);
-                //planets.put(sge.id, new SCGameLogEntry(sge));
+                //i dont know what to do here so
                 break;
             case TronGameLogEntry.Type.WIN:
                 lastTurn = new TronGameLogEntry(tge);
-                //orbits.put(sge.id, new SCGameLogEntry(sge));
                 break;
             default:
                 break;
@@ -156,8 +154,7 @@ public class TronGameState implements GameLogState {
     // log needs this
     @Override
     public int getEntryCount() {
-//        return entries;
-        return 0;
+        return entries;
     }
 
 //    public static TronGameState safeGetNewState(GameLogObserver obs) {
@@ -168,13 +165,16 @@ public class TronGameState implements GameLogState {
 //        }
 //        return null;
 //    }
+
     // this is what the server will use to get entries to feed to the client. 
     @Override
     public ArrayList<GameLogEntry> getCompactedEntries() {
         ArrayList<GameLogEntry> result = new ArrayList<>();
 
-//        result.addAll(stars);
-//        result.addAll(planets.values());
+        result.addAll(bikes.values());
+        result.addAll(deaths);
+        result.addAll(trails);
+
 //        result.addAll(species);
 //        result.addAll(aliens.values());
 //        if (fights.size() > 100) {
@@ -184,13 +184,13 @@ public class TronGameState implements GameLogState {
 //        result.addAll(burns);
 //        result.addAll(kills);
 //        result.addAll(orbits.values());
-//        
-//        if (lastTurn != null) {
-//            result.add(lastTurn);
-//        }
-//        if (lastGameState != null) {
-//            result.add(lastGameState);
-//        }
+
+        if (lastTurn != null) {
+            result.add(lastTurn);
+        }
+        if (lastGameState != null) {
+            result.add(lastGameState);
+        }
         return result;
     }
 
@@ -206,7 +206,7 @@ public class TronGameState implements GameLogState {
 
     @Override
     public void setLog(GameLog log) {
-//        this.log = log;
+        this.log = log;
     }
 
 }
