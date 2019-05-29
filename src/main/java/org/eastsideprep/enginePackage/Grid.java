@@ -74,7 +74,7 @@ public class Grid extends GridPane {
         return isValid(col, row);
     }
 
-    boolean isOccupied(int col, int row, int dir) {
+    public boolean isOccupied(int col, int row, int dir) {
         if (!isValid(col, row, dir)) {
             return true;
         }
@@ -83,12 +83,6 @@ public class Grid extends GridPane {
         return occupied[col][row];
     }
 
-    boolean isOccupied(int col, int row) {
-        if (!isValid(col, row)) {
-            return true;
-        }
-        return occupied[col][row];
-    }
 
     void set(int col, int row, Color c) {
         Rectangle r = (Rectangle) grid[col][row].getChildren().get(0);

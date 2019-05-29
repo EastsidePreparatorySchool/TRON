@@ -27,7 +27,6 @@ public class CycleContainer {
         this.col = col;
         this.row = row;
         this.direction = dir;
-        System.out.println(Util.nameFromColor(this.color) + ": " + this.cycle.getClass().getName());
     }
 
     void kill() {

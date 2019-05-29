@@ -12,13 +12,13 @@ import javafx.scene.paint.Color;
  * @author gmein
  */
 public abstract class LightCycle {
-    static final int UP = 0;
-    static final int RIGHT = 1; 
-    static final int DOWN = 2;
-    static final int LEFT = 3;
+    public static final int UP = 0;
+    public static final int RIGHT = 1; 
+    public static final int DOWN = 2;
+    public static final int LEFT = 3;
     
     // you must override this:
-    abstract int getDirection(Grid grid, int col, int row, int currentDir); 
+    public abstract int getDirection(Grid grid, int col, int row, int currentDir); 
 
     void noteOtherCycle(Color co, int col, int row, int dir){
         // intentionally left blank. 
