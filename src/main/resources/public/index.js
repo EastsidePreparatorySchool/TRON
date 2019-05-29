@@ -39,7 +39,7 @@ function getGames() {
 
     request({ url: "/getGames", method: "GET" })
     .then(data => {
-        if (data.length != null) {
+        if (data != null) {
             let res = JSON.parse(data);
             console.log(res);
 
@@ -52,7 +52,7 @@ function getGames() {
         }
     })
     .catch(error => {
-        result.innerHTML += "Could not find any games."
+        document.getElementById("gameListOutput").value= "Could not find any games."
     });
 
 document.getElementById("gameListOutput").value += "";
