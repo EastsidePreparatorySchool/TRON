@@ -44,11 +44,19 @@ public class main {
 
 
     //big bulky update stuff
-    //sends grid with all ocupied spaces marked
-    public static Object[][] getGrid() {
-
+    public static int[][] getGrid(spark.Request req) {
+        //sends grid with all ocupied spaces marked by the following scheme
+        //  0 for empty square
+        //  1 for bike
+        //  2 for wall
         try {
             //GET grid
+            int gameId = Integer.parseInt(req.queryParams("id"));
+            for (AbstractGameEngine age : RunningAbstractGameEngines) {
+                if (age.AbstractGameEngineId == gameId){
+                    return age.getGrid();
+                }                
+            }
             return null;
         } catch (Exception e) {
             System.out.println(e);
