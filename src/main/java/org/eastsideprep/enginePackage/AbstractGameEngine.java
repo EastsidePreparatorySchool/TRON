@@ -77,10 +77,11 @@ public class AbstractGameEngine implements AbstractGameInterface {
             int dir = b.bike.direction;
             Tuple pos = b.currentPosition;
 
-            //
+            //add a trail at that position
             b.trail.add(pos);
+            board[pos.x][pos.y] = 2;
+            
             //update postions using direction
-
             if (dir == 0) {
                 pos.x--;
             } else if (dir == 1) {
@@ -90,13 +91,13 @@ public class AbstractGameEngine implements AbstractGameInterface {
             } else if (dir == 3) {
                 pos.y--;
             }
+            board[pos.x][pos.y]=1;
             gameTronLog.UpdatePosition(b.bike.id, pos);
 
             //kill
-            if (pos.x == 0 || pos.x == 251 || pos.y == 0 || pos.y == 251) {
+            if (pos.x == 0 || pos.x == 251 || pos.y == 0 || pos.y == 251 || board[pos.x][pos.y] == 2) {
                 gameTronLog.KillBike(b.bike.id);
                 killBike(b);
-
             }
         }
     }
@@ -105,6 +106,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
         bikes.remove(bc);
     }
 
+    //TODO: send win logs to Faye
     @Override
     public Tuple[] run(int n, Bike[] testBikes, int size) {
         //this method runs n complete games and returns the number of wins per bike

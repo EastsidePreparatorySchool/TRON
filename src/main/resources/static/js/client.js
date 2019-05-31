@@ -16,26 +16,26 @@ const scene = new THREE.Scene();
 //grid and size variables
 var gridSize = out; //sidelength of full grid
 var gridDivisions = 100; //how many squares along a side
-var unit = gridDivisions/gridSize; //sidelength of one square on the grid
+var unit = gridDivisions / gridSize; //sidelength of one square on the grid
 var gridCenterColor = 0x66ffd9; //0x444444;
 var gridColor = 0x668cff; //0x888888;
-var paththickness = 0.5; //thickness of light trail
+var paththickness = 5; //thickness of light trail
 
 
 // orbit control stuff
 var controls = new THREE.OrbitControls(camera);
 controls.enableZoom = true;
-controls.maxDistance = out*3; 
-controls.minDistance = out/30;
+controls.maxDistance = out * 3;
+controls.minDistance = out / 30;
 controls.keys = { //move around center of grid with keys
-	LEFT: 37, //left arrow
-	UP: 38, // up arrow
-	RIGHT: 39, // right arrow
-	BOTTOM: 40 // down arrow
+    LEFT: 37, //left arrow
+    UP: 38, // up arrow
+    RIGHT: 39, // right arrow
+    BOTTOM: 40 // down arrow
 }
 
 //setting and adding camera
-camera.position.set(0, out*1.2, out/1.5);
+camera.position.set(0, out * 1.2, out / 1.5);
 var cameraFocus = new THREE.Vector3(100, 0, 0);
 camera.lookAt(cameraFocus);
 controls.update(); //have to update controls after camera is changed
@@ -45,8 +45,9 @@ container.appendChild(renderer.domElement);
 
 
 //now the game starts
-bikes = []; //store IDs of each bike in the game
-testpath = [[1, 1], [1, 2], [1, 3]]; //test path with three points
+var bikes = []; //store IDs of each bike in the game
+var testpath = [[-10, 9], [-10, 8], [-9, 8], [-9, 7], [-9, 6], [-8, 6], [-7, 6], [-6, 6], [-5, 6], [-4, 6], [-3, 6], [-3, 5], [-2, 5]]; //test path with kinda random points
+var numbers = [1, 2, 3, 4, 5]; //array with just numbers
 
 class Bike {
     constructor(material, startx, starty, id, species, lightpath) { //lightpath is a double array
@@ -66,32 +67,47 @@ class Bike {
     }
 }
 
-var pathgeo = new THREE.CubeGeometry(unit, unit, )
-pathmaterial = MeshLambertMaterial();
-pathmate
 
-class lightpath {
-    constructor (material, patharray) {
-        this.material = MeshLambertMaterial; //maybe don't put material in the constructor, unless it't the only way to change color
-        this.path = patharray;
-        this.mesh = new THREE.Mesh(cubeGeo, this.material); 
+var pathgeo = new THREE.CubeGeometry(unit, paththickness, unit); //one unit of the path geometry
+var pathmat = new THREE.MeshLambertMaterial({ color: 0xff0066, ambient: 0xffffff }); //, ambient: 0x121212
+
+var pathmesh = new THREE.Mesh(pathgeo, pathmat);
+/*
+pathmesh.position.x = unit/2;
+pathmesh.position.z = unit/2;
+scene.add(pathmesh); */
+
+function drawpath(patharray, color) {
+    var pathgeo = new THREE.CubeGeometry(unit, paththickness, unit); //one unit of the path geometry
+    var pathmat = new THREE.MeshLambertMaterial({ color: color, ambient: 0xffffff }); //, ambient: 0x121212
+    var pathlength = patharray.length;
+    var i;
+    for (i = 0; i < pathlength; i++) {
+        var mesh = new THREE.Mesh(pathgeo, pathmat);
+        mesh.position.x = patharray[i][0] - unit / 2;
+        mesh.position.z = patharray[i][1] - unit / 2;
+        scene.add(mesh);
     }
 }
 
+drawpath(testpath, 0xff0066);
+
+
+
 
 //grid helper constructor: (size, divisions, colorCenterLine, colorGrid)
-var grid = new THREE.GridHelper (gridSize, gridDivisions, gridCenterColor, gridColor);
-scene.add (grid);
+var grid = new THREE.GridHelper(gridSize, gridDivisions, gridCenterColor, gridColor);
+scene.add(grid);
 
-// bike stuff
-const RADIUS = unit/2;
+// fake bike stuff
+const RADIUS = unit / 2;
 const SEGMENTS = 16;
 const RINGS = 16;
-const sphereMaterial = new THREE.MeshLambertMaterial({color: 0xCC0000});
+const sphereMaterial = new THREE.MeshLambertMaterial({ color: 0xCC0000 });
 const fakebike = new THREE.Mesh(new THREE.SphereGeometry(RADIUS, SEGMENTS, RINGS), sphereMaterial);
-fakebike.position.x = unit/2;
-fakebike.position.z = unit/2;
-scene.add(fakebike);
+fakebike.position.x = unit / 2;
+fakebike.position.z = unit / 2;
+//scene.add(fakebike);
 
 
 
@@ -104,8 +120,8 @@ scene.add(fakebike);
 
 const pointLight = new THREE.PointLight(0xFFFFFF);
 pointLight.position.x = 10;
-pointLight.position.y = 50;
-pointLight.position.z = 130;
+pointLight.position.y = 130;
+pointLight.position.z = 50;
 scene.add(pointLight);
 
 //functions and routes
@@ -129,7 +145,7 @@ function request(obj) {
 
 //routes I need should go here
 function updateBikes() {
-    request({url: "updateBikes", method: "GET"})
+    request({ url: "updateBikes", method: "GET" })
         .then(data => {
             //something
         })
@@ -138,13 +154,24 @@ function updateBikes() {
         });
 }
 
-//more routes??
+//going to recieve:
+// bike values
+// deaths
+// trails
+
+//[[bike0, true/false, [points]], [bike1, true/false, [points]]];
+
+//going to recieve an array of bikes, status, and their routes
+//perhaps bikeinfo = [ [bike0, true, [points]], [bike1, false, [points]] ]
+//could start with name or number of bike, then a boolean for if still alive
+//then if alive = true, there will be points, if false, points until death point
+//if it died since last update give points until death
 
 
 //RENDERING AND UPDATING
 renderer.render(scene, camera);
 
-function animate () {
+function animate() {
     renderer.render(scene, camera);
     controls.update();
     requestAnimationFrame(animate); //Schedule the next frame.
