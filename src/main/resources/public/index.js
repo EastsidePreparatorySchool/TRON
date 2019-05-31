@@ -1,3 +1,6 @@
+
+
+
 //requests xmlhttprequest wrapped in promise
 function request(obj) {
     return new Promise((resolve, reject) => {
@@ -29,26 +32,36 @@ function xmlRequest(verb, url) {
     xhr.send();
 }
 
-//initialize
-function initialize() {
-    console.log("intializing game...");
-    request({ url: "/getGrid", method: "GET" })
+function getGames() {
+    var tester = "";
+    request({ url: "/getGames", method: "GET" })
         .then(data => {
-            //parse that yes
+            if (data.length != null) {
+                let res = JSON.parse(data);
+                console.log(res);
+
+                for (var i = 0; i < res.length; i++) {
+                    for (var j = 0; j < res[0].length; j++) {
+                    
+                   if (res[i][j] != null){
+                   tester = tester + res[i][j] + " ";
+                   }
+                    }
+                    
+                    
+                }
+                document.getElementById("gameListOutput").innerHTML=tester; 
+console.log(tester);
+            }
         })
         .catch(error => {
-            console.log(error);
+            result.innerHTML += "Could not find any games."
         });
+
+    document.getElementById("gameListOutput").value += "";
 }
 
-//smol updates
-function update() {
-    console.log("updating...");
-    request({ url: "/updateBikes", method: "GET" })
-        .then(data => {
-            //parse that yes
-        })
-        .catch(error => {
-            console.log(error);
-        });
+function selectGame(){
+    var gameid = document.getElementById("userGameId");
+    request({url: "/selectGame?gameid=" + gameid, method: "POST"})
 }
