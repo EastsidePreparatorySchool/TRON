@@ -19,7 +19,7 @@ var gridDivisions = 100; //how many squares along a side
 var unit = gridDivisions / gridSize; //sidelength of one square on the grid
 var gridCenterColor = 0x66ffd9; //0x444444;
 var gridColor = 0x668cff; //0x888888;
-var paththickness = 0.01; //thickness of light trail
+var paththickness = 5; //thickness of light trail
 
 
 // orbit control stuff
@@ -71,24 +71,15 @@ class Bike {
 var pathgeo = new THREE.CubeGeometry(unit, paththickness, unit); //one unit of the path geometry
 var pathmat = new THREE.MeshLambertMaterial({ color: 0xff0066, ambient: 0xffffff }); //, ambient: 0x121212
 
-class lightpath {
-    constructor(material, patharray) {
-        this.material = material; //maybe don't put material in the constructor, unless it't the only way to change color
-        this.path = patharray;
-        this.mesh = new THREE.Mesh(pathgeo, this.material);
-    }
-
-    //draw function ()
-}
-
 var pathmesh = new THREE.Mesh(pathgeo, pathmat);
 /*
 pathmesh.position.x = unit/2;
 pathmesh.position.z = unit/2;
 scene.add(pathmesh); */
 
-function drawpath(patharray) {
-    //going to use the pathgeo, pathmat, and pathmesh I already set for this simple-er path drawer
+function drawpath(patharray, color) {
+    var pathgeo = new THREE.CubeGeometry(unit, paththickness, unit); //one unit of the path geometry
+    var pathmat = new THREE.MeshLambertMaterial({ color: color, ambient: 0xffffff }); //, ambient: 0x121212
     var pathlength = patharray.length;
     var i;
     for (i = 0; i < pathlength; i++) {
@@ -99,12 +90,8 @@ function drawpath(patharray) {
     }
 }
 
-drawpath(testpath);
+drawpath(testpath, 0xff0066);
 
-
-//var path1 = new lightpath(pathmat, testpath);
-//scene.add(path1);
-//path1.draw();
 
 
 
@@ -112,7 +99,7 @@ drawpath(testpath);
 var grid = new THREE.GridHelper(gridSize, gridDivisions, gridCenterColor, gridColor);
 scene.add(grid);
 
-// bike stuff
+// fake bike stuff
 const RADIUS = unit / 2;
 const SEGMENTS = 16;
 const RINGS = 16;
@@ -168,6 +155,12 @@ function updateBikes() {
 }
 
 //more routes??
+
+//going to recieve an array of bikes, status, and their routes
+//perhaps bikeinfo = [ [bike0, true, [points]], [bike1, false, [points]] ]
+//could start with name or number of bike, then a boolean for if still alive
+//then if alive = true, there will be points, if false, points until death point
+//if it died since last update give points until death
 
 
 //RENDERING AND UPDATING
