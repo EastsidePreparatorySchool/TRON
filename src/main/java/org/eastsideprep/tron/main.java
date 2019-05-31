@@ -6,6 +6,7 @@
 package org.eastsideprep.tron;
 
 import java.sql.*;
+import org.eastsideprep.enginePackage.AbstractGameEngine;
 import static spark.Spark.*;
 
 /**
@@ -22,10 +23,10 @@ public class main {
         connect();
         staticFiles.location("/public/");
 
-       // get("/getGrid", "application/json", (req, res) -> getGrid(), new JSONRT());
+        get("/getGrid", "application/json", (req, res) -> getGrid(req), new JSONRT());
         get("/updateBikes", "application/json", (req, res) -> updateBikes(), new JSONRT());
         post("/createGame", (req, res) -> newGame(req));
-        get("/getGames", "application/json", (req, res) -> getGames(), new JSONRT());
+        get("/getGames", "application/json", (req, res) -> getTable(req), new JSONRT());
 
     }
      public static void connect() {
@@ -98,11 +99,12 @@ public class main {
     return req.session().id();
     }
 
-    public static Object[][] getGames() {
+    public static Object[][] getTable(spark.Request req) {
+        String table=req.queryParams("tableName");
 
         try {
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("select * from bikeclasses"); // select everything in the table
+            ResultSet rs = stmt.executeQuery("select * from "+table); // select everything in the table
 
             ResultSetMetaData rsmd = rs.getMetaData();
             int numberOfColumns = rsmd.getColumnCount();
