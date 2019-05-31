@@ -66,8 +66,9 @@ function createGame() {
     for (var i = 0, l = newGameBikeList.length; i < l; ++i) {
         bikes = bikes + "|" + newGameBikeList[i];
     }
-
-    request({ url: "/createGame?newGameId=" + newGameName + "bikeList=" + bikes, method: "POST" })
+    
+    request({ url: "/createGame?newGameId=" + newGameName + "bikeList=" + bikes, method: "GET" })
+    
 }
 
 

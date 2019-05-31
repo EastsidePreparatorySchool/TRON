@@ -60,6 +60,7 @@ public class main {
         String bikeNames = req.queryParams("bikeListID");
         String[] bikeIDList = bikeNames.split("|");
         String gameName=req.queryParams("gameName");
+        System.out.println(gameName+"=================");
         //this function will take a list of bikes in a string formated in this format - bike1|bike2|bike3|bike4|
         char quote = '"';
         int lastBikeID = 0; //here i need something that will return the last bike id so i can add it 
@@ -93,7 +94,7 @@ public class main {
 
         try {
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("select * from games"); // select everything in the table
+            ResultSet rs = stmt.executeQuery("select * from bikeclasses"); // select everything in the table
 
             ResultSetMetaData rsmd = rs.getMetaData();
             int numberOfColumns = rsmd.getColumnCount();
