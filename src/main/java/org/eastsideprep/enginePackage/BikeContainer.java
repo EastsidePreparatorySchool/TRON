@@ -16,7 +16,9 @@ public class BikeContainer {
 
     Bike bike;
     Tuple currentPosition;
+    int direction = bike.direction;
     int id;
+    boolean isAlive;
     int velocity;
     ArrayList<Tuple> trail = new ArrayList<>();
 
@@ -24,8 +26,18 @@ public class BikeContainer {
         this.id = bike.id;
         this.bike = b;
         this.currentPosition = p;
+        isAlive = true;
         this.velocity = v;
-    }        
+    }
+
+    void move(Grid g) {
+
+    }
+
+    Tuple kill() {
+        this.isAlive = false;
+        return currentPosition;
+    }
 
     //not used yet
     int fuel;
