@@ -43,8 +43,6 @@ public class main {
     }
 
 
- 
-
     public static String newGame(spark.Request req) {
         String bikeNames = req.queryParams("bikeListID");
         String[] bikeIDList = bikeNames.split("|");
