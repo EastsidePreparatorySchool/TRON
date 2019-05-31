@@ -7,6 +7,9 @@ package org.eastsideprep.tron;
 
 import java.sql.*;
 import org.eastsideprep.enginePackage.AbstractGameEngine;
+import org.eastsideprep.gamelog.GameLogEntry;
+import org.eastsideprep.trongamelog.TronGameState;
+import java.util.*;
 import static spark.Spark.*;
 
 /**
@@ -16,21 +19,20 @@ import static spark.Spark.*;
 public class main {
 
     public final static int LENGTH = 100;
-
+    public final static TronGameState STATE = new TronGameState(true);
     static Connection conn = null;
 
     public static void main(String[] args) {
         connect();
         staticFiles.location("/public/");
 
-
         get("/updateBikes", "application/json", (req, res) -> updateBikes(), new JSONRT());
         post("/createGame", "application/json", (req, res) -> newGame(req));
         get("/getGames", "application/json", (req, res) -> getTable(req), new JSONRT());
-        
-
+        get("/initializeBikes", "application/json", (req, res) -> initializeBikes(), new JSONRT());
     }
-     public static void connect() {
+
+    public static void connect() {
         try {
             // db parameters
             String url = "jdbc:sqlite:tron.db";
@@ -44,12 +46,11 @@ public class main {
         }
     }
 
-
     public static String newGame(spark.Request req) {
         String bikeNames = req.queryParams("bikeListID");
         String[] bikeIDList = bikeNames.split("|");
-        String gameName=req.queryParams("gameName");
-        System.out.println(gameName+"=================");
+        String gameName = req.queryParams("gameName");
+        System.out.println(gameName + "=================");
         //this function will take a list of bikes in a string formated in this format - bike1|bike2|bike3|bike4|
         char quote = '"';
  
@@ -63,7 +64,7 @@ public class main {
         } catch (Exception e) {
             System.out.println(e);
         }
-         for (int i = 0; i > bikeIDList.length; i++) {
+        for (int i = 0; i > bikeIDList.length; i++) {
 
            
             String sqlBikeClass = "INSERT INTO" + quote + "gameBike" + quote + "(GameID, BikeClassID) VALUES (" + Integer.toString(GameID) + ", " + quote + bikeIDList[i] + quote + ");";
@@ -76,11 +77,11 @@ public class main {
                 System.out.println(e);
             }
         }
-    return req.session().id();
+        return req.session().id();
     }
 
     public static Object[][] getTable(spark.Request req) {
-        String table=req.queryParams("tableName");
+        String table = req.queryParams("tableName");
 
         try {
             Statement stmt = conn.createStatement();
@@ -88,7 +89,7 @@ public class main {
 
             ResultSetMetaData rsmd = rs.getMetaData();
             int numberOfColumns = rsmd.getColumnCount();
-             System.out.println(numberOfColumns);
+            System.out.println(numberOfColumns);
             for (int i = 1; i <= numberOfColumns; i++) {
                 System.out.println(rsmd.getColumnName(i) + ",  " + rsmd.getColumnTypeName(i)); // prints column name and type
 
@@ -112,16 +113,24 @@ public class main {
         return null;
     }
 
-//smol update stuff
-//send bike position, added trail position of bike
-    public static Object updateBikes() {
+//list of bikeos and such
+    public static Object[] initializeBikes() {
         try {
-            //GET updated move
-
+            ArrayList<GameLogEntry> log = STATE.getCompactedEntries();
         } catch (Exception e) {
             System.out.println(e);
         }
         return null;
     }
 
+//smol update stuff
+//send bike position, added trail position of bike
+    public static Object[] updateBikes() {
+        try {
+            ArrayList<GameLogEntry> log = STATE.getCompactedEntries();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
+    }
 }
