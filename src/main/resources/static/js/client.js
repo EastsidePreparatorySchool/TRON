@@ -161,6 +161,12 @@ function updateBikes() {
 
 //[[bike0, true/false, [points]], [bike1, true/false, [points]]];
 
+//going to recieve an array of bikes, status, and their routes
+//perhaps bikeinfo = [ [bike0, true, [points]], [bike1, false, [points]] ]
+//could start with name or number of bike, then a boolean for if still alive
+//then if alive = true, there will be points, if false, points until death point
+//if it died since last update give points until death
+
 
 //RENDERING AND UPDATING
 renderer.render(scene, camera);
