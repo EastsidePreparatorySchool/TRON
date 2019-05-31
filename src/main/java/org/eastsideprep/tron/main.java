@@ -19,7 +19,7 @@ import static spark.Spark.*;
 public class main {
 
     public final static int LENGTH = 100;
-    public final static TronGameState STATE = new TronGameState(false);
+    public final static TronGameState STATE = new TronGameState(true);
     static Connection conn = null;
 
     public static void main(String[] args) {
@@ -29,7 +29,7 @@ public class main {
         get("/updateBikes", "application/json", (req, res) -> updateBikes(), new JSONRT());
         post("/createGame", (req, res) -> newGame(req));
         get("/getGames", "application/json", (req, res) -> getTable(req), new JSONRT());
-
+        get("/initializeBikes", "application/json", (req, res) -> initializeBikes(), new JSONRT());
     }
 
     public static void connect() {
@@ -113,6 +113,16 @@ public class main {
         return null;
     }
 
+//list of bikeos and such
+    public static Object[] initializeBikes() {
+        try {
+            ArrayList<GameLogEntry> log = STATE.getCompactedEntries();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
+    }
+
 //smol update stuff
 //send bike position, added trail position of bike
     public static Object[] updateBikes() {
@@ -123,5 +133,4 @@ public class main {
         }
         return null;
     }
-
 }

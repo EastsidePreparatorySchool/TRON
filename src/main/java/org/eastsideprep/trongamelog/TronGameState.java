@@ -25,8 +25,8 @@ public class TronGameState   implements GameLogState {
     private TronGameLogEntry lastGameState;
 
     private HashMap<Integer, TronGameLogEntry> bikes = new HashMap<>();
-    private ArrayList<TronGameLogEntry> deaths = new ArrayList<>();
     private HashMap<Integer, TronGameLogEntry> trails = new HashMap<>();
+    private ArrayList<TronGameLogEntry> deaths = new ArrayList<>();
 //    private HashMap<Integer, SCGameLogEntry> planets = new HashMap<>();
 //    private HashMap<Integer, SCGameLogEntry> orbits = new HashMap<>();
 //    private ArrayList<SCGameLogEntry> stars = new ArrayList<>();
