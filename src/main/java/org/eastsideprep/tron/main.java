@@ -22,7 +22,7 @@ public class main {
         connect();
         staticFiles.location("/public/");
 
-        get("/getGrid", "application/json", (req, res) -> getGrid(), new JSONRT());
+       // get("/getGrid", "application/json", (req, res) -> getGrid(), new JSONRT());
         get("/updateBikes", "application/json", (req, res) -> updateBikes(), new JSONRT());
         post("/createGame", (req, res) -> newGame(req));
         get("/getGames", "application/json", (req, res) -> getGames(), new JSONRT());
