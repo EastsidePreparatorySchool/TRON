@@ -26,7 +26,7 @@ public class TronGameState   implements GameLogState {
 
     private HashMap<Integer, TronGameLogEntry> bikes = new HashMap<>();
     private ArrayList<TronGameLogEntry> deaths = new ArrayList<>();
-    private ArrayList<TronGameLogEntry> trails = new ArrayList<>();
+    private HashMap<Integer, TronGameLogEntry> trails = new HashMap<>();
 //    private HashMap<Integer, SCGameLogEntry> planets = new HashMap<>();
 //    private HashMap<Integer, SCGameLogEntry> orbits = new HashMap<>();
 //    private ArrayList<SCGameLogEntry> stars = new ArrayList<>();
@@ -104,6 +104,7 @@ public class TronGameState   implements GameLogState {
                 break;
             case TronGameLogEntry.Type.POSUPDATE:
                 lastTurn = new TronGameLogEntry(tge);
+                bikes.put(tge.id, lastTurn);
                 break;
             case TronGameLogEntry.Type.DEATH:
                 if (forUpdates) {
@@ -132,7 +133,7 @@ public class TronGameState   implements GameLogState {
                 break;
             case TronGameLogEntry.Type.TRAIL:
                 lastTurn = new TronGameLogEntry(tge);
-                trails.add(new TronGameLogEntry(tge));
+                trails.put(tge.id, lastTurn);
                 break;
             case TronGameLogEntry.Type.GAMETURN:
                 lastTurn = new TronGameLogEntry(tge);
@@ -170,10 +171,10 @@ public class TronGameState   implements GameLogState {
     @Override
     public ArrayList<GameLogEntry> getCompactedEntries() {
         ArrayList<GameLogEntry> result = new ArrayList<>();
-
+        
         result.addAll(bikes.values());
+        result.addAll(trails.values());
         result.addAll(deaths);
-        result.addAll(trails);
 
 //        result.addAll(species);
 //        result.addAll(aliens.values());
