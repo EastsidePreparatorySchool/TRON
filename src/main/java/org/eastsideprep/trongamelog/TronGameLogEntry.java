@@ -13,9 +13,7 @@ import org.eastsideprep.gamelog.GameLogEntry;
  */
 public class TronGameLogEntry extends GameLogEntry {
 
-    // to record: moves, acceleration, state change (t,e, orbital, secrets), comm, trade, 
     public class Position {
-
         int x;
         int y;
     }
@@ -41,7 +39,7 @@ public class TronGameLogEntry extends GameLogEntry {
         this.id = id;
     }
 
-    public TronGameLogEntry() { //GAMETURN
+    public TronGameLogEntry() {
         this.entryType = Type.GAMETURN;
     }
 
