@@ -85,7 +85,7 @@ public class main {
 
         try {
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("select * from " + table); // select everything in the table
+            ResultSet rs = stmt.executeQuery("select * from "+table+";"); // select everything in the table
 
             ResultSetMetaData rsmd = rs.getMetaData();
             int numberOfColumns = rsmd.getColumnCount();
