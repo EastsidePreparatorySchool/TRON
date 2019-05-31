@@ -34,7 +34,7 @@ function xmlRequest(verb, url) {
 
 function getGames() {
     var tester = "";
-    request({ url: "/getGames?tableName=bikeclasses", method: "GET" })
+    request({ url: "/getGames?tableName=games", method: "GET" })
         .then(data => {
             if (data.length != null) {
                 let res = JSON.parse(data);

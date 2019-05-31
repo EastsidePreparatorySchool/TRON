@@ -23,7 +23,7 @@ public class main {
         connect();
         staticFiles.location("/public/");
 
-        get("/getGrid", "application/json", (req, res) -> getGrid(req), new JSONRT());
+
         get("/updateBikes", "application/json", (req, res) -> updateBikes(), new JSONRT());
         post("/createGame", (req, res) -> newGame(req));
         get("/getGames", "application/json", (req, res) -> getTable(req), new JSONRT());
@@ -83,7 +83,7 @@ public class main {
 
         try {
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("select * from "+table); // select everything in the table
+            ResultSet rs = stmt.executeQuery("select * from "+table+";"); // select everything in the table
 
             ResultSetMetaData rsmd = rs.getMetaData();
             int numberOfColumns = rsmd.getColumnCount();
