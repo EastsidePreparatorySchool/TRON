@@ -1,3 +1,4 @@
+drop table bikeclasses;
 CREATE TABLE "bikeclasses"
 (
     [BikeClassId] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -7,6 +8,7 @@ CREATE TABLE "bikeclasses"
     [AverageTurnsSurvived] NUMERIC(6,2) DEFAULT 0.0
 );
 
+drop table games;
 CREATE TABLE "games"
 (
     [GameId] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -16,6 +18,7 @@ CREATE TABLE "games"
     [NumBikes] INTEGER
 );
 
+drop table gamesbikes;
 CREATE TABLE "gamesbikes"
 (
   [GameId] INTEGER NOT NULL,
@@ -26,7 +29,7 @@ CREATE TABLE "gamesbikes"
 
 
 INSERT INTO "bikeclasses" (BikeClassId, Name) VALUES (0, "SillyBike");
-INSERT INTO "games" (GameID, GameName) VALUES (0, "Gametest");
+INSERT INTO "games" (GameName, WinnerClassID) VALUES ("Gametest", 0);
 
 
 

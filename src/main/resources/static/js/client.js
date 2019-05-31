@@ -55,8 +55,8 @@ class Bike {
         this.mesh = new THREE.Mesh(cubeGeo, this.material);
         scene.add(this.mesh);
         this.mesh.position.x = startx; //an initial x, y
-        this.mesh.position.y = starty;
-        this.mesh.position.z = 0; //no 3D?
+        this.mesh.position.z = starty; //this is the y on the grid
+        this.mesh.position.y = 0; //up from grid
         this.id = id; //every bike will have a unique id
         this.species = species; //may be multiple bikes of the same species
         this.lightpath = lightpath; //this will be an array of [x, y] pairs
@@ -143,24 +143,48 @@ function request(obj) {
     });
 };
 
-//routes I need should go here
-function updateBikes() {
-    request({ url: "updateBikes", method: "GET" })
+//already have a bike[] initialized at the top
+
+function initializeBikes() { //initialize bikes
+    request({ url: "initializeBikes", method: "GET" })
         .then(data => {
-            //something
+            bikes = JSON.parse(data); //an array of initial bike objects with position, ID
+            //for some number of bikes
+            //construct a new bike with some ID and assign it a color
+            //figure out bike headings for STL, rotate bikes to drive straight
+            //draw the bikes
+            var numBikes = bikes.length; 
+            var i;
+            for (i = 0; i < numBikes; i++) {
+                //make and draw bikes
+            }
         })
         .catch(error => {
-            print("Bike updata error: " + error);
+            print("Bike update error: " + error);
         });
 }
 
-//more routes??
+var bikeUpdates; 
 
-//going to recieve an array of bikes, status, and their routes
-//perhaps bikeinfo = [ [bike0, true, [points]], [bike1, false, [points]] ]
-//could start with name or number of bike, then a boolean for if still alive
-//then if alive = true, there will be points, if false, points until death point
-//if it died since last update give points until death
+function updateBikes() {
+    request({ url: "updateBikes", method: "GET" })
+        .then(data => {
+            bikeUpdates = JSON.parse(data);
+        })
+        .catch(error => {
+            print("Bike update error: " + error);
+        });
+}
+
+
+
+//going to recieve:
+// bike values
+// deaths
+// trails
+
+//[[bike0, true/false, bikeposition, [points]], [bike1, true/false, bike position, [points]]];
+// true/false applies to if it is alive
 
 
 //RENDERING AND UPDATING

@@ -36,28 +36,32 @@ function xmlRequest(verb, url) {
 
 
 function listBikes() {
-var tester="";
-    request({ url: "/listBikes", method: "GET" })
+    var tester = "";
+    request({ url: "/getGames?tableName=bikeclasses", method: "GET" })
         .then(data => {
             if (data.length != null) {
                 let res = JSON.parse(data);
-               // console.log(res);
+                console.log(res);
 
                 for (var i = 0; i < res.length; i++) {
                     for (var j = 0; j < res[0].length; j++) {
-                        document.getElementById("bikeListOutput").value += res[i][j] + " ";
-                         tester = tester+ res[i][j] + " ";
-                        
+                    
+                   if (res[i][j] != null){
+                   tester = tester + res[i][j] + " ";
+                   }
                     }
-
+                    
+                    
                 }
-               // console.log(tester)
+                document.getElementById("bikeListOutput").innerHTML=tester; 
+console.log(tester);
             }
         })
         .catch(error => {
-            result.innerHTML += "Could not find any bikes RIIIIIIP."
+            result.innerHTML += "Could not find any games."
         });
 
+    document.getElementById("bikeListOutput").value += "";
 }
 
 function createGame() {
@@ -67,8 +71,14 @@ function createGame() {
         bikes = bikes + "|" + newGameBikeList[i];
     }
     
-    request({ url: "/createGame?newGameId=" + newGameName + "bikeList=" + bikes, method: "GET" })
-    
+    request({ url: "/createGame?newGameId=" + newGameName + "bikeList=" + bikes, method: "POST" })
+    .then(data => {
+        console.log("New game " + data + "has been created. Cool" )
+    })
+    .catch(error => {
+        console.log(error);
+
+    });
 }
 
 
