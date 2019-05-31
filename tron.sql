@@ -29,7 +29,7 @@ CREATE TABLE "gamesbikes"
 
 
 INSERT INTO "bikeclasses" (BikeClassId, Name) VALUES (0, "SillyBike");
-INSERT INTO "games" (GameId, GameName, WinnerClassID) VALUES (0, "Gametest", 0);
+INSERT INTO "games" (GameName, WinnerClassID) VALUES ("Gametest", 0);
 
 
 

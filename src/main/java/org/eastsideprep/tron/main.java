@@ -25,8 +25,9 @@ public class main {
 
 
         get("/updateBikes", "application/json", (req, res) -> updateBikes(), new JSONRT());
-        post("/createGame", (req, res) -> newGame(req));
+        post("/createGame", "application/json", (req, res) -> newGame(req));
         get("/getGames", "application/json", (req, res) -> getTable(req), new JSONRT());
+        
 
     }
      public static void connect() {
@@ -51,10 +52,10 @@ public class main {
         System.out.println(gameName+"=================");
         //this function will take a list of bikes in a string formated in this format - bike1|bike2|bike3|bike4|
         char quote = '"';
-        int lastBikeID = 0; //here i need something that will return the last bike id so i can add it 
-        int lastGameID = 0; //same comment 
+ 
+         
        
-        String sqlGame = "INSERT INTO" + quote + "games" + quote + "(GameId, NumBikes, GameName) VALUES (" + Integer.toString(lastGameID + 1) + ", " + quote + bikeIDList.length + quote + ", " + quote + gameName + quote +");";
+        String sqlGame = "INSERT INTO" + quote + "games" + quote + "(GameId, NumBikes, GameName) VALUES (" + Integer.toString(GameID) + ", " + quote + bikeIDList.length + quote + ", " + quote + gameName + quote +");";
         System.out.println(sqlGame);
         try {
             PreparedStatement sqlcmdGame = conn.prepareStatement(sqlGame);
@@ -64,8 +65,8 @@ public class main {
         }
          for (int i = 0; i > bikeIDList.length; i++) {
 
-            lastBikeID = lastBikeID + 1;
-            String sqlBikeClass = "INSERT INTO" + quote + "gameBike" + quote + "(GameID, BikeClassID) VALUES (" + Integer.toString(lastGameID +1) + ", " + quote + bikeIDList[i] + quote + ");";
+           
+            String sqlBikeClass = "INSERT INTO" + quote + "gameBike" + quote + "(GameID, BikeClassID) VALUES (" + Integer.toString(GameID) + ", " + quote + bikeIDList[i] + quote + ");";
             System.out.println(sqlBikeClass);
 
             try {
