@@ -23,11 +23,13 @@ public class AbstractGameEngine implements AbstractGameInterface {
     private final int maxSpeed = 1;
 
 //IMPORTANT OBJECTS
+    public int AbstractGameEngineId;
     private int[][] board;
     private final ArrayList<BikeContainer> bikes;
     private TronLogInterface gameTronLog;
 
-    AbstractGameEngine(int size, Bike[] bikeArr) {
+    AbstractGameEngine(int id, int size, Bike[] bikeArr) {
+        this.AbstractGameEngineId = id;
         this.bikes = new ArrayList<>();
         for (Bike b : bikeArr) {
             bikes.add(new BikeContainer(b, new Tuple(0, 0), maxSpeed));//placing the bikes at 0,0
@@ -57,7 +59,10 @@ public class AbstractGameEngine implements AbstractGameInterface {
             board[x][y] = 1;
         }
         gameTronLog.Setup(size);
+    }
 
+    public int[][] getGrid() {
+        return this.board;
     }
 
     private void update() {
@@ -97,30 +102,35 @@ public class AbstractGameEngine implements AbstractGameInterface {
         }
     }
 
-    void killBike(BikeContainer bc) {
+    private void killBike(BikeContainer bc) {
         bikes.remove(bc);
     }
 
     //TODO: send win logs to Faye
     @Override
-    public Tuple[] run(int n, Bike[] testBikes) {
+    public Tuple[] run(int n, Bike[] testBikes, int size) {
         //this method runs n complete games and returns the number of wins per bike
 
-        int numBikes = bikes.size();
+        int numBikes = testBikes.length;
         Tuple[] scoreboard = new Tuple[numBikes];
         for (int i = 0; i < scoreboard.length; i++) {
             scoreboard[i] = new Tuple(i, 0);
         }
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++) {//n complete games
             int winner;//winner's id
 
-            AbstractGameEngine currentGame = new AbstractGameEngine(250, testBikes);
+            AbstractGameEngine currentGame = new AbstractGameEngine(i, Math.max(250, size), testBikes);//dont want the game board to be too small
             while (currentGame.bikes.size() > 1) {
                 currentGame.update();
             }
             //there is a winner!
             winner = currentGame.bikes.get(0).bike.id;//there is only one bike left in the arraylist
-            scoreboard[winner].y++;//the tuples are (id, times won)
+            //the tuples are (id, times won)
+            for (Tuple tuple : scoreboard) {
+                if (tuple.x == winner) {
+                    scoreboard[winner].y++;
+                }
+            }
         }
         return scoreboard;
     }

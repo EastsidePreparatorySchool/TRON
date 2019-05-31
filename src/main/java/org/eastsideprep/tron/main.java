@@ -8,27 +8,39 @@ package org.eastsideprep.tron;
 import static spark.Spark.*;
 import java.sql.*;
 import java.util.ArrayList;
+import org.eastsideprep.enginePackage.AbstractGameEngine;
 
 /**
  *
  * @author fzhang
  */
 public class main {
-
+    
+    //there might be multiple games going at once
+    static AbstractGameEngine[] RunningAbstractGameEngines;
 
     public static void main(String[] args) {
         staticFiles.location("/public/");
 
         get("/hello", (req, res) -> "hello world");
-        get("/getGrid", "application/json", (req, res) -> getGrid(), new JSONRT());
+        get("/getGrid", "application/json", (req, res) -> getGrid(req), new JSONRT());//MAKE SURE TO PARSE THE int[][]!!!!
         get("/updateBikes", "application/json", (req, res) -> updateBikes(), new JSONRT());
     }
 
     //big bulky update stuff
-    //sends grid with all ocupied spaces marked
-    public static Object[][] getGrid() {
+    public static int[][] getGrid(spark.Request req) {
+        //sends grid with all ocupied spaces marked by the following scheme
+        //  0 for empty square
+        //  1 for bike
+        //  2 for wall
         try {
             //GET grid
+            int gameId = Integer.parseInt(req.queryParams("id"));
+            for (AbstractGameEngine age : RunningAbstractGameEngines) {
+                if (age.AbstractGameEngineId == gameId){
+                    return age.getGrid();
+                }                
+            }
             return null;
         } catch (Exception e) {
             System.out.println(e);
