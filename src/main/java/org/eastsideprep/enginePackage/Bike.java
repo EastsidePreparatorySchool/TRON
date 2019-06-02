@@ -12,7 +12,7 @@ import eastsideprep.org.troncommon.Tuple;
  *
  * @author tespelien
  */
-public abstract class Bike {
+public abstract class Bike{
 
     //a bike only knows its direction and starting position, otherwise it could cheat
     int id;

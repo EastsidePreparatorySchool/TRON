@@ -10,6 +10,7 @@ import org.eastsideprep.enginePackage.AbstractGameEngine;
 import org.eastsideprep.gamelog.GameLogEntry;
 import org.eastsideprep.trongamelog.TronGameState;
 import java.util.*;
+import org.eastsideprep.enginePackage.Bike;
 import static spark.Spark.*;
 
 /**
@@ -28,11 +29,12 @@ public class main {
 
         get("/updateBikes", "application/json", (req, res) -> updateBikes(), new JSONRT());
         post("/createGame", "application/json", (req, res) -> newGame(req));
-        get("/getGames", "application/json", (req, res) -> getTable(req), new JSONRT());
+        get("/getGames", "application/json", (req, res) -> getGamesTable(req), new JSONRT());
         get("/initializeBikes", "application/json", (req, res) -> initializeBikes(), new JSONRT());
+        get("/runFullGame ", "application/json", (req, res) -> runFullGame(req), new JSONRT());
     }
 
-    public static void connect() {
+    private static void connect() {
         try {
             // db parameters
             String url = "jdbc:sqlite:tron.db";
@@ -46,17 +48,15 @@ public class main {
         }
     }
 
-    public static String newGame(spark.Request req) {
+    private static String newGame(spark.Request req) {
         String bikeNames = req.queryParams("bikeListID");
         String[] bikeIDList = bikeNames.split("|");
         String gameName = req.queryParams("gameName");
         System.out.println(gameName + "=================");
         //this function will take a list of bikes in a string formated in this format - bike1|bike2|bike3|bike4|
         char quote = '"';
- 
-         
-       
-        String sqlGame = "INSERT INTO" + quote + "games" + quote + "(GameId, NumBikes, GameName) VALUES (" + Integer.toString(GameID) + ", " + quote + bikeIDList.length + quote + ", " + quote + gameName + quote +");";
+
+        String sqlGame = "INSERT INTO" + quote + "games" + quote + "(GameId, NumBikes, GameName) VALUES (" + Integer.toString(GameID) + ", " + quote + bikeIDList.length + quote + ", " + quote + gameName + quote + ");";
         System.out.println(sqlGame);
         try {
             PreparedStatement sqlcmdGame = conn.prepareStatement(sqlGame);
@@ -64,9 +64,8 @@ public class main {
         } catch (Exception e) {
             System.out.println(e);
         }
-        for (int i = 0; i > bikeIDList.length; i++) {
+        for (int i = 0; i < bikeIDList.length; i++) {
 
-           
             String sqlBikeClass = "INSERT INTO" + quote + "gameBike" + quote + "(GameID, BikeClassID) VALUES (" + Integer.toString(GameID) + ", " + quote + bikeIDList[i] + quote + ");";
             System.out.println(sqlBikeClass);
 
@@ -80,12 +79,12 @@ public class main {
         return req.session().id();
     }
 
-    public static Object[][] getTable(spark.Request req) {
+    private static Object[][] getGamesTable(spark.Request req) {
         String table = req.queryParams("tableName");
 
         try {
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("select * from "+table+";"); // select everything in the table
+            ResultSet rs = stmt.executeQuery("select * from " + table + ";"); // select everything in the table
 
             ResultSetMetaData rsmd = rs.getMetaData();
             int numberOfColumns = rsmd.getColumnCount();
@@ -114,7 +113,7 @@ public class main {
     }
 
 //list of bikeos and such
-    public static Object[] initializeBikes() {
+    private static Object[] initializeBikes() {
         try {
             ArrayList<GameLogEntry> log = STATE.getCompactedEntries();
         } catch (Exception e) {
@@ -125,12 +124,17 @@ public class main {
 
 //smol update stuff
 //send bike position, added trail position of bike
-    public static Object[] updateBikes() {
+    private static Object[] updateBikes() {
         try {
             ArrayList<GameLogEntry> log = STATE.getCompactedEntries();
         } catch (Exception e) {
             System.out.println(e);
         }
+        return null;
+    }
+
+    //TODO: get bikes from request and use the .run() method in AbstractGameEngine.java
+    private static Object[] runFullGame(spark.Request req) {
         return null;
     }
 }

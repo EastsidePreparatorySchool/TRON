@@ -42,5 +42,4 @@ public class BikeContainer {
     //not used yet
     int fuel;
     int acceleration;
-
 }

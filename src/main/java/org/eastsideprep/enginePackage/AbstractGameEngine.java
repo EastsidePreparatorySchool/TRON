@@ -23,13 +23,13 @@ public class AbstractGameEngine implements AbstractGameInterface {
     private final int maxSpeed = 1;
 
 //IMPORTANT OBJECTS
-    public int AbstractGameEngineId;
+    public int GameId;
     private int[][] board;
     private final ArrayList<BikeContainer> bikes;
-    private TronLogInterface gameTronLog;
+    private TronLogInterface gameLog;
 
     AbstractGameEngine(int id, int size, Bike[] bikeArr) {
-        this.AbstractGameEngineId = id;
+        this.GameId = id;
         this.bikes = new ArrayList<>();
         for (Bike b : bikeArr) {
             bikes.add(new BikeContainer(b, new Tuple(0, 0), maxSpeed));//placing the bikes at 0,0
@@ -43,22 +43,20 @@ public class AbstractGameEngine implements AbstractGameInterface {
     //  2 for wall
     @Override
     public void init(TronLogInterface tl) {
-        this.gameTronLog = tl;
+        this.gameLog = tl;
         //create 4 bikes at random positions
         Random rand = new Random();
 
-        for (int i = 0; i < bikes.size(); i++) {
-
+        for (BikeContainer bc : bikes) {
             int x = rand.nextInt(249) + 1;//random int between 1 and 250 inclusive
             int y = rand.nextInt(249) + 1;
             int vel = rand.nextInt(maxSpeed);
-            //make a new bike with random coords on the board, id from 0-3 and with a random velocity up to maxSpeed
-            Bike b = new Bike(i, new Tuple(x, y));
-            b.direction = rand.nextInt(3);//four directions: 0,1,2,3
-            bikes.set(i, new BikeContainer(b, new Tuple(x, y), vel));
+
+            //place the given bikes at random coords on the board and with a random velocity up to maxSpeed
+            bc.direction = rand.nextInt(3);//four directions: 0,1,2,3
             board[x][y] = 1;
         }
-        gameTronLog.Setup(size);
+        gameLog.Setup(size);
     }
 
     public int[][] getGrid() {
@@ -80,7 +78,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
             //add a trail at that position
             b.trail.add(pos);
             board[pos.x][pos.y] = 2;
-            
+
             //update postions using direction
             if (dir == 0) {
                 pos.x--;
@@ -91,12 +89,12 @@ public class AbstractGameEngine implements AbstractGameInterface {
             } else if (dir == 3) {
                 pos.y--;
             }
-            board[pos.x][pos.y]=1;
-            gameTronLog.UpdatePosition(b.bike.id, pos);
+            board[pos.x][pos.y] = 1;
+            gameLog.UpdatePosition(b.bike.id, pos);
 
             //kill
             if (pos.x == 0 || pos.x == 251 || pos.y == 0 || pos.y == 251 || board[pos.x][pos.y] == 2) {
-                gameTronLog.KillBike(b.bike.id);
+                gameLog.KillBike(b.bike.id);
                 killBike(b);
             }
         }
@@ -108,9 +106,8 @@ public class AbstractGameEngine implements AbstractGameInterface {
 
     //TODO: send win logs to Faye
     @Override
+    //this method runs n complete games and returns the number of wins per bike
     public Tuple[] run(int n, Bike[] testBikes, int size) {
-        //this method runs n complete games and returns the number of wins per bike
-
         int numBikes = testBikes.length;
         Tuple[] scoreboard = new Tuple[numBikes];
         for (int i = 0; i < scoreboard.length; i++) {
@@ -132,6 +129,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
                 }
             }
         }
+        gameLog.runResults(testBikes);
         return scoreboard;
     }
 

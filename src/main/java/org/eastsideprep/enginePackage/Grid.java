@@ -17,51 +17,73 @@ public class Grid {
     int[][] grid;
     int rows = grid.length;
     int cols = grid[0].length;
-    
 
     Grid(int columns, int rows) {
         this.cols = columns;
         this.rows = rows;
     }
 
-    Tuple nextPosition(int row, int col, int dir) {
+    Tuple nextPosition(Tuple pos, int dir) {
+        int col = pos.x;
+        int row = pos.y;
         switch (dir) {
             case LightCycle.LEFT:
-                return new Tuple(row, col - 1);
+                return new Tuple(col - 1, row);
             case LightCycle.RIGHT:
-                return new Tuple(row, col + 1);
+                return new Tuple(col + 1, row);
             case LightCycle.UP:
-                return new Tuple(row - 1, col);
+                return new Tuple(col, row + 1);
             case LightCycle.DOWN:
-                return new Tuple(row + 1, col);
+                return new Tuple(col, row - 1);
         }
         return null;
     }
 
-    boolean isValid(int col, int row) {
+    boolean isValid(Tuple pos) {
+        int col = pos.x;
+        int row = pos.y;
         return col >= 0 && col < cols & row >= 0 && row < rows;
     }
-    
-    boolean isValid(int col, int row, int dir){
-        Tuple pos = nextPosition(col, row, dir);
-        return (pos.x>cols || pos.x<0 || pos.y>rows || pos.y<0);
-        
-    }
-    boolean isOccupied(int col, int row, int dir) {
-        if (!isValid(col, row, dir)) {
-            return true;
-        }
-        Tuple pos = nextPosition(col, row, dir);
-        
-        return grid[pos.x][pos.y]==0;
+
+    boolean isValid(Tuple pos, int dir) {
+        Tuple nextPos = nextPosition(pos, dir);
+        return (nextPos.x > cols || nextPos.x < 0 || nextPos.y > rows || nextPos.y < 0);
     }
 
-    boolean isOccupied(int col, int row) {
-        if (!isValid(col, row)) {
+    //these are the methods you should use to implement bikes
+    //it is recommended to use your direction for anything more than the most basic bikes
+    public boolean isOccupied(int col, int row) {
+        if (!isValid(new Tuple(col, row))) {
             return true;
         }
-        return (grid[col, row]==0);
+        return grid[col][row] == 0;
     }
-    
 
+    public boolean isOccupied(int col, int row, int dir) {
+        Tuple pos = nextPosition(new Tuple(col, row), dir);
+
+        if (!isValid(pos)) {
+            return true;
+        }
+
+        return grid[pos.x][pos.y] == 0;
+    }
+
+    //you can either use integer col and row or Tuple position as parameters
+    public boolean isOccupied(Tuple pos) {
+        if (!isValid(pos)) {
+            return true;
+        }
+        return grid[pos.x][pos.y] == 0;
+    }
+
+    public boolean isOccupied(Tuple pos, int dir) {
+        Tuple nextPos = nextPosition(pos, dir);
+
+        if (!isValid(nextPos)) {
+            return true;
+        }
+
+        return grid[nextPos.x][nextPos.y] == 0;
+    }
 }
