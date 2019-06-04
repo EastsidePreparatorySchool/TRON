@@ -5,16 +5,19 @@
  */
 package org.eastsideprep.bikes;
 
+import eastsideprep.org.troncommon.Tuple;
 import java.util.Random;
-import org.eastsideprep.enginePackage.LightCycle;
-
-import org.eastsideprep.enginePackage.Grid;
+import org.eastsideprep.enginePackage.*;
 
 /**
  *
  * @author pkavounas
  */
-public class SillyBike extends LightCycle {
+public class SillyBike extends Bike {
+
+    public SillyBike(int id, Tuple p) {
+        super(id, p);
+    }
 
     @Override
 //BIKE GOES IN DIRECTION OF UNOCCUPIED SPACE

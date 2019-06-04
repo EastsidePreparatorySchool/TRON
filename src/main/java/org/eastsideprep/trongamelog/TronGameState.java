@@ -173,7 +173,6 @@ public class TronGameState   implements GameLogState {
         GameLogEntry size = new TronGameLogEntry(bikes.size()); //NEED TO FIX
         ArrayList<GameLogEntry> result = new ArrayList<>();
         
-        result.add(size);
         result.addAll(bikes.values());
         result.addAll(trails.values());
         result.add(null);
