@@ -6,17 +6,19 @@
 package org.eastsideprep.tron;
 
 import java.sql.*;
-import org.eastsideprep.enginePackage.AbstractGameEngine;
+import org.eastsideprep.enginePackage.*;
 import org.eastsideprep.gamelog.GameLogEntry;
 import org.eastsideprep.trongamelog.TronGameState;
 import java.util.*;
 import org.eastsideprep.enginePackage.Bike;
 import org.eastsideprep.trongamelog.TronGameLogEntry;
+import org.eastsideprep.bikes.*;
+import eastsideprep.org.troncommon.*;
 import static spark.Spark.*;
 
 /**
  *
- * @author tho
+ * @author tespelien and other less cool boios
  */
 public class main {
 
@@ -24,6 +26,9 @@ public class main {
     public final static int BIKES = 2;
     public final static TronGameState STATE = new TronGameState(true);
     static Connection conn = null;
+
+    //preset game (gameId=0) we will use for testing with a SillyBike (bikeId=0) at (100,100)
+    AbstractGameEngine PreSetGame = new AbstractGameEngine(0, 250, new Bike[]{new SillyBike(0, new Tuple(100, 100))});
 
     public static void main(String[] args) {
         connect();

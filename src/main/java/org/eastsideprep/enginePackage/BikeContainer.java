@@ -23,7 +23,7 @@ public class BikeContainer {
     ArrayList<Tuple> trail = new ArrayList<>();
 
     BikeContainer(Bike b, Tuple p, int v) {
-        this.id = bike.id;
+        this.id = bike.bikeId;
         this.bike = b;
         this.currentPosition = p;
         isAlive = true;
