@@ -60,12 +60,16 @@ public class main {
         System.out.println(gameName + "=================");
         //this function will take a list of bikes in a string formated in this format - bike1|bike2|bike3|bike4|
         char quote = '"';
-
-        String sqlGame = "INSERT INTO" + quote + "games" + quote + "(GameId, NumBikes, GameName) VALUES (" + Integer.toString(GameID) + ", " + quote + bikeIDList.length + quote + ", " + quote + gameName + quote + ");";
+        int GameID=0;
+        String sqlGame = "INSERT INTO" + quote + "games" + quote + "(NumBikes, GameName) VALUES (" +bikeIDList.length + quote + ", " + quote + gameName + quote + ");";
         System.out.println(sqlGame);
+       
         try {
             PreparedStatement sqlcmdGame = conn.prepareStatement(sqlGame);
             sqlcmdGame.execute();
+             Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("select * from games"); 
+         GameID=rs.getInt("gameID");
         } catch (Exception e) {
             System.out.println(e);
         }
