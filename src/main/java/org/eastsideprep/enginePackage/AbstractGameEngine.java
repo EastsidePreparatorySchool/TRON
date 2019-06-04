@@ -28,7 +28,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
     private final ArrayList<BikeContainer> bikes;
     private TronLogInterface gameLog;
 
-    AbstractGameEngine(int id, int size, Bike[] bikeArr) {
+    public AbstractGameEngine(int id, int size, Bike[] bikeArr) {
         this.GameId = id;
         this.bikes = new ArrayList<>();
         for (Bike b : bikeArr) {
@@ -90,11 +90,11 @@ public class AbstractGameEngine implements AbstractGameInterface {
                 pos.y--;
             }
             board[pos.x][pos.y] = 1;
-            gameLog.UpdatePosition(b.bike.id, pos);
+            gameLog.UpdatePosition(b.bike.bikeId, pos);
 
             //kill
             if (pos.x == 0 || pos.x == 251 || pos.y == 0 || pos.y == 251 || board[pos.x][pos.y] == 2) {
-                gameLog.KillBike(b.bike.id);
+                gameLog.KillBike(b.bike.bikeId);
                 killBike(b);
             }
         }
@@ -121,7 +121,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
                 currentGame.update();
             }
             //there is a winner!
-            winner = currentGame.bikes.get(0).bike.id;//there is only one bike left in the arraylist
+            winner = currentGame.bikes.get(0).bike.bikeId;//there is only one bike left in the arraylist
             //the tuples are (id, times won)
             for (Tuple tuple : scoreboard) {
                 if (tuple.x == winner) {

@@ -15,12 +15,12 @@ import eastsideprep.org.troncommon.Tuple;
 public abstract class Bike{
 
     //a bike only knows its direction and starting position, otherwise it could cheat
-    int id;
+    int bikeId;
     int direction;
     Tuple startingPosition;
 
-    public Bike(int s, Tuple p) {
-        id = s;
+    public Bike(int id, Tuple p) {
+        bikeId = id;
         startingPosition = p;
     }
     public static final int UP = 0;

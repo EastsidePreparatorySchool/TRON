@@ -5,15 +5,20 @@
  */
 package org.eastsideprep.bikes;
 
+import eastsideprep.org.troncommon.Tuple;
 import java.util.Random;
 import org.eastsideprep.enginePackage.Grid;
-import org.eastsideprep.enginePackage.LightCycle;
+import org.eastsideprep.enginePackage.*;
 
 /**
  *
  * @author pkavounas
  */
-public class BasicBike extends LightCycle {
+public class BasicBike extends Bike {
+
+    public BasicBike(int s, Tuple p) {
+        super(s, p);
+    }
      @Override
 
     public int getDirection(Grid grid, int col, int row, int currentDir) {
