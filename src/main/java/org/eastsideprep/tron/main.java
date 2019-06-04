@@ -152,10 +152,10 @@ public class main {
         }
 
         // blow up stale contexts
-        if (ctx.observer != null && ctx.observer.isStale()) {
-            ctx.observer = null;
+        //if (ctx.observer != null && ctx.observer.isStaxle()) {
+            //ctx.observer = null;
 //            return null;
-        }
+        //}
 
         req.session().maxInactiveInterval(60); // kill this session afte 60 seconds of inactivity
         return ctx;
