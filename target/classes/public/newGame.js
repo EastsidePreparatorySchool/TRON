@@ -1,6 +1,6 @@
 
 var newGameBikeList = [];
-
+var bikeID = document.getElementById("userInputBike").value;
 
 
 
@@ -45,16 +45,16 @@ function listBikes() {
 
                 for (var i = 0; i < res.length; i++) {
                     for (var j = 0; j < res[0].length; j++) {
-                    
-                   if (res[i][j] != null){
-                   tester = tester + res[i][j] + " ";
-                   }
+
+                        if (res[i][j] != null) {
+                            tester = tester + res[i][j] + " ";
+                        }
                     }
-                    
-                    
+
+
                 }
-                document.getElementById("bikeListOutput").innerHTML=tester; 
-console.log(tester);
+                document.getElementById("bikeListOutput").innerHTML = tester;
+                console.log(tester);
             }
         })
         .catch(error => {
@@ -66,19 +66,21 @@ console.log(tester);
 
 function createGame() {
     var newGameName = document.getElementById("userGameName");
-    var bikes = "";
-    for (var i = 0, l = newGameBikeList.length; i < l; ++i) {
-        bikes = bikes + "|" + newGameBikeList[i];
-    }
-    
-    request({ url: "/createGame?newGameId=" + newGameName + "bikeList=" + bikes, method: "POST" })
-    .then(data => {
-        console.log("New game " + data + "has been created. Cool" )
-    })
-    .catch(error => {
-        console.log(error);
+    var bikes = {
+        nameBikeList: JSON.stringify(currentObject)
+    };
 
-    });
+    xmlhttp.setRequestHeader("Content-type", "application/json");
+
+
+    request({ url: "/createGame?newGameId=" + newGameName + "bikeList=" + bikes, method: "POST" }) //body:bikes
+        .then(data => {
+            console.log("New game " + data + "has been created. Cool")
+        })
+        .catch(error => {
+            console.log(error);
+
+        });
 }
 
 
@@ -96,14 +98,17 @@ function initialize() {
 }
 
 
-function selectBike(bikeID) {
+function selectBike() {
+    var bikeID = document.getElementById("userInputBike").value;
 
     newGameBikeList.push(bikeID);
+    for (i = 0; i < newGameBikeList.length; i++) {
+        console.log(newGameBikeList[i]);
+    }
+    ;
 }
 
 function selectGame() {
     var gameid = document.getElementById("userGameId");
     request({ url: "/selectGame?gameid=" + gameid, method: "POST" })
 }
-
-
