@@ -26,12 +26,15 @@ public class main {
     public static void main(String[] args) {
         connect();
         staticFiles.location("/public/");
-
+        updateBikeTest();
         get("/updateBikes", "application/json", (req, res) -> updateBikes(), new JSONRT());
         post("/createGame", "application/json", (req, res) -> newGame(req));
         get("/getGames", "application/json", (req, res) -> getGamesTable(req), new JSONRT());
         get("/initializeBikes", "application/json", (req, res) -> initializeBikes(), new JSONRT());
         get("/runFullGame ", "application/json", (req, res) -> runFullGame(req), new JSONRT());
+
+        //test
+        get("/updateBikeTest ", "application/json", (req, res) -> updateBikeTest(), new JSONRT());
     }
 
     private static void connect() {
@@ -136,5 +139,28 @@ public class main {
     //TODO: get bikes from request and use the .run() method in AbstractGameEngine.java
     private static Object[] runFullGame(spark.Request req) {
         return null;
+    }
+
+//TEST
+    private static Object[] updateBikeTest() {
+        Object[] testArr = new Object[2];
+        ArrayList<Object> tes = new ArrayList<>();
+                
+        tes.add("test1");
+        tes.add(true);
+        tes.add(new int[] {50, 30});
+        tes.add(new int[] {50, -20});
+        
+        testArr[0] = tes;
+
+        tes.clear();
+        tes.add("test2");
+        tes.add(false);
+        tes.add(new int[] {-40, 30});
+        tes.add(new int[] {30, 30});
+        
+        testArr[1] = tes;
+        
+        return testArr;
     }
 }
