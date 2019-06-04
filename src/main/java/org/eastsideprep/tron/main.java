@@ -20,6 +20,7 @@ import static spark.Spark.*;
 public class main {
 
     public final static int LENGTH = 100;
+    public final static int BIKES = 2;
     public final static TronGameState STATE = new TronGameState(true);
     static Connection conn = null;
 
@@ -130,6 +131,52 @@ public class main {
     private static Object[] updateBikes() {
         try {
             ArrayList<GameLogEntry> log = STATE.getCompactedEntries();
+            Object[] result = new Object[4];
+            //result be like [bike#, bikes, trails, deaths]
+            int bikes = BIKES;
+            result[0] = bikes;
+
+            ArrayList<Object> tempList = new ArrayList<>();
+            ArrayList<Object> bikeInfo = new ArrayList<>();
+            //info be like {bikeID, (int[] bikePos) [x,y]}
+            ArrayList<Object> trailInfo = new ArrayList<>();
+            //info be like {bikeid, (int[] trailPos) [x,y]}
+            ArrayList<Object> deathInfo = new ArrayList<>();
+            //info be like {bikeID} (means bike with that bikeID died)
+            int nullID = bikes+1;
+
+            for (int i = 1; i < bikes+1; i++) {
+                bikeInfo.add(log.get(i));
+                //bikeInfo.add(log.get(i).id); //adding id first
+                //bikeInfo.add(new int[] {log.get(i+1).p.x, log.get(i+1).p.y}); //adding position second
+                tempList.add(bikeInfo);
+                bikeInfo.clear();
+            }
+            result[1] = tempList;
+            tempList.clear();
+
+            for (int i = bikes+1; i < log.size(); i++) {
+                while(log.get(i) != null) {
+                    trailInfo.add(log.get(i));
+                    //trailInfo.add(log.get(i).id); //adding id first
+                    //trailInfo.add(new int[] {log.get(i+1).p.x, log.get(i+1).p.y}); //adding position second
+                    tempList.add(trailInfo);
+                    trailInfo.clear();
+                }
+                nullID = i;
+                break;
+            }
+            result[2] = tempList;
+            tempList.clear();
+            
+            for (int i = nullID; i < log.size(); i++) {
+                deathInfo.add(log.get(i));
+                //deathInfo.add(log.get(i).id);
+            }
+            result[3] = tempList;
+            tempList.clear();
+
+            return result;            
         } catch (Exception e) {
             System.out.println(e);
         }
