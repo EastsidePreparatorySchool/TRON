@@ -44,6 +44,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
     @Override
     public void init(TronLogInterface tl) {
         this.gameLog = tl;
+        gameLog.Setup(size);
         //create 4 bikes at random positions
         Random rand = new Random();
 
@@ -55,8 +56,8 @@ public class AbstractGameEngine implements AbstractGameInterface {
             //place the given bikes at random coords on the board and with a random velocity up to maxSpeed
             bc.direction = rand.nextInt(3);//four directions: 0,1,2,3
             board[x][y] = 1;
+            gameLog.UpdatePosition(bc.bike.bikeId, new Tuple(x, y));
         }
-        gameLog.Setup(size);
     }
 
     public int[][] getGrid() {
@@ -105,9 +106,12 @@ public class AbstractGameEngine implements AbstractGameInterface {
     }
 
     //TODO: send win logs to Faye
-    @Override
-    //this method runs n complete games and returns the number of wins per bike
-    public Tuple[] run(int n, Bike[] testBikes, int size) {
+    public Tuple[] run(int n) {
+        int size = this.size;
+        Bike[] testBikes = new Bike[bikes.size()];
+        for (int i = 0; i < testBikes.length; i++) {
+            testBikes[i] = bikes.get(i).bike;
+        }
         int numBikes = testBikes.length;
         Tuple[] scoreboard = new Tuple[numBikes];
         for (int i = 0; i < scoreboard.length; i++) {
@@ -131,6 +135,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
         }
         gameLog.runResults(testBikes);
         return scoreboard;
+        
     }
 
 }
