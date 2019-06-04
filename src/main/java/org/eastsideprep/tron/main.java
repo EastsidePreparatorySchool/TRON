@@ -11,6 +11,7 @@ import org.eastsideprep.gamelog.GameLogEntry;
 import org.eastsideprep.trongamelog.TronGameState;
 import java.util.*;
 import org.eastsideprep.enginePackage.Bike;
+import org.eastsideprep.trongamelog.TronGameLogEntry;
 import static spark.Spark.*;
 
 /**
@@ -28,7 +29,7 @@ public class main {
         connect();
         staticFiles.location("/public/");
         updateBikeTest();
-        get("/updateBikes", "application/json", (req, res) -> updateBikes(), new JSONRT());
+        get("/updateBikes", "application/json", (req, res) -> updateBikes(req), new JSONRT());
         post("/createGame", "application/json", (req, res) -> newGame(req));
         get("/getGames", "application/json", (req, res) -> getGamesTable(req), new JSONRT());
         get("/initializeBikes", "application/json", (req, res) -> initializeBikes(), new JSONRT());
@@ -126,15 +127,69 @@ public class main {
         return null;
     }
 
+    private static ServerContext getCtx(spark.Request req) {
+        HashMap<String, ServerContext> ctxMap = req.session().attribute("ServerContexts");
+        if (req.session().isNew() || ctxMap == null) {
+            ctxMap = new HashMap<>();
+            req.session().attribute("ServerContexts", ctxMap);
+        }
+
+        String client = req.queryParams("clientID");
+        ServerContext ctx = ctxMap.get(client);
+        if (ctx == null) {
+            ctx = new ServerContext();
+            ctx.clientSubID = client;
+            ctxMap.put(client, ctx);
+        }
+
+        // blow up stale contexts
+        if (ctx.observer != null && ctx.observer.isStale()) {
+            ctx.observer = null;
+//            return null;
+        }
+
+        req.session().maxInactiveInterval(60); // kill this session afte 60 seconds of inactivity
+        return ctx;
+    }
+
+    
 //smol update stuff
 //send bike position, added trail position of bike
-    private static Object[] updateBikes() {
+    private static Object[] updateBikes(spark.Request req) {
+        try {
+            ServerContext ctx = getCtx(req);
+            if (ctx.observer == null) {
+                return null;
+            }
+
+            ArrayList<GameLogEntry> list = ctx.observer.getNewItems();
+
+            if (req.queryParams("compact").equals("yes")) {
+                // if the client requests it, make a new game state, 
+                // we will use it to compact the entries
+
+                TronGameState compactor = new TronGameState(true);
+                for (GameLogEntry item : list) {
+                    compactor.addEntry(item);
+                }
+                list = compactor.getCompactedEntries();
+            }
+            // now convert into array to JSON knows what to do
+            TronGameLogEntry[] array = new TronGameLogEntry[list.size()];
+            return list.toArray(array);
+
+        } catch (Exception e) {
+            System.out.println("exception in GU");
+            System.out.println(e.getMessage());
+            e.printStackTrace(System.out);
+        }
+        //return null;
+
         try {
             ArrayList<GameLogEntry> log = STATE.getCompactedEntries();
             Object[] result = new Object[4];
             //result be like [bike#, bikes, trails, deaths]
-            int bikes = BIKES;
-            result[0] = bikes;
+            result[0] = BIKES;
 
             ArrayList<Object> tempList = new ArrayList<>();
             ArrayList<Object> bikeInfo = new ArrayList<>();
@@ -143,23 +198,23 @@ public class main {
             //info be like {bikeid, (int[] trailPos) [x,y]}
             ArrayList<Object> deathInfo = new ArrayList<>();
             //info be like {bikeID} (means bike with that bikeID died)
-            int nullID = bikes+1;
+            int nullID = BIKES + 1;
 
-            for (int i = 1; i < bikes+1; i++) {
+            for (int i = 1; i < BIKES + 1; i++) {
                 bikeInfo.add(log.get(i));
                 //bikeInfo.add(log.get(i).id); //adding id first
-                //bikeInfo.add(new int[] {log.get(i+1).p.x, log.get(i+1).p.y}); //adding position second
+                //bikeInfo.add(new int[] {log.get(i).p.x, log.get(i).p.y}); //adding position second
                 tempList.add(bikeInfo);
                 bikeInfo.clear();
             }
             result[1] = tempList;
             tempList.clear();
 
-            for (int i = bikes+1; i < log.size(); i++) {
-                while(log.get(i) != null) {
+            for (int i = BIKES + 1; i < log.size(); i++) {
+                while (log.get(i) != null) {
                     trailInfo.add(log.get(i));
                     //trailInfo.add(log.get(i).id); //adding id first
-                    //trailInfo.add(new int[] {log.get(i+1).p.x, log.get(i+1).p.y}); //adding position second
+                    //trailInfo.add(new int[] {log.get(i).p.x, log.get(i).p.y}); //adding position second
                     tempList.add(trailInfo);
                     trailInfo.clear();
                 }
@@ -168,7 +223,7 @@ public class main {
             }
             result[2] = tempList;
             tempList.clear();
-            
+
             for (int i = nullID; i < log.size(); i++) {
                 deathInfo.add(log.get(i));
                 //deathInfo.add(log.get(i).id);
@@ -176,7 +231,7 @@ public class main {
             result[3] = tempList;
             tempList.clear();
 
-            return result;            
+            return result;
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -192,22 +247,22 @@ public class main {
     private static Object[] updateBikeTest() {
         Object[] testArr = new Object[2];
         ArrayList<Object> tes = new ArrayList<>();
-                
+
         tes.add("test1");
         tes.add(true);
-        tes.add(new int[] {50, 30});
-        tes.add(new int[] {50, -20});
-        
+        tes.add(new int[]{50, 30});
+        tes.add(new int[]{50, -20});
+
         testArr[0] = tes;
 
         tes.clear();
         tes.add("test2");
         tes.add(false);
-        tes.add(new int[] {-40, 30});
-        tes.add(new int[] {30, 30});
-        
+        tes.add(new int[]{-40, 30});
+        tes.add(new int[]{30, 30});
+
         testArr[1] = tes;
-        
+
         return testArr;
     }
 }
