@@ -54,21 +54,20 @@ public class main {
 
     private static String newGame(spark.Request req) {
         String bikeNames = req.queryParams("bikeListID");
-        String[] bikeIDList = bikeNames.split("|");
+        String[] bikeIDList = req.queryParams("idBikeList").split("|");
         String gameName = req.queryParams("gameName");
         System.out.println(gameName + "=================");
         //this function will take a list of bikes in a string formated in this format - bike1|bike2|bike3|bike4|
         char quote = '"';
-        int GameID=0;
-        String sqlGame = "INSERT INTO" + quote + "games" + quote + "(NumBikes, GameName) VALUES (" +bikeIDList.length + quote + ", " + quote + gameName + quote + ");";
+        int GameID = 0;
+        String sqlGame = "INSERT INTO" + quote + "games" + quote + "(NumBikes, GameName) VALUES (" + bikeIDList.length + quote + ", " + quote + gameName + quote + ");";
         System.out.println(sqlGame);
-       
+
         try {
             PreparedStatement sqlcmdGame = conn.prepareStatement(sqlGame);
             sqlcmdGame.execute();
-             Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery("select * from games"); 
-         GameID=rs.getInt("gameID");
+             GameID = sqlcmdGame.getGeneratedKeys().getInt(1);
+           
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -147,9 +146,9 @@ public class main {
             //info be like {bikeid, (int[] trailPos) [x,y]}
             ArrayList<Object> deathInfo = new ArrayList<>();
             //info be like {bikeID} (means bike with that bikeID died)
-            int nullID = bikes+1;
+            int nullID = bikes + 1;
 
-            for (int i = 1; i < bikes+1; i++) {
+            for (int i = 1; i < bikes + 1; i++) {
                 bikeInfo.add(log.get(i));
                 //bikeInfo.add(log.get(i).id); //adding id first
                 //bikeInfo.add(new int[] {log.get(i+1).p.x, log.get(i+1).p.y}); //adding position second
@@ -159,8 +158,8 @@ public class main {
             result[1] = tempList;
             tempList.clear();
 
-            for (int i = bikes+1; i < log.size(); i++) {
-                while(log.get(i) != null) {
+            for (int i = bikes + 1; i < log.size(); i++) {
+                while (log.get(i) != null) {
                     trailInfo.add(log.get(i));
                     //trailInfo.add(log.get(i).id); //adding id first
                     //trailInfo.add(new int[] {log.get(i+1).p.x, log.get(i+1).p.y}); //adding position second
@@ -172,7 +171,7 @@ public class main {
             }
             result[2] = tempList;
             tempList.clear();
-            
+
             for (int i = nullID; i < log.size(); i++) {
                 deathInfo.add(log.get(i));
                 //deathInfo.add(log.get(i).id);
@@ -180,7 +179,7 @@ public class main {
             result[3] = tempList;
             tempList.clear();
 
-            return result;            
+            return result;
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -196,22 +195,22 @@ public class main {
     private static Object[] updateBikeTest() {
         Object[] testArr = new Object[2];
         ArrayList<Object> tes = new ArrayList<>();
-                
+
         tes.add("test1");
         tes.add(true);
-        tes.add(new int[] {50, 30});
-        tes.add(new int[] {50, -20});
-        
+        tes.add(new int[]{50, 30});
+        tes.add(new int[]{50, -20});
+
         testArr[0] = tes;
 
         tes.clear();
         tes.add("test2");
         tes.add(false);
-        tes.add(new int[] {-40, 30});
-        tes.add(new int[] {30, 30});
-        
+        tes.add(new int[]{-40, 30});
+        tes.add(new int[]{30, 30});
+
         testArr[1] = tes;
-        
+
         return testArr;
     }
 }
