@@ -14,6 +14,7 @@ import org.eastsideprep.enginePackage.Bike;
 import org.eastsideprep.trongamelog.TronGameLogEntry;
 import org.eastsideprep.bikes.*;
 import eastsideprep.org.troncommon.*;
+import spark.Request;
 import static spark.Spark.*;
 
 /**
@@ -28,7 +29,7 @@ public class main {
     static Connection conn = null;
 
     //preset game (gameId=0) we will use for testing with a SillyBike (bikeId=0) at (100,100)
-    AbstractGameEngine PreSetGame = new AbstractGameEngine(0, 250, new Bike[]{new SillyBike(0, new Tuple(100, 100))});
+    static AbstractGameEngine PreSetGame = new AbstractGameEngine(0, 250, new Bike[]{new SillyBike(0, new Tuple(100, 100))});
 
     public static void main(String[] args) {
         connect();
@@ -40,8 +41,9 @@ public class main {
         get("/initializeBikes", "application/json", (req, res) -> initializeBikes(), new JSONRT());
         get("/runFullGame ", "application/json", (req, res) -> runFullGame(req), new JSONRT());
 
-        //test
+        //for testing purposes only
         get("/updateBikeTest ", "application/json", (req, res) -> updateBikeTest(), new JSONRT());
+        get("/runGameTest ", "application/json", (req, res) -> runTest(req), new JSONRT());
     }
 
     private static void connect() {
@@ -58,6 +60,18 @@ public class main {
         }
     }
 
+    //testing methods
+    private static String runTest(Request req) {
+        try {
+            AbstractGameEngine testGame = PreSetGame;//see comments at the top to see params
+            testGame.run(250);//runs 1 full game
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return req.session().id();
+    }
+
     private static String newGame(spark.Request req) {
         String bikeNames = req.queryParams("bikeListID");
         String[] bikeIDList = bikeNames.split("|");
@@ -65,16 +79,16 @@ public class main {
         System.out.println(gameName + "=================");
         //this function will take a list of bikes in a string formated in this format - bike1|bike2|bike3|bike4|
         char quote = '"';
-        int GameID=0;
-        String sqlGame = "INSERT INTO" + quote + "games" + quote + "(NumBikes, GameName) VALUES (" +bikeIDList.length + quote + ", " + quote + gameName + quote + ");";
+        int GameID = 0;
+        String sqlGame = "INSERT INTO" + quote + "games" + quote + "(NumBikes, GameName) VALUES (" + bikeIDList.length + quote + ", " + quote + gameName + quote + ");";
         System.out.println(sqlGame);
-       
+
         try {
             PreparedStatement sqlcmdGame = conn.prepareStatement(sqlGame);
             sqlcmdGame.execute();
-             Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery("select * from games"); 
-         GameID=rs.getInt("gameID");
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("select * from games");
+            GameID = rs.getInt("gameID");
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -152,16 +166,15 @@ public class main {
         }
 
         // blow up stale contexts
-        if (ctx.observer != null && ctx.observer.isStale()) {
-            ctx.observer = null;
+        //if (ctx.observer != null && ctx.observer.isStaxle()) {
+            //ctx.observer = null;
 //            return null;
-        }
+        //}
 
         req.session().maxInactiveInterval(60); // kill this session afte 60 seconds of inactivity
         return ctx;
     }
 
-    
 //smol update stuff
 //send bike position, added trail position of bike
     private static Object[] updateBikes(spark.Request req) {

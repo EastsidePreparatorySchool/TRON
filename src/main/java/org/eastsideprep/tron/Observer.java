@@ -6,7 +6,10 @@
 package org.eastsideprep.tron;
 
 import java.util.ArrayList;
+import org.eastsideprep.gamelog.GameLog;
 import org.eastsideprep.gamelog.GameLogEntry;
+import static org.eastsideprep.tron.main.STATE;
+import org.eastsideprep.trongamelog.TronGameLogEntry;
 
 /**
  *
@@ -14,7 +17,14 @@ import org.eastsideprep.gamelog.GameLogEntry;
  */
 public class Observer {
 
+    GameLog log;
+
+    public Observer(GameLog log) {
+        this.log = log;
+    }
+
     ArrayList<GameLogEntry> getNewItems() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ArrayList<GameLogEntry> log = STATE.getCompactedEntries(); //idk how to get new items so here they are
+        return log;
     }
 }
