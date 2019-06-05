@@ -66,8 +66,9 @@ function listBikes() {
 
 function createGame() {
     var newGameName = document.getElementById("userGameName");
+    console.log(newGameName);
     var bikes = {
-        nameBikeList: JSON.stringify(currentObject)
+        nameBikeList: JSON.stringify(newGameBikeList)
     };
 
     xmlhttp.setRequestHeader("Content-type", "application/json");
