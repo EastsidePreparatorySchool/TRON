@@ -61,15 +61,21 @@ public class main {
     }
 
     //testing methods
-    private static String runTest(Request req) {
+    private static Object[] runTest(Request req) {
         try {
             AbstractGameEngine testGame = PreSetGame;//see comments at the top to see params
-            testGame.run(250);//runs 1 full game
-            return null;
+            Tuple[] rawTestResults = testGame.run(250);//runs 1 full game
+            int[][] nicerResults = new int[2][testGame.numStartingBikes];
+            for (int i = 0; i < rawTestResults.length; i++) {
+                Tuple t = rawTestResults[i];
+                nicerResults[i] = new int[]{t.x, t.y};
+            }
+            return nicerResults;
         } catch (Exception e) {
             System.out.println(e);
         }
-        return req.session().id();
+        System.out.println("something crashed and this hElPfUl error message is ~~not~~ going to help you :joy:");
+        return null;
     }
 
     private static String newGame(spark.Request req) {
@@ -169,10 +175,17 @@ public class main {
         }
 //I COMENTED THIS ONE OUT BECAUSE IT WAS GIVING AN ERROR AND IT WAS ANNOYING
         // blow up stale contexts
+
        // if (ctx.observer != null && ctx.observer.isStale()) { 
        //     ctx.observer = null;
 //            return null;
       //  }
+
+
+        //if (ctx.observer != null && ctx.observer.isStaxle()) {
+        //ctx.observer = null;
+//            return null;
+        //}
 
         req.session().maxInactiveInterval(60); // kill this session afte 60 seconds of inactivity
         return ctx;
