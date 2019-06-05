@@ -14,6 +14,7 @@ import org.eastsideprep.enginePackage.Bike;
 import org.eastsideprep.trongamelog.TronGameLogEntry;
 import org.eastsideprep.bikes.*;
 import eastsideprep.org.troncommon.*;
+import spark.Request;
 import static spark.Spark.*;
 
 /**
@@ -28,7 +29,7 @@ public class main {
     static Connection conn = null;
 
     //preset game (gameId=0) we will use for testing with a SillyBike (bikeId=0) at (100,100)
-    AbstractGameEngine PreSetGame = new AbstractGameEngine(0, 250, new Bike[]{new SillyBike(0, new Tuple(100, 100))});
+    static AbstractGameEngine PreSetGame = new AbstractGameEngine(0, 250, new Bike[]{new SillyBike(0, new Tuple(100, 100))});
 
     public static void main(String[] args) {
         connect();
@@ -40,8 +41,9 @@ public class main {
         get("/initializeBikes", "application/json", (req, res) -> initializeBikes(), new JSONRT());
         get("/runFullGame ", "application/json", (req, res) -> runFullGame(req), new JSONRT());
 
-        //test
+        //for testing purposes only
         get("/updateBikeTest ", "application/json", (req, res) -> updateBikeTest(), new JSONRT());
+        get("/runGameTest ", "application/json", (req, res) -> runTest(req), new JSONRT());
     }
 
     private static void connect() {
@@ -58,6 +60,18 @@ public class main {
         }
     }
 
+    //testing methods
+    private static String runTest(Request req) {
+        try {
+            AbstractGameEngine testGame = PreSetGame;//see comments at the top to see params
+            testGame.run(250);//runs 1 full game
+            return null;
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return req.session().id();
+    }
+
     private static String newGame(spark.Request req) {
         String bikeNames = req.queryParams("bikeListID");
         String[] bikeIDList = req.queryParams("idBikeList").split("|");
@@ -72,8 +86,12 @@ public class main {
         try {
             PreparedStatement sqlcmdGame = conn.prepareStatement(sqlGame);
             sqlcmdGame.execute();
+
              GameID = sqlcmdGame.getGeneratedKeys().getInt(1);
            
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("select * from games");
+            GameID = rs.getInt("gameID");
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -149,18 +167,17 @@ public class main {
             ctx.clientSubID = client;
             ctxMap.put(client, ctx);
         }
-
+//I COMENTED THIS ONE OUT BECAUSE IT WAS GIVING AN ERROR AND IT WAS ANNOYING
         // blow up stale contexts
-        if (ctx.observer != null && ctx.observer.isStale()) {
-            ctx.observer = null;
+       // if (ctx.observer != null && ctx.observer.isStale()) { 
+       //     ctx.observer = null;
 //            return null;
-        }
+      //  }
 
         req.session().maxInactiveInterval(60); // kill this session afte 60 seconds of inactivity
         return ctx;
     }
 
-    
 //smol update stuff
 //send bike position, added trail position of bike
     private static Object[] updateBikes(spark.Request req) {
@@ -206,9 +223,9 @@ public class main {
             //info be like {bikeid, (int[] trailPos) [x,y]}
             ArrayList<Object> deathInfo = new ArrayList<>();
             //info be like {bikeID} (means bike with that bikeID died)
-            int nullID = bikes + 1;
-
-            for (int i = 1; i < bikes + 1; i++) {
+            int nullID = BIKES + 1;
+// I SWITCHED "bikes" to "BIKES" because it was giving an error and it was annoying. Sorry if that wasnt supposed to happen- theo 
+            for (int i = 1; i < BIKES + 1; i++) {
                 bikeInfo.add(log.get(i));
                 //bikeInfo.add(log.get(i).id); //adding id first
                 //bikeInfo.add(new int[] {log.get(i).p.x, log.get(i).p.y}); //adding position second
@@ -218,7 +235,7 @@ public class main {
             result[1] = tempList;
             tempList.clear();
 
-            for (int i = bikes + 1; i < log.size(); i++) {
+            for (int i = BIKES + 1; i < log.size(); i++) {
                 while (log.get(i) != null) {
                     trailInfo.add(log.get(i));
                     //trailInfo.add(log.get(i).id); //adding id first
