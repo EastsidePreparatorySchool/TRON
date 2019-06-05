@@ -25,7 +25,8 @@ public class AbstractGameEngine implements AbstractGameInterface {
 //IMPORTANT OBJECTS
     public int GameId;
     private int[][] board;
-    private final ArrayList<BikeContainer> bikes;
+    private ArrayList<BikeContainer> bikes;
+    public final int numStartingBikes = bikes.size();
     private TronLogInterface gameLog;
 
     public AbstractGameEngine(int id, int size, Bike[] bikeArr) {
@@ -108,7 +109,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
     //TODO: send win logs to Faye
     public Tuple[] run(int n) {
         int size = this.size;
-        Bike[] testBikes = new Bike[bikes.size()];
+        Bike[] testBikes = new Bike[numStartingBikes];
         for (int i = 0; i < testBikes.length; i++) {
             testBikes[i] = bikes.get(i).bike;
         }
@@ -121,7 +122,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
             int winner;//winner's id
 
             AbstractGameEngine currentGame = new AbstractGameEngine(i, Math.max(250, size), testBikes);//dont want the game board to be too small
-            while (currentGame.bikes.size() > 1) {
+            while (currentGame.bikes.size() > 1) {//sometimes a bike will die and the length of the arraylist will decrease
                 currentGame.update();
             }
             //there is a winner!
