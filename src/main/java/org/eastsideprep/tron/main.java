@@ -86,7 +86,7 @@ public class main {
 
     private static String newGame(spark.Request req) {
         String bikeNames = req.queryParams("bikeListID");
-        String[] bikeIDList = bikeNames.split("|");
+        String[] bikeIDList = req.queryParams("idBikeList").split("|");
         String gameName = req.queryParams("gameName");
         System.out.println(gameName + "=================");
         //this function will take a list of bikes in a string formated in this format - bike1|bike2|bike3|bike4|
@@ -98,6 +98,9 @@ public class main {
         try {
             PreparedStatement sqlcmdGame = conn.prepareStatement(sqlGame);
             sqlcmdGame.execute();
+
+             GameID = sqlcmdGame.getGeneratedKeys().getInt(1);
+           
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select * from games");
             GameID = rs.getInt("gameID");
@@ -176,12 +179,20 @@ public class main {
             ctx.clientSubID = client;
             ctxMap.put(client, ctx);
         }
-
+//I COMENTED THIS ONE OUT BECAUSE IT WAS GIVING AN ERROR AND IT WAS ANNOYING
         // blow up stale contexts
+
+       // if (ctx.observer != null && ctx.observer.isStale()) { 
+       //     ctx.observer = null;
+//            return null;
+      //  }
+
+
         //if (ctx.observer != null && ctx.observer.isStaxle()) {
         //ctx.observer = null;
 //            return null;
         //}
+
         req.session().maxInactiveInterval(60); // kill this session afte 60 seconds of inactivity
         return ctx;
     }
@@ -232,7 +243,7 @@ public class main {
             ArrayList<Object> deathInfo = new ArrayList<>();
             //info be like {bikeID} (means bike with that bikeID died)
             int nullID = BIKES + 1;
-
+// I SWITCHED "bikes" to "BIKES" because it was giving an error and it was annoying. Sorry if that wasnt supposed to happen- theo 
             for (int i = 1; i < BIKES + 1; i++) {
                 bikeInfo.add(log.get(i));
                 //bikeInfo.add(log.get(i).id); //adding id first
