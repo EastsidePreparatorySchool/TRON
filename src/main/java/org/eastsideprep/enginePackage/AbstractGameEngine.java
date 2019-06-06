@@ -26,7 +26,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
     public int GameId;
     private int[][] board;
     private ArrayList<BikeContainer> bikes;
-    public final int numStartingBikes = bikes.size();
+    public final int numStartingBikes;
     private TronLogInterface gameLog;
 
     public AbstractGameEngine(int id, int size, Bike[] bikeArr) {
@@ -35,6 +35,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
         for (Bike b : bikeArr) {
             bikes.add(new BikeContainer(b, new Tuple(0, 0), maxSpeed));//placing the bikes at 0,0
         }
+        numStartingBikes = bikes.size();
         board = new int[size][size];
     }
 
@@ -136,7 +137,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
         }
         gameLog.runResults(testBikes);
         return scoreboard;
-        
+
     }
 
 }

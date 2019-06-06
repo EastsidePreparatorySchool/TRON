@@ -32,8 +32,14 @@ public class main {
     static AbstractGameEngine PreSetGame = new AbstractGameEngine(0, 250, new Bike[]{new SillyBike(0, new Tuple(100, 100))});
 
     public static void main(String[] args) {
+
+        staticFiles.location("public/");
+
+        before("*", (req, res) -> {
+            //System.out.println("request coming in: " + req.requestMethod() + ":" + req.url());
+        });
         connect();
-        staticFiles.location("/public/");
+
         updateBikeTest();
         get("/updateBikes", "application/json", (req, res) -> updateBikes(req), new JSONRT());
         post("/createGame", "application/json", (req, res) -> newGame(req));
