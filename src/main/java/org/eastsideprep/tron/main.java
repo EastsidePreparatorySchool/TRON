@@ -40,6 +40,7 @@ public class main {
         });
         connect();
 
+        //full functionality
         updateBikeTest();
         get("/updateBikes", "application/json", (req, res) -> updateBikes(req), new JSONRT());
         post("/createGame", "application/json", (req, res) -> newGame(req));
@@ -49,7 +50,8 @@ public class main {
 
         //for testing purposes only
         get("/updateBikeTest ", "application/json", (req, res) -> updateBikeTest(), new JSONRT());
-        get("/runGameTest ", "application/json", (req, res) -> runTest(req), new JSONRT());
+        get("/runTestGame ", "application/json", (req, res) -> runTestGame(req), new JSONRT());
+
     }
 
     private static void connect() {
@@ -66,25 +68,8 @@ public class main {
         }
     }
 
-    //testing methods
-    private static Object[] runTest(Request req) {
-        try {
-            AbstractGameEngine testGame = PreSetGame;//see comments at the top to see params
-            Tuple[] rawTestResults = testGame.run(250);//runs 1 full game
-            int[][] nicerResults = new int[2][testGame.numStartingBikes];
-            for (int i = 0; i < rawTestResults.length; i++) {
-                Tuple t = rawTestResults[i];
-                nicerResults[i] = new int[]{t.x, t.y};
-            }
-            return nicerResults;
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        System.out.println("something crashed and this hElPfUl error message is ~~not~~ going to help you :joy:");
-        return null;
-    }
-
     private static String newGame(spark.Request req) {
+       
         String bikeNames = req.queryParams("bikeListID");
         String[] bikeIDList = req.queryParams("idBikeList").split("|");
         String gameName = req.queryParams("gameName");
@@ -182,17 +167,14 @@ public class main {
 //I COMENTED THIS ONE OUT BECAUSE IT WAS GIVING AN ERROR AND IT WAS ANNOYING
         // blow up stale contexts
 
-       // if (ctx.observer != null && ctx.observer.isStale()) { 
-       //     ctx.observer = null;
+        // if (ctx.observer != null && ctx.observer.isStale()) { 
+        //     ctx.observer = null;
 //            return null;
-      //  }
-
-
+        //  }
         //if (ctx.observer != null && ctx.observer.isStaxle()) {
         //ctx.observer = null;
 //            return null;
         //}
-
         req.session().maxInactiveInterval(60); // kill this session afte 60 seconds of inactivity
         return ctx;
     }
@@ -288,6 +270,24 @@ public class main {
     }
 
 //TEST
+    //testing methods
+    private static Object[] runTestGame(Request req) {
+        try {
+            AbstractGameEngine testGame = PreSetGame;//see comments at the top to see params
+            Tuple[] rawTestResults = testGame.run(250);//runs 1 full game
+            int[][] nicerResults = new int[2][testGame.numStartingBikes];
+            for (int i = 0; i < rawTestResults.length; i++) {
+                Tuple t = rawTestResults[i];
+                nicerResults[i] = new int[]{t.x, t.y};
+            }
+            return nicerResults;
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        System.out.println("something crashed and this hElPfUl error message is ~~not~~ going to help you :joy:");
+        return null;
+    }
+
     private static Object[] updateBikeTest() {
         Object[] testArr = new Object[2];
         ArrayList<Object> tes = new ArrayList<>();
@@ -309,4 +309,5 @@ public class main {
 
         return testArr;
     }
+
 }

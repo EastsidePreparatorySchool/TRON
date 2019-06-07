@@ -23,6 +23,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
     private final int maxSpeed = 1;
 
 //IMPORTANT OBJECTS
+    public String name = "Unnamed";
     public int GameId;
     private int[][] board;
     private ArrayList<BikeContainer> bikes;
@@ -31,6 +32,17 @@ public class AbstractGameEngine implements AbstractGameInterface {
 
     public AbstractGameEngine(int id, int size, Bike[] bikeArr) {
         this.GameId = id;
+        this.bikes = new ArrayList<>();
+        for (Bike b : bikeArr) {
+            bikes.add(new BikeContainer(b, new Tuple(0, 0), maxSpeed));//placing the bikes at 0,0
+        }
+        numStartingBikes = bikes.size();
+        board = new int[size][size];
+    }
+//not every game needs a name
+    public AbstractGameEngine(int id, String name, int size, Bike[] bikeArr) {
+        this.GameId = id;
+        this.name = name;
         this.bikes = new ArrayList<>();
         for (Bike b : bikeArr) {
             bikes.add(new BikeContainer(b, new Tuple(0, 0), maxSpeed));//placing the bikes at 0,0
