@@ -16,18 +16,20 @@ public class BikeContainer {
 
     Bike bike;
     Tuple currentPosition;
-    int direction = bike.direction;
+    int direction;
     int id;
     boolean isAlive;
     int velocity;
     ArrayList<Tuple> trail = new ArrayList<>();
 
     BikeContainer(Bike b, Tuple p, int v) {
-        this.id = bike.bikeId;
+
         this.bike = b;
+        this.id = b.bikeId;
         this.currentPosition = p;
         isAlive = true;
         this.velocity = v;
+        this.direction = bike.direction;
     }
 
     void move(Grid g) {

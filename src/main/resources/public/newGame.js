@@ -71,16 +71,13 @@ function createGame() {
         nameBikeList: JSON.stringify(newGameBikeList)
     };
 
-    xmlhttp.setRequestHeader("Content-type", "application/json");
-
-
-    request({ url: "/createGame?newGameId=" + newGameName + "bikeList=" + bikes, method: "POST" }) //body:bikes
+    //xmlhttp.setRequestHeader("Content-type", "application/json");
+    request({ url: "/runTestGame", method: "POST", body: bikes }) //body:bikes
         .then(data => {
             console.log("New game " + data + "has been created. Cool")
         })
         .catch(error => {
             console.log(error);
-
         });
 }
 
@@ -90,11 +87,11 @@ function initialize() {
     console.log("intializing game...");
     request({ url: "/getGrid", method: "GET" })
         .then(data => {
-            //parse that yes
+            var cleanData = data.JSON.parse();
+            console.log(cleanData);
         })
         .catch(error => {
             console.log(error);
-
         });
 }
 
@@ -106,7 +103,7 @@ function selectBike() {
     for (i = 0; i < newGameBikeList.length; i++) {
         console.log(newGameBikeList[i]);
     }
-    ;
+
 }
 
 function selectGame() {
