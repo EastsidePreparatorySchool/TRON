@@ -27,7 +27,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
     public int GameId;
     private int[][] board;
     private ArrayList<BikeContainer> bikes;
-    public final int numStartingBikes;
+    public int numStartingBikes;
     private TronLogInterface gameLog;
 
     public AbstractGameEngine(int id, int size, Bike[] bikeArr) {
@@ -40,6 +40,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
         board = new int[size][size];
     }
 //not every game needs a name
+
     public AbstractGameEngine(int id, String name, int size, Bike[] bikeArr) {
         this.GameId = id;
         this.name = name;
@@ -119,8 +120,8 @@ public class AbstractGameEngine implements AbstractGameInterface {
         bikes.remove(bc);
     }
 
-    //TODO: send win logs to Faye
     public Tuple[] run(int n) {
+        System.out.println(this.name);
         int size = this.size;
         Bike[] testBikes = new Bike[numStartingBikes];
         for (int i = 0; i < testBikes.length; i++) {
@@ -133,13 +134,17 @@ public class AbstractGameEngine implements AbstractGameInterface {
         }
         for (int i = 0; i < n; i++) {//n complete games
             int winner;//winner's id
-
+            int turns = 0;
             AbstractGameEngine currentGame = new AbstractGameEngine(i, Math.max(250, size), testBikes);//dont want the game board to be too small
             while (currentGame.bikes.size() > 1) {//sometimes a bike will die and the length of the arraylist will decrease
+
                 currentGame.update();
+                turns++;
+                System.out.println("Turns ran " + turns);
             }
             //there is a winner!
             winner = currentGame.bikes.get(0).bike.bikeId;//there is only one bike left in the arraylist
+            System.out.println("The winner is " + winner);
             //the tuples are (id, times won)
             for (Tuple tuple : scoreboard) {
                 if (tuple.x == winner) {
@@ -148,8 +153,8 @@ public class AbstractGameEngine implements AbstractGameInterface {
             }
         }
         gameLog.runResults(testBikes);
-        return scoreboard;
 
+        return scoreboard;
     }
 
 }

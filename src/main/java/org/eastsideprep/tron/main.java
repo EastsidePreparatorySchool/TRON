@@ -14,6 +14,7 @@ import org.eastsideprep.enginePackage.Bike;
 import org.eastsideprep.trongamelog.TronGameLogEntry;
 import org.eastsideprep.bikes.*;
 import eastsideprep.org.troncommon.*;
+import javax.servlet.MultipartConfigElement;
 import spark.Request;
 import static spark.Spark.*;
 
@@ -29,7 +30,8 @@ public class main {
     static Connection conn = null;
 
     //preset game (gameId=0) we will use for testing with a SillyBike (bikeId=0) at (100,100)
-    static AbstractGameEngine PreSetGame = new AbstractGameEngine(0, 250, new Bike[]{new SillyBike(0, new Tuple(100, 100))});
+    static final Bike[] PreSetBikes = new Bike[]{new SillyBike(0, new Tuple(50, 50)), new SillyBike(0, new Tuple(50, 150))};
+    static AbstractGameEngine PreSetGame = new AbstractGameEngine(0, "engineTest", 250, PreSetBikes);
 
     public static void main(String[] args) {
 
@@ -38,22 +40,78 @@ public class main {
         before("*", (req, res) -> {
             //System.out.println("request coming in: " + req.requestMethod() + ":" + req.url());
         });
+        //We don't need SQL for testing!
         connect();
 
         //full functionality
-        updateBikeTest();
+        //updateBikeTest();
         get("/updateBikes", "application/json", (req, res) -> updateBikes(req), new JSONRT());
         post("/createGame", "application/json", (req, res) -> newGame(req));
         get("/getGames", "application/json", (req, res) -> getGamesTable(req), new JSONRT());
         get("/initializeBikes", "application/json", (req, res) -> initializeBikes(), new JSONRT());
-        get("/runFullGame ", "application/json", (req, res) -> runFullGame(req), new JSONRT());
+        get("/runGame", "application/json", (req, res) -> runGame(req), new JSONRT());
 
         //for testing purposes only
-        get("/updateBikeTest ", "application/json", (req, res) -> updateBikeTest(), new JSONRT());
-        get("/runTestGame ", "application/json", (req, res) -> runTestGame(req), new JSONRT());
+        get("/updateBikeTest", "application/json", (req, res) -> updateBikeTest(), new JSONRT());
+        post("/runGameTest", "application/json", (req, res) -> runGameTest(req), new JSONRT());
 
     }
 
+//TEST
+    //testing methods
+    private static Object[] runGameTest(Request req) {
+//        MultipartConfigElement multipartConfigElement = new MultipartConfigElement(System.getProperty("java.io.tmpdir"));
+//        req.raw().setAttribute("org.eclipse.jetty.multipartConfig", multipartConfigElement);
+//        String type = req.queryParams("type");
+//        System.out.println("This test is of type " + type);
+
+        try {
+            System.out.println("1");
+
+            AbstractGameEngine testGame = PreSetGame;//see comments at the top to see params
+            System.out.println("2");
+            Tuple[] rawTestResults = testGame.run(1);//runs 1 full game
+            System.out.println("3");
+
+            int[][] nicerResults = new int[2][testGame.numStartingBikes];
+            System.out.println("nicerResults dimensions are " + nicerResults.length + ", " + nicerResults[0].length);
+            for (int i = 0; i < rawTestResults.length; i++) {
+                Tuple t = rawTestResults[i];
+                nicerResults[i] = new int[]{t.x, t.y};
+            }
+            return nicerResults;
+        } catch (Exception e) {
+            System.out.println(e);
+            System.out.println("something crashed and this hElPfUl error message is ~~not~~ going to help you :joy:");
+        }
+
+        return null;
+    }
+
+    private static Object[] updateBikeTest() {
+        Object[] testArr = new Object[2];
+        ArrayList<Object> tes = new ArrayList<>();
+
+        tes.add("test1");
+        tes.add(true);
+        tes.add(new int[]{50, 30});
+        tes.add(new int[]{50, -20});
+
+        testArr[0] = tes;
+
+        tes.clear();
+        tes.add("test2");
+        tes.add(false);
+        tes.add(new int[]{-40, 30});
+        tes.add(new int[]{30, 30});
+
+        testArr[1] = tes;
+
+        return testArr;
+    }
+    //End of testing methods
+
+    //Regular methods:    
     private static void connect() {
         try {
             // db parameters
@@ -69,7 +127,7 @@ public class main {
     }
 
     private static String newGame(spark.Request req) {
-       
+
         String bikeNames = req.queryParams("bikeListID");
         String[] bikeIDList = req.queryParams("idBikeList").split("|");
         String gameName = req.queryParams("gameName");
@@ -84,8 +142,8 @@ public class main {
             PreparedStatement sqlcmdGame = conn.prepareStatement(sqlGame);
             sqlcmdGame.execute();
 
-             GameID = sqlcmdGame.getGeneratedKeys().getInt(1);
-           
+            GameID = sqlcmdGame.getGeneratedKeys().getInt(1);
+
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select * from games");
             GameID = rs.getInt("gameID");
@@ -265,49 +323,8 @@ public class main {
     }
 
     //TODO: get bikes from request and use the .run() method in AbstractGameEngine.java
-    private static Object[] runFullGame(spark.Request req) {
+    private static Object[] runGame(spark.Request req) {
         return null;
-    }
-
-//TEST
-    //testing methods
-    private static Object[] runTestGame(Request req) {
-        try {
-            AbstractGameEngine testGame = PreSetGame;//see comments at the top to see params
-            Tuple[] rawTestResults = testGame.run(250);//runs 1 full game
-            int[][] nicerResults = new int[2][testGame.numStartingBikes];
-            for (int i = 0; i < rawTestResults.length; i++) {
-                Tuple t = rawTestResults[i];
-                nicerResults[i] = new int[]{t.x, t.y};
-            }
-            return nicerResults;
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        System.out.println("something crashed and this hElPfUl error message is ~~not~~ going to help you :joy:");
-        return null;
-    }
-
-    private static Object[] updateBikeTest() {
-        Object[] testArr = new Object[2];
-        ArrayList<Object> tes = new ArrayList<>();
-
-        tes.add("test1");
-        tes.add(true);
-        tes.add(new int[]{50, 30});
-        tes.add(new int[]{50, -20});
-
-        testArr[0] = tes;
-
-        tes.clear();
-        tes.add("test2");
-        tes.add(false);
-        tes.add(new int[]{-40, 30});
-        tes.add(new int[]{30, 30});
-
-        testArr[1] = tes;
-
-        return testArr;
     }
 
 }

@@ -2,7 +2,25 @@
 var newGameBikeList = [];
 var bikeID = document.getElementById("userInputBike").value;
 
-
+function createGameTest() {
+    var typeOfTest = document.getElementById("inputTest").value;
+    console.log(typeOfTest);
+    var gameInfo = { type: typeOfTest };
+    console.log(gameInfo);
+    request({ url: "/runGameTest", method: "POST", body: gameInfo }) //body:type and more to come...
+        .then(data => {
+            console.log("New game of type " + gameInfo.type + " has been created.");
+            console.log("Game running...");
+            var results = data.JSON.parse();
+            console.log("Results: \n");
+            results.forEach(element => {
+                console.log("Won " + element + " times");
+            });
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
 
 function request(obj) {
     return new Promise((resolve, reject) => {
@@ -81,8 +99,6 @@ function createGame() {
         });
 }
 
-
-
 function initialize() {
     console.log("intializing game...");
     request({ url: "/getGrid", method: "GET" })
@@ -94,7 +110,6 @@ function initialize() {
             console.log(error);
         });
 }
-
 
 function selectBike() {
     var bikeID = document.getElementById("userInputBike").value;
