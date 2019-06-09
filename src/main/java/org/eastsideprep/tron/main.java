@@ -30,7 +30,7 @@ public class main {
     static Connection conn = null;
 
     //preset game (gameId=0) we will use for testing with a SillyBike (bikeId=0) at (100,100)
-    static final Bike[] PreSetBikes = new Bike[]{new SillyBike(1, new Tuple(50, 50)), new SillyBike(2, new Tuple(50, 150))};
+    static final Bike[] PreSetBikes = new Bike[]{new SillyBike(0, new Tuple(50, 50)), new SillyBike(1, new Tuple(51, 51))};
     static AbstractGameEngine PreSetGame = new AbstractGameEngine(0, "engineTest", 250, PreSetBikes);
 
     public static void main(String[] args) {
@@ -60,18 +60,17 @@ public class main {
 //TEST
     //testing methods
     private static Object[] runGameTest(Request req) {
-//        MultipartConfigElement multipartConfigElement = new MultipartConfigElement(System.getProperty("java.io.tmpdir"));
-//        req.raw().setAttribute("org.eclipse.jetty.multipartConfig", multipartConfigElement);
-//        String type = req.queryParams("type");
-//        System.out.println("This test is of type " + type);
+        MultipartConfigElement multipartConfigElement = new MultipartConfigElement(System.getProperty("java.io.tmpdir"));
+        req.raw().setAttribute("org.eclipse.jetty.multipartConfig", multipartConfigElement);
+        String type = req.queryParams("type");
+        System.out.println("This test is of type " + type);
+        int num = Integer.parseInt(req.queryParams("num"));
+        System.out.println("Number of simulations: " + num);
 
         try {
-            System.out.println("1");
-
             AbstractGameEngine testGame = PreSetGame;//see comments at the top to see params
-            System.out.println("2");
-            Tuple[] rawTestResults = testGame.run(1);//runs 1 full game
-            System.out.println("3");
+
+            Tuple[] rawTestResults = testGame.run(num);//runs 1 full game
 
             String[] nicerResults = new String[testGame.numStartingBikes];
             System.out.println("nicerResults length: " + nicerResults.length);
@@ -79,7 +78,7 @@ public class main {
                 Tuple t = rawTestResults[i];
                 int bikeId = t.x;
                 int numWins = t.y;
-                nicerResults[i] = ("(" + bikeId + ", " + numWins + ")");
+                nicerResults[i] = ("Bike " + bikeId + " win " + numWins + " times! \n");
                 System.out.println(nicerResults[i]);
             }
             return nicerResults;

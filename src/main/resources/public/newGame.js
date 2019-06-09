@@ -3,9 +3,13 @@ var newGameBikeList = [];
 var bikeID = document.getElementById("userInputBike").value;
 
 function createGameTest() {
-    var typeOfTest = document.getElementById("inputTest").value;
+    var typeOfTest = document.getElementById("typeTest").value;
+    var numTest = document.getElementById("numTest").value;
+    var outputHandle = document.getElementById("resultTest");
     console.log(typeOfTest);
-    var gameInfo = { type: typeOfTest };
+    var gameInfo = new FormData();
+    gameInfo.append("type", typeOfTest);
+    gameInfo.append("num", numTest);
     console.log(gameInfo);
     request({ url: "/runGameTest", method: "POST", body: gameInfo }) //body:type and more to come...
         .then(data => {
@@ -13,6 +17,9 @@ function createGameTest() {
             console.log("Game running...");
             var results = JSON.parse(data);
             console.log("Results: \n");
+            var cleanResults = JSON.stringify(results);
+            cleanResults = cleanResults.replace(",", " ");
+            outputHandle.value = cleanResults;
             results.forEach(element => {
                 console.log("Won " + element + " times");
             });

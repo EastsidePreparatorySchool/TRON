@@ -66,8 +66,8 @@ public class Grid {
         if (!isValid(pos)) {
             return true;
         }
-        System.out.println("from grid: " + pos.x + "," + pos.y);
-        System.out.println("that space is: " + grid[pos.x][pos.y]);
+        //System.out.println("from grid: " + pos.x + "," + pos.y);
+        //System.out.println("that space is: " + grid[pos.x][pos.y]);
         return grid[pos.x][pos.y] == 0;
     }
 
