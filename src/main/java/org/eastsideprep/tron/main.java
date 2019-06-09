@@ -92,6 +92,7 @@ public class main {
     private static Object[] updateBikeTest() {
         Object[] testArr = new Object[2];
         ArrayList<Object> tes = new ArrayList<>();
+        ArrayList<Object> tes2 = new ArrayList<>();
 
         tes.add("test1");
         tes.add(true);
@@ -100,13 +101,12 @@ public class main {
 
         testArr[0] = tes;
 
-        tes.clear();
-        tes.add("test2");
-        tes.add(false);
-        tes.add(new int[]{-40, 30});
-        tes.add(new int[]{30, 30});
+        tes2.add("test2");
+        tes2.add(false);
+        tes2.add(new int[]{-40, 30});
+        tes2.add(new int[]{30, 30});
 
-        testArr[1] = tes;
+        testArr[1] = tes2;
 
         return testArr;
     }
