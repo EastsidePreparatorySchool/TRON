@@ -28,13 +28,13 @@ public class Grid {
         int col = pos.x;
         int row = pos.y;
         switch (dir) {
-            case LightCycle.LEFT:
+            case Bike.LEFT:
                 return new Tuple(col - 1, row);
-            case LightCycle.RIGHT:
+            case Bike.RIGHT:
                 return new Tuple(col + 1, row);
-            case LightCycle.UP:
+            case Bike.UP:
                 return new Tuple(col, row + 1);
-            case LightCycle.DOWN:
+            case Bike.DOWN:
                 return new Tuple(col, row - 1);
         }
         return null;

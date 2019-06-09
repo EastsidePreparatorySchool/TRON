@@ -3,7 +3,7 @@
 // * To change this template file, choose Tools | Templates
 // * and open the template in the editor.
 // */
-//package org.eastsideprep.enginePackage;
+package org.eastsideprep.enginePackage;
 //
 //import javafx.scene.paint.Color;
 //import eastsideprep.org.troncommon.*;
@@ -12,7 +12,7 @@
 // *
 // * @author gmein
 // */
-//public class CycleContainer {
+public class CycleContainer {
 //
 //    LightCycle cycle;
 //    Tuple position;
@@ -37,4 +37,4 @@
 //
 //    }
 //
-//}
+}

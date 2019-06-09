@@ -3,7 +3,7 @@
 // * To change this template file, choose Tools | Templates
 // * and open the template in the editor.
 // */
-//package org.eastsideprep.enginePackage;
+package org.eastsideprep.enginePackage;
 //
 //import javafx.scene.paint.Color;
 //
@@ -11,7 +11,8 @@
 // *
 // * @author gmein
 // */
-//public abstract class LightCycle {
+
+public abstract class LightCycle {
 //    public static final int UP = 0;
 //    public static final int RIGHT = 1; 
 //    public static final int DOWN = 2;
@@ -24,4 +25,4 @@
 //        // intentionally left blank. 
 //        // Override it if you want to do something with it!
 //    }
-//}
+}
