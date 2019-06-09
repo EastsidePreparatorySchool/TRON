@@ -180,6 +180,8 @@ function updateBikeTest() { //initialize bikes
         });
 }
 
+//updateBikeTest();
+
 var testbikes = [["test1", true, [50, 30], [50, -20]], ["test2", false, [-40, 30], [30, 30]]]; //faye's test array -- pretend the first point is where the bike actually is and the rest are the new trails
 console.log(testbikes.length);
 
@@ -217,7 +219,7 @@ function updateBikeTest2() { //this one without a url request just so I can test
     }
 }
 
-updateBikeTest2();
+//updateBikeTest2();
 
 //already have a bike[] initialized at the top
 
