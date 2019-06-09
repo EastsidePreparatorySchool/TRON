@@ -150,10 +150,16 @@ function request(obj) {
     });
 };
 
+var testbikes = [["test1", true, [50, 30], [50, -20]], ["test2", false, [-40, 30], [30, 30]]]; //faye's test array -- pretend the first point is where the bike actually is and the rest are the new trails
+console.log(testbikes.length);
+
+console.log("what I should get from faye: " + testbikes);
+
 function updateBikeTest() { //initialize bikes
-    request({ url: "updateBikeTest", method: "GET" })
+    request({ url: "/updateBikeTest", method: "GET" })
         .then(data => {
             bikes = JSON.parse(data); //given a test array with two bike data object
+            console.log("what I actually get from faye: " + bikes);
             var numBikes = bikes.length;
             var bikeNames = []; //bike names will be test1 and test2
             var bikePositions = Array(numBikes); //with sub arrays of points
@@ -176,16 +182,11 @@ function updateBikeTest() { //initialize bikes
 
         })
         .catch(error => {
-            print("Bike update error: " + error);
+            console.log("Bike update error: " + error);
         });
 }
 
 //updateBikeTest();
-
-var testbikes = [["test1", true, [50, 30], [50, -20]], ["test2", false, [-40, 30], [30, 30]]]; //faye's test array -- pretend the first point is where the bike actually is and the rest are the new trails
-console.log(testbikes.length);
-
-
 
 function updateBikeTest2() { //this one without a url request just so I can test it here
     bikes = testbikes; //testbikes;
@@ -226,7 +227,7 @@ function updateBikeTest2() { //this one without a url request just so I can test
 
 
 function initializeBikes() { //initialize bikes
-    request({ url: "initializeBikes", method: "GET" })
+    request({ url: "/initializeBikes", method: "GET" })
         .then(data => {
             bikes = JSON.parse(data); //an array of initial bike objects with position, ID
             //for some number of bikes
@@ -244,7 +245,7 @@ function initializeBikes() { //initialize bikes
             }
         })
         .catch(error => {
-            print("Bike update error: " + error);
+            console.log("Bike update error: " + error);
         });
 }
 
@@ -253,12 +254,12 @@ function initializeBikes() { //initialize bikes
 var bikeUpdates;
 
 function updateBikes() {
-    request({ url: "updateBikes", method: "GET" })
+    request({ url: "/updateBikes", method: "GET" })
         .then(data => {
             bikeUpdates = JSON.parse(data);
         })
         .catch(error => {
-            print("Bike update error: " + error);
+            console.log("Bike update error: " + error);
         });
 }
 
