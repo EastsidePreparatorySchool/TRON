@@ -6,7 +6,6 @@
 package org.eastsideprep.bikes;
 
 import eastsideprep.org.troncommon.Tuple;
-import java.util.Random;
 import org.eastsideprep.enginePackage.Grid;
 import org.eastsideprep.enginePackage.*;
 
@@ -25,19 +24,19 @@ public class BasicBike extends Bike {
         
         //BIKE GOES IN DIRECTION OF UNOCCUPIED SPACE
         if (grid.isOccupied(col, row, 1) && grid.isOccupied(col, row, 2) && grid.isOccupied(col, row, 3)) {
-            return LightCycle.UP;
+            return Bike.UP;
         }
         if (grid.isOccupied(col, row, 0) && grid.isOccupied(col, row, 1) && grid.isOccupied(col, row, 3)) {
-            return LightCycle.DOWN;
+            return Bike.DOWN;
         }
         if (grid.isOccupied(col, row, 0) && grid.isOccupied(col, row, 1) && grid.isOccupied(col, row, 2)) {
-            return LightCycle.LEFT;
+            return Bike.LEFT;
         }
         if (grid.isOccupied(col, row, 0) && grid.isOccupied(col, row, 2) && grid.isOccupied(col, row, 3)) {
-            return LightCycle.RIGHT;
+            return Bike.RIGHT;
         }
         
 
-        return LightCycle.UP;
+        return Bike.UP;
     }
 }
