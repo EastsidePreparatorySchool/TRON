@@ -17,12 +17,13 @@ function createGameTest() {
             console.log("Game running...");
             var results = JSON.parse(data);
             console.log("Results: \n");
+            console.log(results);
             var cleanResults = JSON.stringify(results);
             cleanResults = cleanResults.replace(",", " ");
-            outputHandle.value = cleanResults;
-            results.forEach(element => {
-                console.log("Won " + element + " times");
-            });
+            cleanResults = cleanResults.replace("\\n\"", "<br> ");
+            cleanResults = cleanResults.replace("[","");
+            cleanResults = cleanResults.replace("]","");
+            outputHandle.innerHTML = cleanResults;
         })
         .catch(error => {
             console.log(error);
