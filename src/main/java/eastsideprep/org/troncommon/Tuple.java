@@ -18,4 +18,9 @@ public class Tuple {
         this.x = x;
         this.y = y;
     }
+
+    public String toString() {
+        Tuple t = this;
+        return ("(" + t.x + ", " + t.y + ")");
+    }
 }

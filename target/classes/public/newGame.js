@@ -11,7 +11,7 @@ function createGameTest() {
         .then(data => {
             console.log("New game of type " + gameInfo.type + " has been created.");
             console.log("Game running...");
-            var results = data.JSON.parse();
+            var results = JSON.parse(data);
             console.log("Results: \n");
             results.forEach(element => {
                 console.log("Won " + element + " times");

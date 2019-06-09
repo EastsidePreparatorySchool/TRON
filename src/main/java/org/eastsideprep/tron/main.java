@@ -30,7 +30,7 @@ public class main {
     static Connection conn = null;
 
     //preset game (gameId=0) we will use for testing with a SillyBike (bikeId=0) at (100,100)
-    static final Bike[] PreSetBikes = new Bike[]{new SillyBike(0, new Tuple(50, 50)), new SillyBike(0, new Tuple(50, 150))};
+    static final Bike[] PreSetBikes = new Bike[]{new SillyBike(1, new Tuple(50, 50)), new SillyBike(2, new Tuple(50, 150))};
     static AbstractGameEngine PreSetGame = new AbstractGameEngine(0, "engineTest", 250, PreSetBikes);
 
     public static void main(String[] args) {
@@ -73,19 +73,21 @@ public class main {
             Tuple[] rawTestResults = testGame.run(1);//runs 1 full game
             System.out.println("3");
 
-            int[][] nicerResults = new int[2][testGame.numStartingBikes];
-            System.out.println("nicerResults dimensions are " + nicerResults.length + ", " + nicerResults[0].length);
+            String[] nicerResults = new String[testGame.numStartingBikes];
+            System.out.println("nicerResults length: " + nicerResults.length);
             for (int i = 0; i < rawTestResults.length; i++) {
                 Tuple t = rawTestResults[i];
-                nicerResults[i] = new int[]{t.x, t.y};
+                int bikeId = t.x;
+                int numWins = t.y;
+                nicerResults[i] = ("(" + bikeId + ", " + numWins + ")");
+                System.out.println(nicerResults[i]);
             }
             return nicerResults;
         } catch (Exception e) {
             System.out.println(e);
             System.out.println("something crashed and this hElPfUl error message is ~~not~~ going to help you :joy:");
         }
-
-        return null;
+        return new String[]{"oof"};
     }
 
     private static Object[] updateBikeTest() {

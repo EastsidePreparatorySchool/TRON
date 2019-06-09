@@ -15,10 +15,11 @@ import org.eastsideprep.*;
 public class Grid {
 
     int[][] grid;
-    int rows = grid.length;
-    int cols = grid[0].length;
+    int rows;
+    int cols;
 
     Grid(int columns, int rows) {
+        this.grid = new int[columns][rows];
         this.cols = columns;
         this.rows = rows;
     }
@@ -47,7 +48,7 @@ public class Grid {
 
     boolean isValid(Tuple pos, int dir) {
         Tuple nextPos = nextPosition(pos, dir);
-        return (nextPos.x > cols || nextPos.x < 0 || nextPos.y > rows || nextPos.y < 0);
+        return (nextPos.x > cols - 1 || nextPos.x < 1 || nextPos.y > rows - 1 || nextPos.y < 1);//remember that the edge of the grid is a wall
     }
 
     //these are the methods you should use to implement bikes
@@ -65,7 +66,8 @@ public class Grid {
         if (!isValid(pos)) {
             return true;
         }
-
+        System.out.println("from grid: " + pos.x + "," + pos.y);
+        System.out.println("that space is: " + grid[pos.x][pos.y]);
         return grid[pos.x][pos.y] == 0;
     }
 

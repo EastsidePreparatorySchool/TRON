@@ -12,7 +12,7 @@ import eastsideprep.org.troncommon.Tuple;
  *
  * @author tespelien
  */
-public abstract class Bike{
+public abstract class Bike {
 
     //a bike only knows its direction and starting position, otherwise it could cheat
     int bikeId;
@@ -20,8 +20,8 @@ public abstract class Bike{
     Tuple startingPosition;
 
     public Bike(int id, Tuple p) {
-        bikeId = id;
-        startingPosition = p;
+        this.bikeId = id;
+        this.startingPosition = p;
     }
     public static final int UP = 0;
     public static final int RIGHT = 1;
