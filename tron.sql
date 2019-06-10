@@ -13,7 +13,7 @@ CREATE TABLE "games"
 (
     [GameId] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     [GameName] NVARCHAR(120),
-    [WinnerClassId] INTEGER  NOT NULL,
+    [WinnerClassId] INTEGER,
     [TotalTurns] INTEGER,
     [NumBikes] INTEGER
 );
@@ -29,7 +29,10 @@ CREATE TABLE "gamesbikes"
 
 
 INSERT INTO "bikeclasses" (BikeClassId, Name) VALUES (0, "SillyBike");
-INSERT INTO "games" (GameName, WinnerClassID) VALUES ("Gametest", 0);
+INSERT INTO "bikeclasses" (BikeClassId, Name) VALUES (1, "BasicBike");
+INSERT INTO "games" (GameName, NumBikes) VALUES ("Gametest", 2);
+INSERT INTO "gamesbikes" (GameID, BikeClassId) VALUES (0, 0);
+INSERT INTO "gamesbikes" (GameID, BikeClassId) VALUES (0, 1);
 
 
 

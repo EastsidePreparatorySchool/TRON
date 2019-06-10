@@ -5,6 +5,8 @@
  */
 package eastsideprep.org.troncommon;
 
+import org.eastsideprep.enginePackage.Bike;
+
 
 
 /**
@@ -15,4 +17,7 @@ public interface TronLogInterface {
     void UpdatePosition (int id, Tuple t);
     void KillBike(int id);
     void Setup(int size);
+    
+    //TODO: implement
+    void runResults(Bike[] testBikes);//these are the results of a certain number of complete games with these bikes
 }

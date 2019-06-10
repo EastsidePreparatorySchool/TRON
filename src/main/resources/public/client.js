@@ -69,7 +69,7 @@ class Bike {
 
 
 var pathgeo = new THREE.CubeGeometry(unit, paththickness, unit); //one unit of the path geometry
-var pathmat = new THREE.MeshLambertMaterial({ color: 0xff0066, ambient: 0xffffff }); //, ambient: 0x121212
+var pathmat = new THREE.MeshLambertMaterial({ color: 0xff0066 }); //, ambient: 0x121212
 
 var pathmesh = new THREE.Mesh(pathgeo, pathmat);
 /*
@@ -79,12 +79,12 @@ scene.add(pathmesh); */
 
 function drawpath(patharray, color) {
     var pathgeo = new THREE.CubeGeometry(unit, paththickness, unit); //one unit of the path geometry
-    var pathmat = new THREE.MeshLambertMaterial({ color: color, ambient: 0xffffff }); //, ambient: 0x121212
+    var pathmat = new THREE.MeshLambertMaterial({ color: color }); //, ambient: 0x121212
     var pathlength = patharray.length;
     var i;
     for (i = 0; i < pathlength; i++) {
         var mesh = new THREE.Mesh(pathgeo, pathmat);
-        mesh.position.x = patharray[i][0] - unit / 2;
+        mesh.position.x = patharray[i][0] - unit / 2; //HAS PROBLEMS HERE
         mesh.position.z = patharray[i][1] - unit / 2;
         scene.add(mesh);
     }
@@ -100,21 +100,26 @@ var grid = new THREE.GridHelper(gridSize, gridDivisions, gridCenterColor, gridCo
 scene.add(grid);
 
 // fake bike stuff
-const RADIUS = unit / 2;
+/*const RADIUS = unit / 2;
 const SEGMENTS = 16;
 const RINGS = 16;
 const sphereMaterial = new THREE.MeshLambertMaterial({ color: 0xCC0000 });
 const fakebike = new THREE.Mesh(new THREE.SphereGeometry(RADIUS, SEGMENTS, RINGS), sphereMaterial);
 fakebike.position.x = unit / 2;
-fakebike.position.z = unit / 2;
+fakebike.position.z = unit / 2; */
+
+function simpleBike(x, y, color) {
+    const RADIUS = unit / 2;
+    const SEGMENTS = 16;
+    const RINGS = 16;
+    const sphereMaterial = new THREE.MeshLambertMaterial({ color: color });
+    const simplebike = new THREE.Mesh(new THREE.SphereGeometry(RADIUS, SEGMENTS, RINGS), sphereMaterial);
+    simplebike.position.x = x - unit / 2;
+    simplebike.position.z = y - unit / 2;
+    scene.add(simplebike);
+}
+
 //scene.add(fakebike);
-
-
-
-
-
-
-
 
 //
 
@@ -123,6 +128,8 @@ pointLight.position.x = 10;
 pointLight.position.y = 130;
 pointLight.position.z = 50;
 scene.add(pointLight);
+
+
 
 //functions and routes
 function request(obj) {
@@ -143,38 +150,141 @@ function request(obj) {
     });
 };
 
+var testbikes = [["test1", true, [50, 30], [50, -20]], ["test2", false, [-40, 30], [30, 30]]]; //faye's test array -- pretend the first point is where the bike actually is and the rest are the new trails
+console.log(testbikes.length);
+
+console.log("what I should get from faye: " + testbikes);
+
+function updateBikeTest() { //initialize bikes
+    request({ url: "/updateBikeTest", method: "GET" })
+        .then(data => {
+            bikes = JSON.parse(data); //given a test array with two bike data object
+            console.log("what I actually get from faye: " + bikes);
+            var numBikes = bikes.length;
+            var bikeNames = []; //bike names will be test1 and test2
+            var bikePositions = Array(numBikes); //with sub arrays of points
+            var bikeColors = [0x9900ff, 0x99ff33, 0xff0066]; //make this better later
+
+            var i;
+            var j;
+            for (i = 0; i < numBikes; i++) {
+                var numPositions = bikes[i].length; //the two at the beginning are name and aliveness
+                //console.log(numPositions);
+                bikeNames[i] = bikes[i][j];
+                bikePositions[i] = [];
+                var bikecolor
+                for (j = 2; j < numPositions; j++) {
+                    bikePositions[i][j - 2] = bikes[i][j]; //load positions into positions array
+                }
+                //send off bike positions to be plotted
+                drawpath(bikePositions[i], bikeColors[i]); //purple just to test
+            }
+
+        })
+        .catch(error => {
+            console.log("Bike update error: " + error);
+        });
+}
+
+//updateBikeTest();
+
+function updateBikeTest2() { //this one without a url request just so I can test it here
+    bikes = testbikes; //testbikes;
+    var numBikes = bikes.length;
+    var bikeNames = []; //bike names will be test1 and test2
+    var bikePositions = Array(numBikes); //with sub arrays of points
+    var bikeColors = [0x9900ff, 0x99ff33, 0xff0066]; //make this better later
+
+    /*var c; //make some pretty random colors later: 
+    for (c = 0; c < numBikes; c++) {
+        var rand = Math.floor(Math.random() * 100000000);
+        console.log(rand);
+        // (0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6)
+        bikeColors[c] = '0x'+rand.toString(16).substr(1,6);
+    } */
+
+    var i;
+    var j;
+    for (i = 0; i < numBikes; i++) {
+        var numPositions = bikes[i].length; //the two at the beginning are name and aliveness
+        //console.log(numPositions);
+        bikeNames[i] = bikes[i][j];
+        bikePositions[i] = [];
+        simpleBike(bikes[i][2][0], bikes[i][2][1], bikeColors[i]); //draw a simple sphere bike
+
+        for (j = 3; j < numPositions; j++) {
+            bikePositions[i][j - 3] = bikes[i][j]; //load positions into positions array
+        }
+        //send off bike positions to be plotted
+        drawpath(bikePositions[i], bikeColors[i]); //purple just to test
+    }
+}
+
+//updateBikeTest2();
+
 //already have a bike[] initialized at the top
 
+
+
 function initializeBikes() { //initialize bikes
-    request({ url: "initializeBikes", method: "GET" })
+    request({ url: "/initializeBikes", method: "GET" })
         .then(data => {
             bikes = JSON.parse(data); //an array of initial bike objects with position, ID
             //for some number of bikes
             //construct a new bike with some ID and assign it a color
             //figure out bike headings for STL, rotate bikes to drive straight
             //draw the bikes
-            var numBikes = bikes.length; 
+            var numBikes = bikes.length;
+            var bikeIDs;
+            var bikeColors; //do this later
             var i;
             for (i = 0; i < numBikes; i++) {
                 //make and draw bikes
+                bikeIDs[i] = bikes[i][0];
+
             }
         })
         .catch(error => {
-            print("Bike update error: " + error);
+            console.log("Bike update error: " + error);
         });
 }
 
-var bikeUpdates; 
+
+
+var bikeUpdates;
 
 function updateBikes() {
-    request({ url: "updateBikes", method: "GET" })
+    request({ url: "/updateBikeTest", method: "GET" })
         .then(data => {
-            bikeUpdates = JSON.parse(data);
+            bikes = JSON.parse(data); //given a test array with two bike data object
+            console.log("what I actually get from faye: " + bikes);
+            var numBikes = bikes.length;
+            var bikeNames = []; //bike names will be test1 and test2
+            var bikePositions = Array(numBikes); //with sub arrays of points
+            var bikeColors = [0x9900ff, 0x99ff33, 0xff0066]; //make this better later
+
+            var i;
+            var j;
+            for (i = 0; i < numBikes; i++) {
+                var numPositions = bikes[i].length; //the two at the beginning are name and aliveness
+                //console.log(numPositions);
+                bikeNames[i] = bikes[i][j];
+                bikePositions[i] = [];
+                var bikecolor
+                for (j = 2; j < numPositions; j++) {
+                    bikePositions[i][j - 2] = bikes[i][j]; //load positions into positions array
+                }
+                //send off bike positions to be plotted
+                drawpath(bikePositions[i], bikeColors[i]); //purple just to test
+            }
+            updateBikes(); //call update function again after last update finishes
         })
         .catch(error => {
-            print("Bike update error: " + error);
+            console.log("Bike update error: " + error);
         });
 }
+
+
 
 
 

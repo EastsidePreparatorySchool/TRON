@@ -5,34 +5,38 @@
  */
 package org.eastsideprep.bikes;
 
-import java.util.Random;
+import eastsideprep.org.troncommon.Tuple;
 import org.eastsideprep.enginePackage.Grid;
-import org.eastsideprep.enginePackage.LightCycle;
+import org.eastsideprep.enginePackage.*;
 
 /**
  *
  * @author pkavounas
  */
-public class BasicBike extends LightCycle {
+public class BasicBike extends Bike {
+
+    public BasicBike(int s, Tuple p) {
+        super(s, p);
+    }
      @Override
 
     public int getDirection(Grid grid, int col, int row, int currentDir) {
         
         //BIKE GOES IN DIRECTION OF UNOCCUPIED SPACE
         if (grid.isOccupied(col, row, 1) && grid.isOccupied(col, row, 2) && grid.isOccupied(col, row, 3)) {
-            return LightCycle.UP;
+            return Bike.UP;
         }
         if (grid.isOccupied(col, row, 0) && grid.isOccupied(col, row, 1) && grid.isOccupied(col, row, 3)) {
-            return LightCycle.DOWN;
+            return Bike.DOWN;
         }
         if (grid.isOccupied(col, row, 0) && grid.isOccupied(col, row, 1) && grid.isOccupied(col, row, 2)) {
-            return LightCycle.LEFT;
+            return Bike.LEFT;
         }
         if (grid.isOccupied(col, row, 0) && grid.isOccupied(col, row, 2) && grid.isOccupied(col, row, 3)) {
-            return LightCycle.RIGHT;
+            return Bike.RIGHT;
         }
         
 
-        return LightCycle.UP;
+        return Bike.UP;
     }
 }

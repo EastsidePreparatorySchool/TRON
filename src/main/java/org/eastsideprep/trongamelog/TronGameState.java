@@ -170,10 +170,12 @@ public class TronGameState   implements GameLogState {
     // this is what the server will use to get entries to feed to the client. 
     @Override
     public ArrayList<GameLogEntry> getCompactedEntries() {
+        GameLogEntry size = new TronGameLogEntry(bikes.size()); //NEED TO FIX
         ArrayList<GameLogEntry> result = new ArrayList<>();
         
         result.addAll(bikes.values());
         result.addAll(trails.values());
+        result.add(null);
         result.addAll(deaths);
 
 //        result.addAll(species);

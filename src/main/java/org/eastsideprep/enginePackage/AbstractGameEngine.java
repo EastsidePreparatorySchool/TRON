@@ -23,18 +23,35 @@ public class AbstractGameEngine implements AbstractGameInterface {
     private final int maxSpeed = 1;
 
 //IMPORTANT OBJECTS
-    public int AbstractGameEngineId;
-    private int[][] board;
-    private final ArrayList<BikeContainer> bikes;
-    private TronLogInterface gameTronLog;
+    public String name = "Unnamed";//change this in the constructor if you wish
+    public int GameId;
+    //private int[][] board;
+    private Grid board;//this is a complex object that contains a int[][] grid
+    private ArrayList<BikeContainer> bikes;
+    public int numStartingBikes;
+    //private TronLogInterface gameLog;
 
-    AbstractGameEngine(int id, int size, Bike[] bikeArr) {
-        this.AbstractGameEngineId = id;
+    public AbstractGameEngine(int id, int size, Bike[] bikeArr) {
+        this.GameId = id;
         this.bikes = new ArrayList<>();
         for (Bike b : bikeArr) {
             bikes.add(new BikeContainer(b, new Tuple(0, 0), maxSpeed));//placing the bikes at 0,0
         }
-        board = new int[size][size];
+        numStartingBikes = bikes.size();
+        board = new Grid(size, size);
+
+    }
+//not every game needs a name
+
+    public AbstractGameEngine(int id, String name, int size, Bike[] bikeArr) {
+        this.GameId = id;
+        this.name = name;
+        this.bikes = new ArrayList<>();
+        for (Bike b : bikeArr) {
+            bikes.add(new BikeContainer(b, new Tuple(0, 0), maxSpeed));//placing the bikes at 0,0
+        }
+        numStartingBikes = bikes.size();
+        board = new Grid(size, size);
     }
 
     //each square on the board will have one of 3 ints:
@@ -43,26 +60,26 @@ public class AbstractGameEngine implements AbstractGameInterface {
     //  2 for wall
     @Override
     public void init(TronLogInterface tl) {
-        this.gameTronLog = tl;
+        //this.gameLog = tl;
+        //gameLog.Setup(size);
         //create 4 bikes at random positions
         Random rand = new Random();
 
-        for (int i = 0; i < bikes.size(); i++) {
-
+        for (BikeContainer bc : bikes) {
             int x = rand.nextInt(249) + 1;//random int between 1 and 250 inclusive
             int y = rand.nextInt(249) + 1;
             int vel = rand.nextInt(maxSpeed);
-            //make a new bike with random coords on the board, id from 0-3 and with a random velocity up to maxSpeed
-            Bike b = new Bike(i, new Tuple(x, y));
-            b.direction = rand.nextInt(3);//four directions: 0,1,2,3
-            bikes.set(i, new BikeContainer(b, new Tuple(x, y), vel));
-            board[x][y] = 1;
+
+            //place the given bikes at random coords on the board and with a random velocity up to maxSpeed
+            bc.direction = rand.nextInt(3);//four directions: 0,1,2,3
+            bc.currentPosition = new Tuple(x, y);
+            board.grid[x][y] = 1;
+            //gameLog.UpdatePosition(bc.bike.bikeId, new Tuple(x, y));
         }
-        gameTronLog.Setup(size);
     }
 
     public int[][] getGrid() {
-        return this.board;
+        return this.board.grid;
     }
 
     private void update() {
@@ -74,64 +91,99 @@ public class AbstractGameEngine implements AbstractGameInterface {
         //      if so kill it AND its trail
 
         for (BikeContainer b : bikes) {
-            int dir = b.bike.direction;
+            //System.out.println("update1");
+            Bike bike = b.bike;
             Tuple pos = b.currentPosition;
+            //System.out.println(pos.x + "," + pos.y);
+            int dir = bike.getDirection(board, pos.x, pos.y, bike.direction);
+            //System.out.println("update2");
+            //System.out.println("direction: " + dir);
 
             //add a trail at that position
             b.trail.add(pos);
-            board[pos.x][pos.y] = 2;
-            
+            board.grid[pos.x][pos.y] = 2;
+            //System.out.println("x: " + pos.x);
+            //System.out.println("y: " + pos.y + "\n -----");
             //update postions using direction
             if (dir == 0) {
-                pos.x--;
+                if (pos.x > 1) {//only let it move if its a legal move
+                    pos.x--;
+                }
             } else if (dir == 1) {
-                pos.y++;
+                if (pos.y < 250) {
+                    pos.y++;
+                }
             } else if (dir == 2) {
-                pos.x++;
+                if (pos.x < 250) {
+                    pos.x++;
+                }
             } else if (dir == 3) {
-                pos.y--;
+                if (pos.y > 1) {
+                    pos.y--;
+                }
             }
-            board[pos.x][pos.y]=1;
-            gameTronLog.UpdatePosition(b.bike.id, pos);
-
-            //kill
-            if (pos.x == 0 || pos.x == 251 || pos.y == 0 || pos.y == 251 || board[pos.x][pos.y] == 2) {
-                gameTronLog.KillBike(b.bike.id);
+            //System.out.println("update3");
+            board.grid[pos.x][pos.y] = 1;
+            //System.out.println("updated position: (" + pos.x + "," + pos.y + ")");
+            //System.out.println("id: " + bike.bikeId);
+            //System.out.println("position: " + pos);
+            //gameLog.UpdatePosition(bike.bikeId, pos);
+            //System.out.println("update4");
+            if (pos.x == 0 || pos.x == 251 || pos.y == 0 || pos.y == 251 || board.grid[pos.x][pos.y] == 2) {
                 killBike(b);
             }
         }
     }
 
     private void killBike(BikeContainer bc) {
+        //gameLog.KillBike(bc.bike.bikeId);
         bikes.remove(bc);
+
     }
 
-    //TODO: send win logs to Faye
-    @Override
-    public Tuple[] run(int n, Bike[] testBikes, int size) {
-        //this method runs n complete games and returns the number of wins per bike
-
+    public Tuple[] run(int n) {
+        System.out.println(this.name);
+        int size = this.size;
+        Bike[] testBikes = new Bike[numStartingBikes];
+        //System.out.println("run1");
+        for (int i = 0; i < testBikes.length; i++) {
+            testBikes[i] = bikes.get(i).bike;
+        }
         int numBikes = testBikes.length;
         Tuple[] scoreboard = new Tuple[numBikes];
+        //System.out.println("run2");
         for (int i = 0; i < scoreboard.length; i++) {
             scoreboard[i] = new Tuple(i, 0);
         }
+        //System.out.println("run3");
         for (int i = 0; i < n; i++) {//n complete games
             int winner;//winner's id
-
+            int turns = 0;
+            //System.out.println("run4");
             AbstractGameEngine currentGame = new AbstractGameEngine(i, Math.max(250, size), testBikes);//dont want the game board to be too small
-            while (currentGame.bikes.size() > 1) {
+            while (currentGame.bikes.size() > 1) {//sometimes a bike will die and the length of the arraylist will decrease
+                //System.out.println("run5");
                 currentGame.update();
+                turns++;
+                //System.out.println("Turns ran " + turns);
+                //System.out.println("run6");
             }
+            // System.out.println("run7");
             //there is a winner!
-            winner = currentGame.bikes.get(0).bike.id;//there is only one bike left in the arraylist
+            winner = currentGame.bikes.get(0).bike.bikeId;//there is only one bike left in the arraylist
+            System.out.println("The winner is " + winner);
             //the tuples are (id, times won)
             for (Tuple tuple : scoreboard) {
+                System.out.println(tuple.toString());
                 if (tuple.x == winner) {
                     scoreboard[winner].y++;
+                    //System.out.println(tuple.toString());
                 }
             }
+            //System.out.println("run8");
         }
+        //gameLog.runResults(testBikes);
+
         return scoreboard;
     }
 
