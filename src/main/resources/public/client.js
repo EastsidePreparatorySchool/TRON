@@ -254,9 +254,30 @@ function initializeBikes() { //initialize bikes
 var bikeUpdates;
 
 function updateBikes() {
-    request({ url: "/updateBikes", method: "GET" })
+    request({ url: "/updateBikeTest", method: "GET" })
         .then(data => {
-            bikeUpdates = JSON.parse(data);
+            bikes = JSON.parse(data); //given a test array with two bike data object
+            console.log("what I actually get from faye: " + bikes);
+            var numBikes = bikes.length;
+            var bikeNames = []; //bike names will be test1 and test2
+            var bikePositions = Array(numBikes); //with sub arrays of points
+            var bikeColors = [0x9900ff, 0x99ff33, 0xff0066]; //make this better later
+
+            var i;
+            var j;
+            for (i = 0; i < numBikes; i++) {
+                var numPositions = bikes[i].length; //the two at the beginning are name and aliveness
+                //console.log(numPositions);
+                bikeNames[i] = bikes[i][j];
+                bikePositions[i] = [];
+                var bikecolor
+                for (j = 2; j < numPositions; j++) {
+                    bikePositions[i][j - 2] = bikes[i][j]; //load positions into positions array
+                }
+                //send off bike positions to be plotted
+                drawpath(bikePositions[i], bikeColors[i]); //purple just to test
+            }
+            updateBikes(); //call update function again after last update finishes
         })
         .catch(error => {
             console.log("Bike update error: " + error);
