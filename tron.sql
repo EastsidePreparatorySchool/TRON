@@ -31,8 +31,8 @@ CREATE TABLE "gamesbikes"
 INSERT INTO "bikeclasses" (BikeClassId, Name) VALUES (0, "SillyBike");
 INSERT INTO "bikeclasses" (BikeClassId, Name) VALUES (1, "BasicBike");
 INSERT INTO "games" (GameName, NumBikes) VALUES ("Gametest", 2);
-INSERT INTO "gamesbikes" (GameID, BikeClassId) VALUES (0, 0);
-INSERT INTO "gamesbikes" (GameID, BikeClassId) VALUES (0, 1);
+INSERT INTO "gamesbikes" (GameID, BikeClassId) VALUES (1, 0);
+INSERT INTO "gamesbikes" (GameID, BikeClassId) VALUES (1, 1);
 
 
 

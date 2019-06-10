@@ -54,7 +54,8 @@ public class main {
         //for testing purposes only
         get("/updateBikeTest", "application/json", (req, res) -> updateBikeTest(), new JSONRT());
         post("/runGameTest", "application/json", (req, res) -> runGameTest(req), new JSONRT());
-        giveMeTheValue("GameID","games","GameName= " +quote + "Gametest"+ quote);
+        //giveMeTheValue("GameID","games","GameName= " +quote + "Gametest"+ quote);
+        System.out.println("teeeeeestttt "+giveMeTheBikeArray("Gametest"));
         
     }
 
@@ -90,24 +91,31 @@ public class main {
         return new String[]{"oof"};
     }
     
-   public static String giveMeTheBikeArray(String gameName){
-       String gameID="";
+   public static List<Integer> giveMeTheBikeArray(String gameName){
+       List<Integer> bikeList = new ArrayList<Integer>();
+       char quote = '"';
+       String gameID= giveMeTheValue("GameID","games","GameName= " +quote + gameName+ quote);
+       System.out.println("GAME ID: "+gameID);
       try {
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("select BikeClassID from gamesbikes where GameId" + gameID + ";"); // select everything in the table
+            ResultSet rs = stmt.executeQuery("select BikeClassID from gamesbikes where GameId=" + gameID + ";"); // select everything in the table
 
             ResultSetMetaData rsmd = rs.getMetaData();
-            int numberOfColumns = rsmd.getColumnCount();
-            System.out.println(numberOfColumns);
-            for (int i = 1; i <= numberOfColumns; i++) {
-                System.out.println(rsmd.getColumnName(i) + ",  " + rsmd.getColumnTypeName(i)); // prints column name and type
-
+            while (rs.next()){
+               int i=1;
+               int iarr=0;
+              bikeList.add(iarr,rs.getInt(i));
+            System.out.println("TEST: "+rs.getString(i)+"|"+i);
+            i++;
+            iarr++;
+            
             }
+            return bikeList;
 
       }catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-     return "";
+     return null;
    }
    
    public static String giveMeTheValue(String row, String table, String where){
@@ -117,9 +125,9 @@ public class main {
             ResultSet rs = stmt.executeQuery("select "+ row + " from " + table + " where " +where+ ";" );
 
             ResultSetMetaData rsmd = rs.getMetaData();
-            int numberOfColumns = rsmd.getColumnCount();
-            System.out.println(numberOfColumns);
-            System.out.println(rsmd);
+            System.out.println(rs.getString(1));
+            System.out.println(rs.getInt(1));
+            return rs.getString(1);
             //System.out.println(rs);
 
 
@@ -129,7 +137,7 @@ public class main {
        
        
        
-       return "";
+       return null;
    }
     
 
