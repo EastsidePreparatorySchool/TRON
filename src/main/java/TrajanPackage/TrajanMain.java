@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.eastsideprep.tron;
+package TrajanPackage;
 
 import java.sql.*;
 import org.eastsideprep.enginePackage.*;
@@ -15,6 +15,8 @@ import org.eastsideprep.trongamelog.TronGameLogEntry;
 import org.eastsideprep.bikes.*;
 import eastsideprep.org.troncommon.*;
 import javax.servlet.MultipartConfigElement;
+import org.eastsideprep.tron.JSONRT;
+import org.eastsideprep.tron.ServerContext;
 import spark.Request;
 import static spark.Spark.*;
 
@@ -40,25 +42,19 @@ public class TrajanMain {
         before("*", (req, res) -> {
             //System.out.println("request coming in: " + req.requestMethod() + ":" + req.url());
         });
-        //We don't need SQL for testing!
-        connect();
 
         //full functionality
         //updateBikeTest();
         get("/updateBikes", "application/json", (req, res) -> updateBikes(req), new JSONRT());
-        post("/createGame", "application/json", (req, res) -> newGame(req));
-        get("/getGames", "application/json", (req, res) -> getGamesTable(req), new JSONRT());
-        get("/initializeBikes", "application/json", (req, res) -> initializeBikes(), new JSONRT());
         get("/runGame", "application/json", (req, res) -> runGame(req), new JSONRT());
 
         //for testing purposes only
         get("/updateBikeTest", "application/json", (req, res) -> updateBikeTest(), new JSONRT());
         post("/runGameTest", "application/json", (req, res) -> runGameTest(req), new JSONRT());
-        giveMeTheValue("GameID", "games", "GameName= " + quote + "Gametest" + quote);
 
     }
 
-//TEST
+    //TEST
     //testing methods
     private static Object[] runGameTest(Request req) {
         MultipartConfigElement multipartConfigElement = new MultipartConfigElement(System.getProperty("java.io.tmpdir"));
@@ -90,45 +86,6 @@ public class TrajanMain {
         return new String[]{"oof"};
     }
 
-    public static String giveMeTheBikeArray(String gameName) {
-        String gameID = "";
-        try {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("select BikeClassID from gamesbikes where GameId" + gameID + ";"); // select everything in the table
-
-            ResultSetMetaData rsmd = rs.getMetaData();
-            int numberOfColumns = rsmd.getColumnCount();
-            System.out.println(numberOfColumns);
-            for (int i = 1; i <= numberOfColumns; i++) {
-                System.out.println(rsmd.getColumnName(i) + ",  " + rsmd.getColumnTypeName(i)); // prints column name and type
-
-            }
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return "";
-    }
-
-    public static String giveMeTheValue(String row, String table, String where) {
-        System.out.println("select " + row + " from " + table + " where " + where + ";");
-        try {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("select " + row + " from " + table + " where " + where + ";");
-
-            ResultSetMetaData rsmd = rs.getMetaData();
-            int numberOfColumns = rsmd.getColumnCount();
-            System.out.println(numberOfColumns);
-            System.out.println(rsmd);
-            //System.out.println(rs);
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-
-        return "";
-    }
-
     private static Object[] updateBikeTest() {
         Object[] testArr = new Object[2];
         ArrayList<Object> tes = new ArrayList<>();
@@ -152,134 +109,7 @@ public class TrajanMain {
     }
     //End of testing methods
 
-    //Regular methods:    
-    private static void connect() {
-        try {
-            // db parameters
-            String url = "jdbc:sqlite:tron.db";
-            // create a connection to the database
-            conn = DriverManager.getConnection(url);
-
-            System.out.println("Connection to SQLite has been established.");
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    private static String newGame(spark.Request req) {
-
-        String bikeNames = req.queryParams("bikeListID");
-        String[] bikeIDList = req.queryParams("idBikeList").split("|");
-        String gameName = req.queryParams("gameName");
-        System.out.println(gameName + "=================");
-        //this function will take a list of bikes in a string formated in this format - bike1|bike2|bike3|bike4|
-        char quote = '"';
-        int GameID = 0;
-        String sqlGame = "INSERT INTO" + quote + "games" + quote + "(NumBikes, GameName) VALUES (" + bikeIDList.length + quote + ", " + quote + gameName + quote + ");";
-        System.out.println(sqlGame);
-
-        try {
-            PreparedStatement sqlcmdGame = conn.prepareStatement(sqlGame);
-            sqlcmdGame.execute();
-
-            GameID = sqlcmdGame.getGeneratedKeys().getInt(1);
-
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("select * from games");
-            GameID = rs.getInt("gameID");
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        for (int i = 0; i < bikeIDList.length; i++) {
-
-            String sqlBikeClass = "INSERT INTO" + quote + "gameBike" + quote + "(GameID, BikeClassID) VALUES (" + Integer.toString(GameID) + ", " + quote + bikeIDList[i] + quote + ");";
-            System.out.println(sqlBikeClass);
-
-            try {
-                PreparedStatement sqlcmdBike = conn.prepareStatement(sqlBikeClass);
-                sqlcmdBike.execute();
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-        }
-        return req.session().id();
-    }
-
-    private static Object[][] getGamesTable(spark.Request req) {
-        String table = req.queryParams("tableName");
-
-        try {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("select * from " + table + ";"); // select everything in the table
-
-            ResultSetMetaData rsmd = rs.getMetaData();
-            int numberOfColumns = rsmd.getColumnCount();
-            System.out.println(numberOfColumns);
-            for (int i = 1; i <= numberOfColumns; i++) {
-                System.out.println(rsmd.getColumnName(i) + ",  " + rsmd.getColumnTypeName(i)); // prints column name and type
-
-            }
-
-            Object[][] res = new Object[LENGTH][numberOfColumns];
-            int count = 0;
-
-            while (rs.next() && count < LENGTH) {
-                for (int j = 1; j <= numberOfColumns; j++) {
-                    res[count][j - 1] = rs.getString(j);
-                    System.out.println(rs.getString(j) + "======================");
-                }
-                count++;
-            }
-            return res;
-
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        return null;
-    }
-
-//list of bikeos and such
-    private static Object[] initializeBikes() {
-        try {
-            ArrayList<GameLogEntry> log = STATE.getCompactedEntries();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        return null;
-    }
-
-    private static ServerContext getCtx(spark.Request req) {
-        HashMap<String, ServerContext> ctxMap = req.session().attribute("ServerContexts");
-        if (req.session().isNew() || ctxMap == null) {
-            ctxMap = new HashMap<>();
-            req.session().attribute("ServerContexts", ctxMap);
-        }
-
-        String client = req.queryParams("clientID");
-        ServerContext ctx = ctxMap.get(client);
-        if (ctx == null) {
-            ctx = new ServerContext();
-            ctx.clientSubID = client;
-            ctxMap.put(client, ctx);
-        }
-//I COMENTED THIS ONE OUT BECAUSE IT WAS GIVING AN ERROR AND IT WAS ANNOYING
-        // blow up stale contexts
-
-        // if (ctx.observer != null && ctx.observer.isStale()) { 
-        //     ctx.observer = null;
-//            return null;
-        //  }
-        //if (ctx.observer != null && ctx.observer.isStaxle()) {
-        //ctx.observer = null;
-//            return null;
-        //}
-        req.session().maxInactiveInterval(60); // kill this session afte 60 seconds of inactivity
-        return ctx;
-    }
-
-//smol update stuff
-//send bike position, added trail position of bike
+    //send bike position, added trail position of bike
     private static Object[] updateBikes(spark.Request req) {
         try {
             ServerContext ctx = getCtx(req);
