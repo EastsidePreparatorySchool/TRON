@@ -5,10 +5,7 @@
  */
 package TrajanPackage;
 
-import org.eastsideprep.bikes.*;
 import eastsideprep.org.troncommon.Tuple;
-import org.eastsideprep.enginePackage.Grid;
-import org.eastsideprep.enginePackage.*;
 
 /**
  *
@@ -19,10 +16,10 @@ public class BasicBike extends Bike {
     public BasicBike(int s, Tuple p) {
         super(s, p);
     }
-     @Override
 
+    @Override
     public int getDirection(Grid grid, int col, int row, int currentDir) {
-        
+
         //BIKE GOES IN DIRECTION OF UNOCCUPIED SPACE
         if (grid.isOccupied(col, row, 1) && grid.isOccupied(col, row, 2) && grid.isOccupied(col, row, 3)) {
             return Bike.UP;
@@ -36,8 +33,8 @@ public class BasicBike extends Bike {
         if (grid.isOccupied(col, row, 0) && grid.isOccupied(col, row, 2) && grid.isOccupied(col, row, 3)) {
             return Bike.RIGHT;
         }
-        
 
         return Bike.UP;
     }
+
 }
