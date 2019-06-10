@@ -34,7 +34,7 @@ public class main {
     static AbstractGameEngine PreSetGame = new AbstractGameEngine(0, "engineTest", 250, PreSetBikes);
 
     public static void main(String[] args) {
-
+          char quote = '"';
         staticFiles.location("public/");
 
         before("*", (req, res) -> {
@@ -54,7 +54,8 @@ public class main {
         //for testing purposes only
         get("/updateBikeTest", "application/json", (req, res) -> updateBikeTest(), new JSONRT());
         post("/runGameTest", "application/json", (req, res) -> runGameTest(req), new JSONRT());
-
+        giveMeTheValue("GameID","games","GameName= " +quote + "Gametest"+ quote);
+        
     }
 
 //TEST
@@ -88,6 +89,49 @@ public class main {
         }
         return new String[]{"oof"};
     }
+    
+   public static String giveMeTheBikeArray(String gameName){
+       String gameID="";
+      try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("select BikeClassID from gamesbikes where GameId" + gameID + ";"); // select everything in the table
+
+            ResultSetMetaData rsmd = rs.getMetaData();
+            int numberOfColumns = rsmd.getColumnCount();
+            System.out.println(numberOfColumns);
+            for (int i = 1; i <= numberOfColumns; i++) {
+                System.out.println(rsmd.getColumnName(i) + ",  " + rsmd.getColumnTypeName(i)); // prints column name and type
+
+            }
+
+      }catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+     return "";
+   }
+   
+   public static String giveMeTheValue(String row, String table, String where){
+      System.out.println("select "+ row + " from " + table + " where " +where+ ";" );
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("select "+ row + " from " + table + " where " +where+ ";" );
+
+            ResultSetMetaData rsmd = rs.getMetaData();
+            int numberOfColumns = rsmd.getColumnCount();
+            System.out.println(numberOfColumns);
+            System.out.println(rsmd);
+            //System.out.println(rs);
+
+
+      }catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+       
+       
+       
+       return "";
+   }
+    
 
     private static Object[] updateBikeTest() {
         Object[] testArr = new Object[2];
