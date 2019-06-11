@@ -46,11 +46,10 @@ public class main {
         //full functionality
         //updateBikeTest();
         get("/updateBikes", "application/json", (req, res) -> updateBikes(req), new JSONRT());
-        post("/createGame", "application/json", (req, res) -> newGame(req));
+        post("/createGame", "application/json", (req, res) -> newGameTest(req), new JSONRT());
         get("/getGames", "application/json", (req, res) -> getGamesTable(req), new JSONRT());
         get("/initializeBikes", "application/json", (req, res) -> initializeBikes(), new JSONRT());
-        get("/runGame", "application/json", (req, res) -> runGame(req), new JSONRT());
-
+        get("/runGame", "application/json", (req, res) -> runGame(req), new JSONRT());     
         //for testing purposes only
         get("/updateBikeTest", "application/json", (req, res) -> updateBikeTest(), new JSONRT());
         post("/runGameTest", "application/json", (req, res) -> runGameTest(req), new JSONRT());
@@ -61,6 +60,12 @@ public class main {
 
 //TEST
     //testing methods
+    public static Object[] newGameTest(Request req){
+        String bikeNames = req.queryParams("gamename");
+        System.out.println("testing:::::"+bikeNames);
+        return null;
+    }
+    
     private static Object[] runGameTest(Request req) {
         MultipartConfigElement multipartConfigElement = new MultipartConfigElement(System.getProperty("java.io.tmpdir"));
         req.raw().setAttribute("org.eclipse.jetty.multipartConfig", multipartConfigElement);

@@ -91,14 +91,15 @@ function listBikes() {
 }
 
 function createGame() {
-    var newGameName = document.getElementById("userGameName");
+    var newGameName = document.getElementById("userGameName").value;
     console.log(newGameName);
     var bikes = {
         nameBikeList: JSON.stringify(newGameBikeList)
     };
+    console.log(bikes);
 
     //xmlhttp.setRequestHeader("Content-type", "application/json");
-    request({ url: "/runTestGame", method: "POST", body: bikes }) //body:bikes
+    request({ url: "/createGame?gamename="+newGameName, method: "POST", body: bikes }) //body:bikes
         .then(data => {
             console.log("New game " + data + "has been created. Cool")
         })
@@ -120,7 +121,7 @@ function initialize() {
 }
 
 function selectBike() {
-    var bikeID = document.getElementById("userInputBike").value;
+    var bikeID = document.getElementById("userBikes").value;
 
     newGameBikeList.push(bikeID);
     for (i = 0; i < newGameBikeList.length; i++) {
