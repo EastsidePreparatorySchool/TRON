@@ -5,8 +5,6 @@
  */
 package TrajanPackage;
 
-import eastsideprep.org.troncommon.Tuple;
-
 /**
  *
  * @author pkavounas

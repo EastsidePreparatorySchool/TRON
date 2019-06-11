@@ -5,20 +5,20 @@
  */
 package TrajanPackage;
 
-import org.eastsideprep.tron.*;
-import org.eastsideprep.enginePackage.AbstractGameEngine;
+import TrajanPackage.TrajanLog.GameLogObserver;
 
 /**
  *
  * @author fzhang
  */
 public class ServerContext {
-    Observer observer;
+
+    GameLogObserver observer;
     AbstractGameEngine engine;
     String engineName;
     String client;
     String clientSubID;
-    
+
     public ServerContext() {
     }
 }

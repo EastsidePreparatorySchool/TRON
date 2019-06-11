@@ -5,20 +5,12 @@
  */
 package TrajanPackage;
 
-import java.sql.*;
-import org.eastsideprep.enginePackage.*;
-import org.eastsideprep.gamelog.GameLogEntry;
-import org.eastsideprep.trongamelog.TronGameState;
+//import java.sql.*;
 import java.util.*;
-import org.eastsideprep.enginePackage.Bike;
-import org.eastsideprep.trongamelog.TronGameLogEntry;
-import org.eastsideprep.bikes.*;
-import eastsideprep.org.troncommon.*;
 import javax.servlet.MultipartConfigElement;
-import org.eastsideprep.tron.JSONRT;
-import org.eastsideprep.tron.ServerContext;
 import spark.Request;
 import static spark.Spark.*;
+import TrajanPackage.TrajanLog.*;
 
 /**
  *
@@ -29,7 +21,9 @@ public class TrajanMain {
     public final static int LENGTH = 100;
     public final static int BIKES = 2;
     public final static TronGameState STATE = new TronGameState(true);
-    static Connection conn = null;
+
+    private static ArrayList<ServerContext> userContexts;
+    //static Connection conn = null;
 
     //preset game (gameId=0) we will use for testing with a SillyBike (bikeId=0) at (100,100)
     static final Bike[] PreSetBikes = new Bike[]{new SillyBike(0, new Tuple(50, 50)), new SillyBike(1, new Tuple(51, 51))};
@@ -117,7 +111,7 @@ public class TrajanMain {
                 return null;
             }
 
-            ArrayList<GameLogEntry> list = ctx.observer.getNewItems();
+            ArrayList<TronGameLogEntry> list = ctx.observer.getNewItems();
 
             if (req.queryParams("compact").equals("yes")) {
                 // if the client requests it, make a new game state, 
@@ -196,5 +190,16 @@ public class TrajanMain {
     //TODO: get bikes from request and use the .run() method in AbstractGameEngine.java
     private static Object[] runGame(spark.Request req) {
         return null;
+    }
+
+    private static ServerContext getCtx(Request req) {
+        //get a context or make one from a request
+
+        ServerContext ctx = req.session().attribute("context");
+        if (ctx == null) {
+            ctx = new ServerContext();
+            req.session().attribute("context", ctx);
+        }
+        return ctx;
     }
 }

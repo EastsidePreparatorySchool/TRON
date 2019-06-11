@@ -1,7 +1,5 @@
 package TrajanPackage;
 
-import org.eastsideprep.enginePackage.*;
-import eastsideprep.org.troncommon.Tuple;
 import java.util.ArrayList;
 
 /*

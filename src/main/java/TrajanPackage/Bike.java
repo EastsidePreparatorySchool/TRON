@@ -1,8 +1,5 @@
 package TrajanPackage;
 
-import org.eastsideprep.enginePackage.*;
-import eastsideprep.org.troncommon.Tuple;
-
 
 /*
  * To change this license header, choose License Headers in Project Properties.
