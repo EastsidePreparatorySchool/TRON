@@ -26,7 +26,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
     public String name = "Unnamed";//change this in the constructor if you wish
     public int GameId;
     //private int[][] board;
-    private Grid board;//this is a complex object that contains a int[][] grid
+    public Grid board;//this is a complex object that contains a int[][] grid
     private ArrayList<BikeContainer> bikes;
     public int numStartingBikes;
     //private TronLogInterface gameLog;

@@ -14,7 +14,7 @@ import org.eastsideprep.*;
  */
 public class Grid {
 
-    int[][] grid;
+    public int[][] grid;
     int rows;
     int cols;
 

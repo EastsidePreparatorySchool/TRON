@@ -24,10 +24,11 @@ import static spark.Spark.*;
  */
 public class main {
 
-    public final static int LENGTH = 100;
+    public final static int LENGTH = 252;
     public final static int BIKES = 4;
-    public final static TronGameState STATE = new TronGameState(true);
-    static Connection conn = null;
+    public static ArrayList<AbstractGameEngine> runningGames;//pointers to running games
+    //public final static TronGameState STATE = new TronGameState(true);
+    //static Connection conn = null;
 
     //preset game (gameId=0) we will use for testing with a SillyBike (bikeId=0) at (100,100)
     static final Bike[] PreSetBikes = new Bike[]{new SillyBike(0, new Tuple(50, 50)), new SillyBike(1, new Tuple(51, 51))};
@@ -38,7 +39,7 @@ public class main {
         staticFiles.location("public/");
 
         before("*", (req, res) -> {
-            //System.out.println("request coming in: " + req.requestMethod() + ":" + req.url());
+            System.out.println("request coming in: " + req.requestMethod() + ":" + req.url());
         });
         //We don't need SQL for testing!
         //connect();
@@ -51,8 +52,8 @@ public class main {
         //get("/initializeBikes", "application/json", (req, res) -> initializeBikes(), new JSONRT());
         //get("/runGame", "application/json", (req, res) -> runGame(req), new JSONRT());
         //for testing purposes only
-        get("/updateBikes", "application/json", (req, res) -> updateBikes(), new JSONRT());
-        get("/getBoard", "application/json", (req, res) -> getBoard(), new JSONRT());
+        get("/updateBikes", "application/json", (req, res) -> updateBikes(req), new JSONRT());
+        get("/getBoard", "application/json", (req, res) -> getBoard(req), new JSONRT());
         post("/runGame", "application/json", (req, res) -> runGame(req), new JSONRT());
         //giveMeTheValue("GameID", "games", "GameName= " + quote + "Gametest" + quote);
 
@@ -90,11 +91,16 @@ public class main {
         return new String[]{"oof"};
     }
 
-    private static Object[] updateBikes() {
-        return
+    private static Object[] getBoard(spark.Request req) {
+        int bikeId = Integer.parseInt(req.queryParams("bikeId"));
+        int[][] board = runningGames.get(bikeId).board.grid;
+        synchronized (board) {
+            return board;//return the whole table oof
+        }
     }
 
-    private static Object[] getBoard() {
+    private static Object[] updateBikes(Request req) {
+        //eventually I'll put in the updates instead of the full table
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

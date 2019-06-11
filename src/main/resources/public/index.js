@@ -60,8 +60,3 @@ console.log(tester);
 
     document.getElementById("gameListOutput").value += "";
 }
-
-function selectGame(){
-    var gameid = document.getElementById("userGameId");
-    request({url: "/selectGame?gameid=" + gameid, method: "POST"})
-}
