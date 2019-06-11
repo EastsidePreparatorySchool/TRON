@@ -67,12 +67,4 @@ public class TronGameLogEntry extends GameLogEntry {
         public static final int WIN = 4;
     }
 
-    public static ArrayList<TronGameLogEntry> translateEntryTypes(ArrayList<GameLogEntry> gleal) {
-        ArrayList<TronGameLogEntry> tgleal = new ArrayList<>();//the best naming conventions
-        for (GameLogEntry gle : gleal) {
-            tgleal.add(new TronGameLogEntry(gle));
-        }
-        return tgleal;
-    }
-
 }

@@ -7,9 +7,6 @@ package TrajanPackage.TrajanLog;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import org.eastsideprep.gamelog.GameLog;
-import org.eastsideprep.gamelog.GameLogEntry;
-import org.eastsideprep.gamelog.GameLogState;
 
 /**
  *

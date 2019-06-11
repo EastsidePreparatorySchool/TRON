@@ -111,7 +111,7 @@ public class TrajanMain {
                 return null;
             }
 
-            ArrayList<TronGameLogEntry> list = ctx.observer.getNewItems();
+            ArrayList<TronGameLogEntry> list = translateEntryTypes(ctx.observer.getNewItems());
 
             if (req.queryParams("compact").equals("yes")) {
                 // if the client requests it, make a new game state, 
@@ -119,7 +119,7 @@ public class TrajanMain {
 
                 TronGameState compactor = new TronGameState(true);
                 for (GameLogEntry item : list) {
-                    compactor.addEntry(item);
+                    compactor.addEntry(new TronGameLogEntry(item));
                 }
                 list = compactor.getCompactedEntries();
             }
@@ -135,7 +135,7 @@ public class TrajanMain {
         //return null;
 
         try {
-            ArrayList<GameLogEntry> log = STATE.getCompactedEntries();
+            ArrayList<TronGameLogEntry> log = STATE.getCompactedEntries();
             Object[] result = new Object[4];
             //result be like [bike#, bikes, trails, deaths]
             result[0] = BIKES;
@@ -202,4 +202,14 @@ public class TrajanMain {
         }
         return ctx;
     }
+
+    public static ArrayList<TronGameLogEntry> translateEntryTypes(ArrayList<GameLogEntry> gleal) {
+        ArrayList<TronGameLogEntry> tgleal = new ArrayList<>();//the best naming conventions
+
+        for (GameLogEntry gle : gleal) {
+            tgleal.add(new TronGameLogEntry(gle));
+        }
+        return tgleal;
+    }
+
 }
