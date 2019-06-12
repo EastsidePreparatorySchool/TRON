@@ -14,13 +14,13 @@ import org.eastsideprep.gamelog.GameLogEntry;
 public class TronGameLogEntry extends GameLogEntry {
 
     public class Position {
-        int x;
-        int y;
+        public int x;
+        public int y;
     }
-
-    int entryType;
-    int id;
-    Position p;
+    
+    public int entryType;
+    public int id;
+    public Position p;
 
     public TronGameLogEntry(int id, Position p) {
         this.entryType = Type.POSUPDATE;
