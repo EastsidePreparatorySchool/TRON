@@ -153,22 +153,23 @@ function request(obj) {
     });
 };
 
-function updateGrid() { //initialize bikes
+//TODO: finish updates serverside then here
+function updateGrid() {
     request({ url: "/getBoard", method: "GET" })
         .then(data => {
             var board = JSON.parse(data);
-            drawGrid(board); //purple just to test
+            drawGrid(board); //just to test
         })
         .catch(error => {
             console.log("Bike update error: " + error);
         });
 }
-//TODO: finish updates serverside then here
-function updateBikes() {
-    request({ url: "/updateBikeTest", method: "GET" })
+
+function nextFrame() {
+    request({ url: "/updateBikes", method: "GET" })
         .then(data => {
             bikeUpdates = JSON.parse(data); //given a test array with two bike data object
-
+            drawGrid(bikeUpdates);
         })
         .catch(error => {
             console.log("Bike update error: " + error);
