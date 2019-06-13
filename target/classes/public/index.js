@@ -42,16 +42,16 @@ function getGames() {
 
                 for (var i = 0; i < res.length; i++) {
                     for (var j = 0; j < res[0].length; j++) {
-                    
-                   if (res[i][j] != null){
-                   tester = tester + res[i][j] + " ";
-                   }
+
+                        if (res[i][j] != null) {
+                            tester = tester + res[i][j] + " ";
+                        }
                     }
-                    
-                    
+
+
                 }
-                document.getElementById("gameListOutput").innerHTML=tester; 
-console.log(tester);
+                document.getElementById("gameListOutput").innerHTML = tester;
+                console.log(tester);
             }
         })
         .catch(error => {

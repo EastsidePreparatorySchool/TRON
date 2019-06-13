@@ -12,7 +12,7 @@ package TrajanPackage;
 //probably useless?
 public interface AbstractGameInterface {
 
-    void init(TronLogInterface tl);
+    void init(/*TronLogInterface tl*/);
 
     Tuple[] run(int n);//runs n complete games, returns the winners by ID and times won
 

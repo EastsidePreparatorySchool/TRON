@@ -22,12 +22,13 @@ public class AbstractGameEngine implements AbstractGameInterface {
     public String name = "Unnamed";//change this in the constructor if you wish
     public int GameId;
     //private int[][] board;
-    private Grid board;//this is a complex object that contains a int[][] grid
+    public Grid board = new Grid(252, 252);//this is a complex object that contains a int[][] grid
     private ArrayList<BikeContainer> bikes;
     public int numStartingBikes;
     //private TronLogInterface gameLog;
 
     public AbstractGameEngine(int id, int size, Bike[] bikeArr) {
+        System.out.println("making an engine without a name");
         this.GameId = id;
         this.bikes = new ArrayList<>();
         for (Bike b : bikeArr) {
@@ -35,7 +36,6 @@ public class AbstractGameEngine implements AbstractGameInterface {
         }
         numStartingBikes = bikes.size();
         board = new Grid(size, size);
-
     }
 //not every game needs a name
 
@@ -55,15 +55,16 @@ public class AbstractGameEngine implements AbstractGameInterface {
     //  1 for bike
     //  2 for wall
     @Override
-    public void init(TronLogInterface tl) {
+    public void init(/*TronLogInterface tl*/) {
         //this.gameLog = tl;
         //gameLog.Setup(size);
         //create 4 bikes at random positions
         Random rand = new Random();
 
         for (BikeContainer bc : bikes) {
-            int x = rand.nextInt(249) + 1;//random int between 1 and 250 inclusive
-            int y = rand.nextInt(249) + 1;
+
+            int x = rand.nextInt(3) + 1;//random int between 1 and 250 inclusive
+            int y = rand.nextInt(3) + 1;
             int vel = rand.nextInt(maxSpeed);
 
             //place the given bikes at random coords on the board and with a random velocity up to maxSpeed

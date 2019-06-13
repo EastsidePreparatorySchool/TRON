@@ -3,17 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.eastsideprep.tron;
+package TrajanPackage;
 
 import java.sql.*;
-import org.eastsideprep.enginePackage.*;
-import org.eastsideprep.gamelog.GameLogEntry;
-import org.eastsideprep.trongamelog.TronGameState;
 import java.util.*;
-import org.eastsideprep.enginePackage.Bike;
-import org.eastsideprep.trongamelog.TronGameLogEntry;
-import org.eastsideprep.bikes.*;
-import eastsideprep.org.troncommon.*;
+
 import javax.servlet.MultipartConfigElement;
 import spark.Request;
 import static spark.Spark.*;
@@ -22,17 +16,18 @@ import static spark.Spark.*;
  *
  * @author tespelien and other less cool boios
  */
-//Note to self: don't run this ~Trajan
 public class main {
 
     public final static int LENGTH = 252;
     public final static int BIKES = 4;
-    public static ArrayList<AbstractGameEngine> runningGames;//pointers to running games
+    private static ArrayList<AbstractGameEngine> runningGames = new ArrayList<>();//pointers to running games
     //public final static TronGameState STATE = new TronGameState(true);
     //static Connection conn = null;
 
     //preset game (gameId=0) we will use for testing with a SillyBike (bikeId=0) at (100,100)
-    static final Bike[] PreSetBikes = new Bike[]{new SillyBike(0, new Tuple(50, 50)), new SillyBike(1, new Tuple(51, 51))};
+    private static Bike b1 = new SillyBike(0, new Tuple(50, 50));
+    private static Bike b2 = new SillyBike(0, new Tuple(51, 51));
+    private static final Bike[] PreSetBikes = new Bike[]{b1, b2};
     static AbstractGameEngine PreSetGame = new AbstractGameEngine(0, "engineTest", 250, PreSetBikes);
 
     public static void main(String[] args) {
@@ -56,6 +51,7 @@ public class main {
         get("/updateBikes", "application/json", (req, res) -> updateBikes(req), new JSONRT());
         get("/getBoard", "application/json", (req, res) -> getBoard(req), new JSONRT());
         post("/runGame", "application/json", (req, res) -> runGame(req), new JSONRT());
+        get("/startGame", (req, res) -> startGame());
         //giveMeTheValue("GameID", "games", "GameName= " + quote + "Gametest" + quote);
 
     }
@@ -93,11 +89,30 @@ public class main {
     }
 
     private static Object[] getBoard(spark.Request req) {
-        int bikeId = Integer.parseInt(req.queryParams("bikeId"));
-        int[][] board = runningGames.get(bikeId).board.grid;
-        synchronized (board) {
-            return board;//return the whole table oof
+        System.out.println("getting whole board...");
+        //int gameId = Integer.parseInt(req.queryParams("gameId"));
+        int gameId = 0;//only 1 game at the moment
+        System.out.println("This game is called " + (runningGames.get(gameId).name));//pls dont be null...
+        int[][] board = runningGames.get(gameId).board.grid;
+        //System.out.println(board.length);
+        //synchronized (board) {
+        return board;//return the whole table oof
+        //}
+    }
+
+    private static String startGame() {
+        System.out.println("starting a new game...");
+        try {
+            AbstractGameEngine age = new AbstractGameEngine(0, 250, PreSetBikes);
+            age.init();
+            age.name = "coolname";
+            runningGames.add(age);
+            System.out.println("list of running games: " + runningGames.toString());
+            System.out.println("added a game called: " + runningGames.get(0).name);
+        } catch (Exception e) {
+            System.out.println("error starting game: " + e);
         }
+        return "Trajan was here";
     }
 
     private static Object[] updateBikes(Request req) {

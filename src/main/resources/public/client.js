@@ -26,31 +26,20 @@ var bikeRadius = 2;//bikes are just spheres
 var wallgeo = new THREE.CubeGeometry(unit, wallThickness, unit); //one unit of the path geometry
 var wallmat = new THREE.MeshLambertMaterial({ color: 0x121212 }); //ambient: 0x121212
 
-var bikegeo = new new THREE.Mesh(new THREE.SphereGeometry(bikeRadius, 8, 8), bikemat)
 var bikemat = new THREE.MeshLambertMaterial({ color: 0xFF2800 });//ferrari red!!!!!!!
+var bikegeo = new THREE.SphereGeometry(bikeRadius, 8, 8);
+var bikemesh = new THREE.Mesh(bikegeo, bikemat);
 
-function init() {
-    //setting and adding camera
-    camera.position.set(0, out * 1.2, out / 1.5);
-    var cameraFocus = new THREE.Vector3(100, 0, 0);
-    camera.lookAt(cameraFocus);
-    controls.update(); //have to update controls after camera is changed
-    scene.add(camera);
-    renderer.setSize(WIDTH, HEIGHT);
-    container.appendChild(renderer.domElement);
+var grid = new THREE.GridHelper(gridSize, gridDivisions, gridCenterColor, gridColor);
+scene.add(grid);
 
-    var grid = new THREE.GridHelper(gridSize, gridDivisions, gridCenterColor, gridColor);
-    scene.add(grid);
+//lighting
+const pointLight = new THREE.PointLight(0xFFFFFF);
+pointLight.position.x = 10;
+pointLight.position.y = 130;
+pointLight.position.z = 50;
+scene.add(pointLight);
 
-    //lighting
-    const pointLight = new THREE.PointLight(0xFFFFFF);
-    pointLight.position.x = 10;
-    pointLight.position.y = 130;
-    pointLight.position.z = 50;
-    scene.add(pointLight);
-
-}
-init();
 
 //Three.js:
 // orbit control stuff
@@ -58,13 +47,22 @@ var controls = new THREE.OrbitControls(camera);
 controls.enableZoom = true;
 controls.maxDistance = out * 3;
 controls.minDistance = out / 30;
-controls.keys = { //move around center of grid with keys
-    LEFT: 37, //left arrow
-    UP: 38, // up arrow
-    RIGHT: 39, // right arrow
-    BOTTOM: 40 // down arrow
+// controls.keys = { //move around center of grid with keys
+//     LEFT: 37, //left arrow
+//     UP: 38, // up arrow
+//     RIGHT: 39, // right arrow
+//     BOTTOM: 40 // down arrow
 
-}
+// }
+
+//setting and adding camera
+camera.position.set(0, out * 1.2, out / 1.5);
+var cameraFocus = new THREE.Vector3(100, 0, 0);
+camera.lookAt(cameraFocus);
+controls.update(); //have to update controls after camera is changed
+scene.add(camera);
+renderer.setSize(WIDTH, HEIGHT);
+container.appendChild(renderer.domElement);
 
 //RENDERING AND UPDATING
 renderer.render(scene, camera);
@@ -102,17 +100,20 @@ class Bike {
 }
 
 function drawGrid(grid) {
-    var i;
-    var j;
-    for (i = 0; i < grid.length; i++) {
-        for (j = 0; j < grid[0].length; i++) {
+    var height = grid.length;
+    var width = grid[0].length;
+    console.log("trying to draw a grid with dimensions " + height + ", " + width);
+
+    for (var i = 0; i < height; i++) {
+        for (var j = 0; j < width; j++) {
+            console.log("i is " + i + ", j is " + j + ".");
+            //console.log(grid[i][j]);
             if (grid[i][j] == 0) {
                 break;
-            }
-            if (grid[i][j] == 1) {//bikes
+            } else if (grid[i][j] == 1) {//bikes
+                console.log("found a bike!!")
                 var mesh = new THREE.Mesh(bikegeo, bikemat);
-            }
-            if (grid[i][j] == 2) {//walls or trails
+            } else if (grid[i][j] == 2) {//walls or trails
                 var mesh = new THREE.Mesh(wallgeo, wallmat);
             }
             mesh.position.x = grid[i][j] - unit / 2; //HAS PROBLEMS HERE ~ Audrey
@@ -165,13 +166,97 @@ function updateGrid() {
         });
 }
 
-function nextFrame() {
-    request({ url: "/updateBikes", method: "GET" })
+function listBikes() {
+    var tester = "";
+    request({ url: "/getGames?tableName=bikeclasses", method: "GET" })
         .then(data => {
-            bikeUpdates = JSON.parse(data); //given a test array with two bike data object
-            drawGrid(bikeUpdates);
+            if (data.length != null) {
+                let res = JSON.parse(data);
+                console.log(res);
+
+                for (var i = 0; i < res.length; i++) {
+                    for (var j = 0; j < res[0].length; j++) {
+
+                        if (res[i][j] != null) {
+                            tester = tester + res[i][j] + " ";
+                        }
+                    }
+                }
+                document.getElementById("bikeListOutput").innerHTML = tester;
+                console.log(tester);
+            }
         })
         .catch(error => {
-            console.log("Bike update error: " + error);
+            result.innerHTML += "Could not find any games."
+        });
+
+    document.getElementById("bikeListOutput").value += "";
+}
+
+function runGame() {
+    var newGameName = document.getElementById("userGameName");
+    console.log(newGameName);
+    var bikes = {
+        nameBikeList: JSON.stringify(newGameBikeList)
+    };
+    //xmlhttp.setRequestHeader("Content-type", "application/json");
+    request({ url: "/runGame", method: "POST", body: bikes }) //body:bikes
+        .then(data => {
+            console.log("New game " + data + "has been created. Cool")
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
+//do this once please...
+function initialize() {
+    console.log("intializing game...");
+    request({ url: "/getBoard", method: "GET" })
+        .then(data => {
+            var cleanData = data.JSON.parse();
+            console.log(cleanData);
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
+function frameStep() {
+    console.log("one frame!");
+    request({ url: "/getBoard", method: "GET" })//need to either make this post or use URL params
+        .then(data => {
+            var cleanData = JSON.parse(data);
+            drawGrid(cleanData);
+            console.log(cleanData);
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
+function frameContinuous() {
+    console.log("get me ALL THE UPDATES");
+    //lambdas inside lambdas are fUN
+    setInterval(function () {
+        request({ url: "/getBoard", method: "GET" })
+            .then(data => {
+                var cleanData = data.JSON.parse();
+                console.log(cleanData);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }, 20);
+}
+
+function startGame() {
+    console.log("starting game...")
+    request({ url: "/startGame", method: "GET" })//makes a presetgame
+        .then(data => {
+            console.log("Game started successfully!");
+        })
+        .catch(error => {
+            console.log(error);
         });
 }
