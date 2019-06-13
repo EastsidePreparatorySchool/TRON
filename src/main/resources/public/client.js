@@ -54,7 +54,11 @@ scene.add(pointLight);
 
 //--------------------------------------------LIGHT TRAIL--------------------------------------------------------
 
-var trails = {}; //shove all trails in object so I can destroy them conveniently {ID: [points], ID: [points]}
+var allpaths = []; //2D array of all coordinates, put the path meshes into the right boxes in the array so I can find and delete them later
+var fakeIDs = [1, 21, 15, 3]; //FAKE FOR TESTING COLOR STUFF
+var IDs = fakeIDs; //change to empty
+
+var bikeColors = [0x9900ff, 0x99ff33, 0xff0066, 0xff00ff]; //four pre set colors
 
 var pathgeo = new THREE.CubeGeometry(unit, paththickness, unit); //one unit of the path geometry
 var pathmat = new THREE.MeshLambertMaterial({ color: 0xff0066 }); //, ambient: 0x121212
@@ -73,17 +77,9 @@ function drawpath(patharray, color) { //change color to ID???
     }
 }
 
-var IDs = [];
-var allcolors;  //REPLACE THIS
-
 function getcolor (ID) {
-    var index = IDs.findIndex(comparison, ID); //NEED TO HAND COMPARATOR THE ID YOURE LOOKING FOR
-    //pretend I get the index of an ID, now:
+    var index = IDs.findIndex((currentID) => currentID == ID ); //NEED TO HAND COMPARATOR THE ID YOURE LOOKING FOR
     return bikeColors[index];
-}
-
-function comparison (IDarray, ID) {
-    return IDarray == ID; //this won't work
 }
 
 function drawpath2(patharray, ID) { //change color to ID???
@@ -98,38 +94,68 @@ function drawpath2(patharray, ID) { //change color to ID???
         mesh.position.x = patharray[i][0] - unit / 2; 
         mesh.position.z = patharray[i][1] - unit / 2;
         scene.add(mesh); 
-        trails[ID] += mesh; //DOES THIS DO WHAT I THINK IT WILL????
     }
 }
 
-function killpath(ID) { //takes ID and kills all of their trails
-    scene.remove(trails.ID); 
-    delete trails.ID;
+class Path {
+    constructor(patharray, ID) {
+        console.log(patharray);
+        this.patharray = patharray;
+        //console.log(this.patharray);
+        this.ID = ID;
+        //this.color = getcolor(ID); //this is a funky function that probably doesn't work
+    }
+    draw() {
+        var color = getcolor(this.ID);
+        var pathgeo = new THREE.CubeGeometry(unit, paththickness, unit); //one unit of the path geometry
+        var pathmat = new THREE.MeshLambertMaterial({ color: color }); 
+        console.log("draw: " + this.patharray);
+        var pathlength = this.patharray.length;
+        var i;
+        for (i = 0; i < pathlength; i++) {
+            var mesh = new THREE.Mesh(pathgeo, pathmat);
+            mesh.position.x = this.patharray[i][0] - unit / 2; 
+            mesh.position.z = this.patharray[i][1] - unit / 2;
+            scene.add(mesh); 
+            var x = this.patharray[i][0] + gridDivisions/2;
+            var y = this.patharray[i][1] + gridDivisions/2;
+            console.log("index x: " + x + " and y: " + y);
+            if( allpaths[x] == null ) allpaths[x] = [];
+            allpaths[x][y] = mesh; //add the boi to its coordinate in the path array
+        }
+    }
+    kill() {
+        var pathlength = this.patharray.length;
+        var i;
+        for (i = 0; i < pathlength; i++) {
+            var x = this.patharray[i][0] + gridDivisions/2;
+            var y = this.patharray[i][1] + gridDivisions/2;
+            var pathunit = allpaths[x][y];
+            scene.remove(pathunit); //remove it from the scene
+            allpaths[x][y] = null; //removes it from the storage array
+        }
+    }
 }
+
+var testpath = [[-10, 9], [-10, 8], [-9, 8], [-9, 7], [-9, 6], [-8, 6], [-7, 6], [-6, 6], [-5, 6], [-4, 6], [-3, 6], [-3, 5], [-2, 5]]; //test path with kinda random points
+
+var path1 = new Path (testpath, 3);
+path1.draw();
+path1.kill();
 
 //-----------------------------------------------BIKE------------------------------------------------------------
 
 
-// fake bike stuff
-/*const RADIUS = unit / 2;
-const SEGMENTS = 16;
-const RINGS = 16;
-const sphereMaterial = new THREE.MeshLambertMaterial({ color: 0xCC0000 });
-const fakebike = new THREE.Mesh(new THREE.SphereGeometry(RADIUS, SEGMENTS, RINGS), sphereMaterial);
-fakebike.position.x = unit / 2;
-fakebike.position.z = unit / 2; */
-
 var bikes = []; //store IDs of each bike in the game
-var testpath = [[-10, 9], [-10, 8], [-9, 8], [-9, 7], [-9, 6], [-8, 6], [-7, 6], [-6, 6], [-5, 6], [-4, 6], [-3, 6], [-3, 5], [-2, 5]]; //test path with kinda random points
 var numbers = [1, 2, 3, 4, 5]; //array with just numbers
 
 class Bike {
-    constructor(material, startx, starty, id, species, lightpath) { //lightpath is a double array
+    constructor(material, x, y, id, lightpath) { //lightpath is a double array
         this.material = material;
         this.mesh = new THREE.Mesh(cubeGeo, this.material);
         scene.add(this.mesh);
-        this.mesh.position.x = startx; //an initial x, y
-        this.mesh.position.z = starty; //this is the y on the grid
+        this.mesh.position.x = x; //an initial x, y
+        this.mesh.position.z = y; //this is the y on the grid
         this.mesh.position.y = 0; //up from grid
         this.id = id; //every bike will have a unique id
     }
@@ -205,9 +231,6 @@ function updateBikeTest() { //this is a method to just test parsing a bike array
             console.log("Bike update error: " + error);
         });
 }
-
-
-var bikeColors = [0x9900ff, 0x99ff33, 0xff0066]; //make this better later
 
 function initializeBikes() { //function takes a "compact log" from Faye (form: "["name", true, [bikex, bikey], [trail points]]) and draws it
     request({ url: "/updateBikeTest", method: "GET" })
