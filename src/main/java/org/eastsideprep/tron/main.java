@@ -34,7 +34,7 @@ public class main {
     static final Bike[] PreSetBikes = new Bike[]{new SillyBike(0, new Tuple(50, 50)), new SillyBike(1, new Tuple(51, 51))};
     static AbstractGameEngine PreSetGame = new AbstractGameEngine(0, "engineTest", 250, PreSetBikes);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException{
         char quote = '"';
         staticFiles.location("public/");
 
@@ -53,10 +53,12 @@ public class main {
         get("/runGame", "application/json", (req, res) -> runGame(req), new JSONRT());
         //for testing purposes only
         get("/updateBikeTest", "application/json", (req, res) -> updateBikeTest(), new JSONRT());
+        get("/updateBikeTest2", "application/json", (req, res) -> updateBikeTest2(), new JSONRT());
         post("/runGameTest", "application/json", (req, res) -> runGameTest(req), new JSONRT());
         //giveMeTheValue("GameID","games","GameName= " +quote + "Gametest"+ quote);
         System.out.println("teeeeeestttt " + giveMeTheBikeArray("Gametest"));
-
+        
+        logTest();
     }
 
 //TEST
@@ -72,6 +74,14 @@ public class main {
 
         newGame(gameName, bikeList);
         return bikeList;
+    }
+    
+    public static void logTest() throws InterruptedException  {
+        Bike[] testbikes = new Bike[]{new BasicBike(0, new Tuple(5, 5)), new BasicBike(1, new Tuple(10, 10))};
+        AbstractGameEngine testgame = new AbstractGameEngine(1, "logTest", 15, testbikes);
+
+        testgame.run();
+        
     }
 
     private static Object[] runGameTest(Request req) {
@@ -171,6 +181,18 @@ public class main {
         testArr[1] = tes2;
 
         return testArr;
+    }
+    
+    private static ArrayList updateBikeTest2() {
+        // ["POSUPDATE", int id, int[] pos]
+        // ["DEATH", int id, null]
+        
+        ArrayList<Object> update = new ArrayList<>();
+        update.add("POSUPDATE");
+        update.add(3);
+        update.add(new int[] {-30, -30});
+        
+        return update;
     }
     //End of testing methods
 
@@ -288,7 +310,8 @@ public class main {
             ctx.clientSubID = client;
             ctxMap.put(client, ctx);
         }
-//I COMENTED THIS ONE OUT BECAUSE IT WAS GIVING AN ERROR AND IT WAS ANNOYING
+        
+        
         // blow up stale contexts
 
         // if (ctx.observer != null && ctx.observer.isStale()) { 
@@ -312,6 +335,8 @@ public class main {
                 return null;
             }
 
+            System.out.println("has observer... ");
+            
             ArrayList<GameLogEntry> list = ctx.observer.getNewItems();
             ArrayList<Object> done = new ArrayList<>();
 
@@ -343,12 +368,11 @@ public class main {
                         case 2:
                             result[0] = "DEATH";
                             result[1] = entry.id;
-                        case 6:
-                            result[0] = "WIN";
                         default:
                             break;
                     }
                     done.add(result);
+                    System.out.println("bikeupdate: " + result[0] + " " + result[1] + " " + result[2]);
                 }
                 Object[] array = new Object[list.size()];
                 return done.toArray(array);

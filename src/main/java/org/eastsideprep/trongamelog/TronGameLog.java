@@ -17,28 +17,37 @@ import org.eastsideprep.gamelog.GameLogState;
  */
 public class TronGameLog extends GameLog implements TronLogInterface  {
 
+    //to be 100% honest, i have no idea what to put here
+    //idk why we even need this
+    
+    TronGameState state;
+    
     public TronGameLog(GameLogState state) {
         super(state);
+        this.state = (TronGameState) state;
     }
 
     @Override
     public void UpdatePosition(int id, Tuple t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        state.addEntry(new TronGameLogEntry(id, t));
     }
 
     @Override
     public void KillBike(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        state.addEntry(new TronGameLogEntry(id));
     }
 
     @Override
-    public void Setup(int size) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void GameTurn() {
+        state.addEntry(new TronGameLogEntry());
     }
-
+    
     @Override
     public void runResults(Bike[] testBikes) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //???
+        //what the heck is this and why is it in my log.
+        
+        //traj please explain
     }
     
 }

@@ -23,6 +23,7 @@ public abstract class Bike {
         this.bikeId = id;
         this.startingPosition = p;
     }
+    
     public static final int UP = 0;
     public static final int RIGHT = 1;
     public static final int DOWN = 2;

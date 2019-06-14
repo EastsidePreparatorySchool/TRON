@@ -2,14 +2,15 @@
 //----------------------------------------CAMERA, LIGHT, CONTROL, GRID------------------------------------------
 
 //viewing and rendering variables
-const WIDTH = innerWidth; //change these back!!
-const HEIGHT = innerHeight;
+const WIDTH = window.innerWidth; //change these back!!
+const HEIGHT = window.innerHeight;
+console.log('width: ' + WIDTH + ' height: ' + HEIGHT);
 const VIEW_ANGLE = 45;
 const ASPECT = WIDTH / HEIGHT;
 const NEAR = 0.1;
-const FAR = 10000;
+const FAR = 500;
 var out = 100; //how far out camera is, and also how big grid is
-const container = document.querySelector('#container');
+//const container = document.querySelector('#container');
 const renderer = new THREE.WebGLRenderer();
 var camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
 const scene = new THREE.Scene();
@@ -41,7 +42,7 @@ camera.lookAt(cameraFocus);
 controls.update(); //have to update controls after camera is changed
 scene.add(camera);
 renderer.setSize(WIDTH, HEIGHT);
-container.appendChild(renderer.domElement);
+document.body.appendChild(renderer.domElement);
 
 var grid = new THREE.GridHelper(gridSize, gridDivisions, gridCenterColor, gridColor);
 scene.add(grid);
@@ -65,6 +66,7 @@ var pathmat = new THREE.MeshLambertMaterial({ color: 0xff0066 }); //, ambient: 0
 var pathmesh = new THREE.Mesh(pathgeo, pathmat);
 
 function drawpath(patharray, color) { //change color to ID???
+    //var color = getcolor(ID); //use this if want to use ID instead
     var pathgeo = new THREE.CubeGeometry(unit, paththickness, unit); //one unit of the path geometry
     var pathmat = new THREE.MeshLambertMaterial({ color: color }); //, ambient: 0x121212
     var pathlength = patharray.length;
@@ -77,39 +79,26 @@ function drawpath(patharray, color) { //change color to ID???
     }
 }
 
+function getindex (ID) {
+    var index = IDs.findIndex((currentID) => currentID == ID );
+    return index;
+}
+
 function getcolor (ID) {
     var index = IDs.findIndex((currentID) => currentID == ID ); //NEED TO HAND COMPARATOR THE ID YOURE LOOKING FOR
     return bikeColors[index];
 }
 
-function drawpath2(patharray, ID) { //change color to ID???
-    var color = getcolor(ID);
-    var pathgeo = new THREE.CubeGeometry(unit, paththickness, unit); //one unit of the path geometry
-    var pathmat = new THREE.MeshLambertMaterial({ color: color }); 
-    var pathlength = patharray.length;
-
-    var i;
-    for (i = 0; i < pathlength; i++) {
-        var mesh = new THREE.Mesh(pathgeo, pathmat);
-        mesh.position.x = patharray[i][0] - unit / 2; 
-        mesh.position.z = patharray[i][1] - unit / 2;
-        scene.add(mesh); 
-    }
-}
-
 class Path {
     constructor(patharray, ID) {
-        console.log(patharray);
         this.patharray = patharray;
-        //console.log(this.patharray);
         this.ID = ID;
-        //this.color = getcolor(ID); //this is a funky function that probably doesn't work
+        this.color = getcolor(ID); 
     }
     draw() {
-        var color = getcolor(this.ID);
-        var pathgeo = new THREE.CubeGeometry(unit, paththickness, unit); //one unit of the path geometry
-        var pathmat = new THREE.MeshLambertMaterial({ color: color }); 
-        console.log("draw: " + this.patharray);
+        var pathgeo = new THREE.CubeGeometry(unit, paththickness, unit); //one unit size of the path geometry
+        var pathmat = new THREE.MeshLambertMaterial({ color: this.color }); 
+        //console.log("draw: " + this.patharray);
         var pathlength = this.patharray.length;
         var i;
         for (i = 0; i < pathlength; i++) {
@@ -119,7 +108,7 @@ class Path {
             scene.add(mesh); 
             var x = this.patharray[i][0] + gridDivisions/2;
             var y = this.patharray[i][1] + gridDivisions/2;
-            console.log("index x: " + x + " and y: " + y);
+            //console.log("index x: " + x + " and y: " + y);
             if( allpaths[x] == null ) allpaths[x] = [];
             allpaths[x][y] = mesh; //add the boi to its coordinate in the path array
         }
@@ -141,40 +130,44 @@ var testpath = [[-10, 9], [-10, 8], [-9, 8], [-9, 7], [-9, 6], [-8, 6], [-7, 6],
 
 var path1 = new Path (testpath, 3);
 path1.draw();
-path1.kill();
+//path1.kill();
 
 //-----------------------------------------------BIKE------------------------------------------------------------
 
-
-var bikes = []; //store IDs of each bike in the game
+var bikes = []; //the actual bike meshes go here with the right indices 
 var numbers = [1, 2, 3, 4, 5]; //array with just numbers
 
 class Bike {
-    constructor(material, x, y, id, lightpath) { //lightpath is a double array
-        this.material = material;
-        this.mesh = new THREE.Mesh(cubeGeo, this.material);
-        scene.add(this.mesh);
-        this.mesh.position.x = x; //an initial x, y
-        this.mesh.position.z = y; //this is the y on the grid
-        this.mesh.position.y = 0; //up from grid
-        this.id = id; //every bike will have a unique id
+    constructor(ID) {
+        this.ID = ID;
+        this.color = getcolor(ID);
+        this.x;
+        this.y;
+    }
+    draw(x, y) {
+        const RADIUS = unit / 2;
+        const SEGMENTS = 16;
+        const RINGS = 16;
+        const sphereMaterial = new THREE.MeshLambertMaterial({ color: this.color });
+        const simplebike = new THREE.Mesh(new THREE.SphereGeometry(RADIUS, SEGMENTS, RINGS), sphereMaterial);
+        simplebike.position.x = x - unit / 2;
+        simplebike.position.z = y - unit / 2;
+        scene.add(simplebike);
+        bikes[getindex(this.ID)] = simplebike;
+    }
+    update(x, y) {
+        bikes[getindex(this.ID)].position.x = x - unit / 2;
+        bikes[getindex(this.ID)].position.z = y - unit / 2;
     }
     kill() {
-        scene.remove(this.mesh);
-        delete bikes[this.id];
+        scene.remove(bikes[getindex(this.ID)]);
+        bikes[getindex(this.ID)] = null;
     }
 }
-
-function simpleBike(x, y, color) {
-    const RADIUS = unit / 2;
-    const SEGMENTS = 16;
-    const RINGS = 16;
-    const sphereMaterial = new THREE.MeshLambertMaterial({ color: color });
-    const simplebike = new THREE.Mesh(new THREE.SphereGeometry(RADIUS, SEGMENTS, RINGS), sphereMaterial);
-    simplebike.position.x = x - unit / 2;
-    simplebike.position.z = y - unit / 2;
-    scene.add(simplebike);
-}
+var bike1 = new Bike (3);
+bike1.draw(10, 20);
+bike1.update(20, -30);
+bike1.kill();
 
 
 //-------------------------------------------------ROUTES------------------------------------------------------------
@@ -201,7 +194,7 @@ var testbikes = [["test1", true, [50, 30], [50, -20]], ["test2", false, [-40, 30
 
 console.log("what I should get from faye: " + testbikes);
 
-function updateBikeTest() { //this is a method to just test parsing a bike array from Faye 
+function initializeBikeTest() { //this is a method to just test parsing a bike array from Faye 
     request({ url: "/updateBikeTest", method: "GET" })
         .then(data => {
             bikes = JSON.parse(data); //given a test array with two bike data object
@@ -275,22 +268,49 @@ function updateBikes() { //takes either a "DEATH" (form: [DEATH, int bikeID]) or
         .then(data => { 
             var update = JSON.parse(data); //given a test array with two bike data object
             console.log("bike update: " + update);
-            if (update.length == 3) { //then it is a position update
-                //add position elements to the object
-                var color = getcolor(update[1]); //should return color
-                drawpath(update[2], color);
-                //draw path (with right color)
-                //move bike
-            } else { //then it is a bike death (length 2)
-                
-                //remove bike
-                //remove path
+
+            // ["POSUPDATE", int id, int[] pos]
+            // ["DEATH", int id, null]
+
+            if (update[0] == "POSUPDATE") {
+                var ID = update[1];
+                var newpoint = update[2];
+                var index = getindex(ID);
+                var path = new Path (newpoint, ID);
+                path.draw();
+                bikes[index].update(newpoint[0], newpoint[1]);
+            } else if (update[0] == "DEATH"){
+                bikes[getindex(update[1])].kill();
+                allpaths[getindex(update[1])].kill();
             }
+            //updateBikes(); //call update function again after last update finishes
+        })
+        .catch(error => {
+            console.log("Bike update error: " + error);
+        });
+}
 
-            //maybe have a queue of events (maybe one for each bike?) and step through updates in a nice timed way. first make it work
+function updateBikeTest() { //takes either a "DEATH" (form: [DEATH, int bikeID]) or "POSUPDATE" (form: [POSUPDATE, int bikeID, [x, y]])
+    request({ url: "/updateBikes", method: "GET" })
+        .then(data => { 
+            var update = JSON.parse(data); //given a test array with two bike data object
+            console.log("bike update: " + update);
 
+            // ["POSUPDATE", int id, int[] pos]
+            // ["DEATH", int id, null]
 
-            updateBikes(); //call update function again after last update finishes
+            if (update[0] == "POSUPDATE") {
+                var ID = update[1];
+                var newpoint = update[2];
+                var index = getindex(ID);
+                var path = new Path (newpoint, ID);
+                path.draw();
+                bikes[index].update(newpoint[0], newpoint[1]);
+            } else if (update[0] == "DEATH"){
+                bikes[getindex(update[1])].kill();
+                allpaths[getindex(update[1])].kill();
+            }
+            //updateBikes(); //call update function again after last update finishes
         })
         .catch(error => {
             console.log("Bike update error: " + error);
@@ -347,6 +367,18 @@ function updateBikeTest2() { //this one without a url request just so I can test
         //send off bike positions to be plotted
         drawpath(bikePositions[i], bikeColors[i]); //purple just to test
     }
+}
+
+
+function simpleBike(x, y, color) {
+    const RADIUS = unit / 2;
+    const SEGMENTS = 16;
+    const RINGS = 16;
+    const sphereMaterial = new THREE.MeshLambertMaterial({ color: color });
+    const simplebike = new THREE.Mesh(new THREE.SphereGeometry(RADIUS, SEGMENTS, RINGS), sphereMaterial);
+    simplebike.position.x = x - unit / 2;
+    simplebike.position.z = y - unit / 2;
+    scene.add(simplebike);
 }
 
 */
