@@ -66,6 +66,7 @@ var pathmat = new THREE.MeshLambertMaterial({ color: 0xff0066 }); //, ambient: 0
 var pathmesh = new THREE.Mesh(pathgeo, pathmat);
 
 function drawpath(patharray, color) { //change color to ID???
+    //var color = getcolor(ID); //use this if want to use ID instead
     var pathgeo = new THREE.CubeGeometry(unit, paththickness, unit); //one unit of the path geometry
     var pathmat = new THREE.MeshLambertMaterial({ color: color }); //, ambient: 0x121212
     var pathlength = patharray.length;
@@ -81,21 +82,6 @@ function drawpath(patharray, color) { //change color to ID???
 function getcolor (ID) {
     var index = IDs.findIndex((currentID) => currentID == ID ); //NEED TO HAND COMPARATOR THE ID YOURE LOOKING FOR
     return bikeColors[index];
-}
-
-function drawpath2(patharray, ID) { //change color to ID???
-    var color = getcolor(ID);
-    var pathgeo = new THREE.CubeGeometry(unit, paththickness, unit); //one unit of the path geometry
-    var pathmat = new THREE.MeshLambertMaterial({ color: color }); 
-    var pathlength = patharray.length;
-
-    var i;
-    for (i = 0; i < pathlength; i++) {
-        var mesh = new THREE.Mesh(pathgeo, pathmat);
-        mesh.position.x = patharray[i][0] - unit / 2; 
-        mesh.position.z = patharray[i][1] - unit / 2;
-        scene.add(mesh); 
-    }
 }
 
 class Path {
