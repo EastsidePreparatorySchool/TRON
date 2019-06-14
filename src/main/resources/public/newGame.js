@@ -21,8 +21,8 @@ function createGameTest() {
             var cleanResults = JSON.stringify(results);
             cleanResults = cleanResults.replace(",", " ");
             cleanResults = cleanResults.replace("\\n\"", "<br> ");
-            cleanResults = cleanResults.replace("[","");
-            cleanResults = cleanResults.replace("]","");
+            cleanResults = cleanResults.replace("[", "");
+            cleanResults = cleanResults.replace("]", "");
             outputHandle.innerHTML = cleanResults;
         })
         .catch(error => {
@@ -33,7 +33,9 @@ function createGameTest() {
 function request(obj) {
     return new Promise((resolve, reject) => {
         let xhr = new XMLHttpRequest();
+
         xhr.open(obj.method || "GET", obj.url);
+       // xhr.setRequestHeader("Content-type", "application/json")
 
         xhr.onload = () => {
             if (xhr.status >= 200 && xhr.status < 300) {
@@ -42,7 +44,7 @@ function request(obj) {
                 reject(xhr.statusText);
             }
         };
-        xhr.onerror = () => reject(xhr.statusText);
+        xhr.onerror = () => reject(xhr.statusText)
 
         xhr.send(obj.body);
     });
@@ -91,21 +93,41 @@ function listBikes() {
 }
 
 function createGame() {
+    var bikes="";
     var newGameName = document.getElementById("userGameName").value;
-    console.log(newGameName);
-    var bikes = {
-        nameBikeList: JSON.stringify(newGameBikeList)
-    };
-    console.log(bikes);
+    
+    for (i = 0; i < newGameBikeList.length; i++) {
+       
+        console.log(newGameBikeList[i]);
+        
+    }
+   
+    for (i = 0; i < newGameBikeList.length; i++) {
+       
+        bikes = bikes + ":"+newGameBikeList[i];
+        
+    }
+    while(bikes.charAt(0) === ':')
+{
+ bikes = bikes.substr(1);
+}
+    
+   
+    console.log(bikes+"bikes");
 
     //xmlhttp.setRequestHeader("Content-type", "application/json");
-    request({ url: "/createGame?gamename="+newGameName, method: "POST", body: bikes }) //body:bikes
+    request({ url: "/createGame?gameNameAndBikes=" + newGameName + "/"+bikes, method: "POST"}) //body:bikes
         .then(data => {
             console.log("New game " + data + "has been created. Cool")
         })
         .catch(error => {
             console.log(error);
         });
+}
+
+function createGame8(){
+    var newGameName = document.getElementById("userGameName").value;
+    
 }
 
 function initialize() {
@@ -122,15 +144,15 @@ function initialize() {
 
 function selectBike() {
     var bikeID = document.getElementById("userBikes").value;
-
+    console.log(bikeID);
     newGameBikeList.push(bikeID);
-    for (i = 0; i < newGameBikeList.length; i++) {
-        console.log(newGameBikeList[i]);
-    }
+   
+   
 
 }
 
 function selectGame() {
     var gameid = document.getElementById("userGameId");
     request({ url: "/selectGame?gameid=" + gameid, method: "POST" })
+
 }

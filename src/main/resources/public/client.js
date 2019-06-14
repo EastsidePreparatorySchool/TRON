@@ -2,14 +2,15 @@
 //----------------------------------------CAMERA, LIGHT, CONTROL, GRID------------------------------------------
 
 //viewing and rendering variables
-const WIDTH = innerWidth; //change these back!!
-const HEIGHT = innerHeight;
+const WIDTH = window.innerWidth; //change these back!!
+const HEIGHT = window.innerHeight;
+console.log('width: ' + WIDTH + ' height: ' + HEIGHT);
 const VIEW_ANGLE = 45;
 const ASPECT = WIDTH / HEIGHT;
 const NEAR = 0.1;
-const FAR = 10000;
+const FAR = 500;
 var out = 100; //how far out camera is, and also how big grid is
-const container = document.querySelector('#container');
+//const container = document.querySelector('#container');
 const renderer = new THREE.WebGLRenderer();
 var camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
 const scene = new THREE.Scene();
@@ -41,7 +42,7 @@ camera.lookAt(cameraFocus);
 controls.update(); //have to update controls after camera is changed
 scene.add(camera);
 renderer.setSize(WIDTH, HEIGHT);
-container.appendChild(renderer.domElement);
+document.body.appendChild(renderer.domElement);
 
 var grid = new THREE.GridHelper(gridSize, gridDivisions, gridCenterColor, gridColor);
 scene.add(grid);
@@ -99,16 +100,14 @@ function drawpath2(patharray, ID) { //change color to ID???
 
 class Path {
     constructor(patharray, ID) {
-        console.log(patharray);
         this.patharray = patharray;
-        //console.log(this.patharray);
         this.ID = ID;
-        //this.color = getcolor(ID); //this is a funky function that probably doesn't work
+        this.color = getcolor(ID); //this is a funky function that probably doesn't work
     }
     draw() {
-        var color = getcolor(this.ID);
+        //var color = getcolor(this.ID);
         var pathgeo = new THREE.CubeGeometry(unit, paththickness, unit); //one unit of the path geometry
-        var pathmat = new THREE.MeshLambertMaterial({ color: color }); 
+        var pathmat = new THREE.MeshLambertMaterial({ color: this.color }); 
         console.log("draw: " + this.patharray);
         var pathlength = this.patharray.length;
         var i;
@@ -141,7 +140,7 @@ var testpath = [[-10, 9], [-10, 8], [-9, 8], [-9, 7], [-9, 6], [-8, 6], [-7, 6],
 
 var path1 = new Path (testpath, 3);
 path1.draw();
-path1.kill();
+//path1.kill();
 
 //-----------------------------------------------BIKE------------------------------------------------------------
 
