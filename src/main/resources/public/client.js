@@ -20,8 +20,8 @@ var gridDivisions = 100; //how many squares along a side
 var unit = gridDivisions / gridSize; //sidelength of one square on the grid
 var gridCenterColor = 0x66ffd9; //0x444444;
 var gridColor = 0x668cff; //0x888888;
-var wallThickness = 5; //thickness of light trail
-var bikeRadius = 2;//bikes are just spheres
+var wallThickness = 1 * unit; //thickness of light trail
+var bikeRadius = 3 * unit / 4;//bikes are just spheres
 
 var wallgeo = new THREE.CubeGeometry(unit, wallThickness, unit); //one unit of the path geometry
 var wallmat = new THREE.MeshLambertMaterial({ color: 0x121212 }); //ambient: 0x121212
@@ -100,26 +100,23 @@ class Bike {
 }
 
 function drawGrid(grid) {
-    var height = grid.length;
-    var width = grid[0].length;
-    console.log("trying to draw a grid with dimensions " + height + ", " + width);
-
-    for (var i = 0; i < height; i++) {
-        for (var j = 0; j < width; j++) {
-            console.log("i is " + i + ", j is " + j + ".");
-            //console.log(grid[i][j]);
-            if (grid[i][j] == 0) {
-                break;
-            } else if (grid[i][j] == 1) {//bikes
+    var arr = [[1, 2], [3, 4], [5, 6]];
+    for (var i = 0; i < grid.length; i++) {
+        for (var j = 0; j < grid[i].length; j++) {
+            console.log(grid[i][j]);
+            if (grid[i][j] == 1) {//bikes
                 console.log("found a bike!!")
                 var mesh = new THREE.Mesh(bikegeo, bikemat);
+                mesh.position.x = grid[i][j] - unit / 2;
+                mesh.position.z = grid[i][j] - unit / 2;
+                scene.add(mesh);
             } else if (grid[i][j] == 2) {//walls or trails
                 var mesh = new THREE.Mesh(wallgeo, wallmat);
+                mesh.position.x = grid[i][j] - unit / 2;
+                mesh.position.z = grid[i][j] - unit / 2;
+                scene.add(mesh);
             }
-            mesh.position.x = grid[i][j] - unit / 2; //HAS PROBLEMS HERE ~ Audrey
-            mesh.position.z = grid[i][j] - unit / 2; //yay thanks I love debugging JS ~ Trajan
-            //i wanna join the party ~ Faye
-            scene.add(mesh);
+
         }
     }
 }
