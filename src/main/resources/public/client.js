@@ -79,6 +79,11 @@ function drawpath(patharray, color) { //change color to ID???
     }
 }
 
+function getindex (ID) {
+    var index = IDs.findIndex((currentID) => currentID == ID );
+    return index;
+}
+
 function getcolor (ID) {
     var index = IDs.findIndex((currentID) => currentID == ID ); //NEED TO HAND COMPARATOR THE ID YOURE LOOKING FOR
     return bikeColors[index];
@@ -130,8 +135,7 @@ path1.draw();
 
 //-----------------------------------------------BIKE------------------------------------------------------------
 
-
-var bikes = []; //store IDs of each bike in the game
+var bikes = []; //the actual bike meshes go here with the right indices 
 var numbers = [1, 2, 3, 4, 5]; //array with just numbers
 
 class Bike {
@@ -141,44 +145,30 @@ class Bike {
         this.x;
         this.y;
     }
+    draw(x, y) {
+        const RADIUS = unit / 2;
+        const SEGMENTS = 16;
+        const RINGS = 16;
+        const sphereMaterial = new THREE.MeshLambertMaterial({ color: this.color });
+        const simplebike = new THREE.Mesh(new THREE.SphereGeometry(RADIUS, SEGMENTS, RINGS), sphereMaterial);
+        simplebike.position.x = x - unit / 2;
+        simplebike.position.z = y - unit / 2;
+        scene.add(simplebike);
+        bikes[getindex(this.ID)] = simplebike;
+    }
     update(x, y) {
-        
+        bikes[getindex(this.ID)].position.x = x - unit / 2;
+        bikes[getindex(this.ID)].position.z = y - unit / 2;
     }
     kill() {
-
+        scene.remove(bikes[getindex(this.ID)]);
+        bikes[getindex(this.ID)] = null;
     }
 }
-
-
-
-
-
-class Bike2 {
-    constructor(material, x, y, id, lightpath) { //lightpath is a double array
-        this.material = material;
-        this.mesh = new THREE.Mesh(cubeGeo, this.material);
-        scene.add(this.mesh);
-        this.mesh.position.x = x; //an initial x, y
-        this.mesh.position.z = y; //this is the y on the grid
-        this.mesh.position.y = 0; //up from grid
-        this.id = id; //every bike will have a unique id
-    }
-    kill() {
-        scene.remove(this.mesh);
-        delete bikes[this.id];
-    }
-}
-
-function simpleBike(x, y, color) {
-    const RADIUS = unit / 2;
-    const SEGMENTS = 16;
-    const RINGS = 16;
-    const sphereMaterial = new THREE.MeshLambertMaterial({ color: color });
-    const simplebike = new THREE.Mesh(new THREE.SphereGeometry(RADIUS, SEGMENTS, RINGS), sphereMaterial);
-    simplebike.position.x = x - unit / 2;
-    simplebike.position.z = y - unit / 2;
-    scene.add(simplebike);
-}
+var bike1 = new Bike (3);
+bike1.draw(10, 20);
+bike1.update(20, -30);
+bike1.kill();
 
 
 //-------------------------------------------------ROUTES------------------------------------------------------------
@@ -351,6 +341,18 @@ function updateBikeTest2() { //this one without a url request just so I can test
         //send off bike positions to be plotted
         drawpath(bikePositions[i], bikeColors[i]); //purple just to test
     }
+}
+
+
+function simpleBike(x, y, color) {
+    const RADIUS = unit / 2;
+    const SEGMENTS = 16;
+    const RINGS = 16;
+    const sphereMaterial = new THREE.MeshLambertMaterial({ color: color });
+    const simplebike = new THREE.Mesh(new THREE.SphereGeometry(RADIUS, SEGMENTS, RINGS), sphereMaterial);
+    simplebike.position.x = x - unit / 2;
+    simplebike.position.z = y - unit / 2;
+    scene.add(simplebike);
 }
 
 */
