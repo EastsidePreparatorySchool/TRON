@@ -86,6 +86,7 @@ public class main {
         AbstractGameEngine testgame = new AbstractGameEngine(1, "logTest", 15, testbikes);
 
         testgame.run();
+        
     }
 
     private static Object[] runGameTest(Request req) {
@@ -308,7 +309,8 @@ public class main {
             ctx.clientSubID = client;
             ctxMap.put(client, ctx);
         }
-//I COMENTED THIS ONE OUT BECAUSE IT WAS GIVING AN ERROR AND IT WAS ANNOYING
+        
+        
         // blow up stale contexts
 
         // if (ctx.observer != null && ctx.observer.isStale()) { 
@@ -332,6 +334,8 @@ public class main {
                 return null;
             }
 
+            System.out.println("has observer... ");
+            
             ArrayList<GameLogEntry> list = ctx.observer.getNewItems();
             ArrayList<Object> done = new ArrayList<>();
 

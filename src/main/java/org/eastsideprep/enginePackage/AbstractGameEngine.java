@@ -4,6 +4,8 @@ import eastsideprep.org.troncommon.TronLogInterface;
 import eastsideprep.org.troncommon.AbstractGameInterface;
 import eastsideprep.org.troncommon.Tuple;
 import java.util.ArrayList;
+import org.eastsideprep.trongamelog.TronGameLog;
+import org.eastsideprep.trongamelog.TronGameState;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -27,7 +29,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
     private final Grid board;//this is a complex object that contains a int[][] grid
     private final ArrayList<BikeContainer> bikes;
     public int numStartingBikes;
-    //private TronLogInterface gameLog;
+    private final TronGameLog gameLog = new TronGameLog(new TronGameState(true));
 
     public AbstractGameEngine(int id, int size, Bike[] bikeArr) {
         this.GameId = id;
@@ -135,13 +137,12 @@ public class AbstractGameEngine implements AbstractGameInterface {
             }
         }
         
-        
         System.out.println();
         printGrid();
     }
 
     private void killBike(BikeContainer bc) {
-        //gameLog.KillBike(bc.bike.bikeId);
+        gameLog.KillBike(bc.bike.bikeId);
         bc.kill();
         bikes.remove(bc);
     }

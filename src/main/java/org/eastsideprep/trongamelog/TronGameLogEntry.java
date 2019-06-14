@@ -4,6 +4,7 @@
  */
 package org.eastsideprep.trongamelog;
 
+import eastsideprep.org.troncommon.Tuple;
 import java.util.ArrayList;
 import org.eastsideprep.gamelog.GameLogEntry;
 
@@ -12,23 +13,18 @@ import org.eastsideprep.gamelog.GameLogEntry;
  * @author gmein
  */
 public class TronGameLogEntry extends GameLogEntry {
-
-    public class Position {
-        public int x;
-        public int y;
-    }
     
     public int entryType;
     public int id;
-    public Position p;
+    public Tuple p;
 
-    public TronGameLogEntry(int id, Position p) {
+    public TronGameLogEntry(int id, Tuple p) {
         this.entryType = Type.POSUPDATE;
         this.id = id;
         this.p = p;
     }
 
-    public TronGameLogEntry(int id, Position p, ArrayList<Position> trail) {
+    public TronGameLogEntry(int id, Tuple p, ArrayList<Tuple> trail) {
         this.entryType = Type.TRAIL;
         this.id = id;
         this.p = p;
@@ -43,7 +39,7 @@ public class TronGameLogEntry extends GameLogEntry {
         this.entryType = Type.GAMETURN;
     }
 
-    public TronGameLogEntry(Position p) {
+    public TronGameLogEntry(Tuple p) {
         this.entryType = Type.RESET;
         this.p = p; //actually the width and height of the board
     }
