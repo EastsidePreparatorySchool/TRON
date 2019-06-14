@@ -15,7 +15,7 @@ import java.util.Random;
 public class AbstractGameEngine implements AbstractGameInterface {
 
 //GAME CONSTANTS
-    private final int size = 102;//the edge will be a wall / border
+    private final int size = 42;//the edge will be a wall / border
     private final int maxSpeed = 1;
 
 //IMPORTANT OBJECTS
@@ -36,17 +36,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
         }
         numStartingBikes = bikes.size();
         board = new Grid(size, size);
-        //walls:
-        int[][] grid = new int[size][size];
-        for (int i = 0; i < grid.length; i++) {//first and last column
-            grid[0][i] = 2;
-            grid[size - 1][i] = 2;
-        }
-        for (int i = 0; i < grid[0].length; i++) {//top and bottom row
-            grid[i][0] = 2;
-            grid[i][size - 1] = 2;
-        }
-        board.grid = grid;
+
     }
 //not every game needs a name
 
@@ -55,7 +45,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
         this.name = name;
         this.bikes = new ArrayList<>();
         for (Bike b : bikeArr) {
-            bikes.add(new BikeContainer(b, new Tuple(0, 0), maxSpeed));//placing the bikes at 0,0
+            bikes.add(new BikeContainer(b, new Tuple(0, 0), maxSpeed));//placing the bikes at 0,0 for now
         }
         numStartingBikes = bikes.size();
         board = new Grid(size, size);
@@ -74,16 +64,28 @@ public class AbstractGameEngine implements AbstractGameInterface {
 
         for (BikeContainer bc : bikes) {
 
-            int x = rand.nextInt(3) + 1;//random int between 1 and 250 inclusive
-            int y = rand.nextInt(3) + 1;
+            int x = rand.nextInt(3) + 6;//random int between 1 and the max size inclusive
+            int y = rand.nextInt(3) + 6;
             int vel = rand.nextInt(maxSpeed);
 
             //place the given bikes at random coords on the board and with a random velocity up to maxSpeed
             bc.direction = rand.nextInt(3);//four directions: 0,1,2,3
             bc.currentPosition = new Tuple(x, y);
+            System.out.println("placed a bike at " + bc.currentPosition.toString());
             board.grid[x][y] = 1;
             //gameLog.UpdatePosition(bc.bike.bikeId, new Tuple(x, y));
         }
+        //walls:
+        int[][] grid = new int[size][size];
+        for (int i = 0; i < grid.length; i++) {//first and last column
+            grid[0][i] = 2;
+            grid[size - 1][i] = 2;
+        }
+        for (int i = 0; i < grid[0].length; i++) {//top and bottom row
+            grid[i][0] = 2;
+            grid[i][size - 1] = 2;
+        }
+        board.grid = grid;
     }
 
     public int[][] getGrid() {
@@ -118,11 +120,11 @@ public class AbstractGameEngine implements AbstractGameInterface {
                     pos.x--;
                 }
             } else if (dir == 1) {
-                if (pos.y < 250) {
+                if (pos.y < size - 2) {
                     pos.y++;
                 }
             } else if (dir == 2) {
-                if (pos.x < 250) {
+                if (pos.x < size - 2) {
                     pos.x++;
                 }
             } else if (dir == 3) {
@@ -130,16 +132,11 @@ public class AbstractGameEngine implements AbstractGameInterface {
                     pos.y--;
                 }
             }
-            //System.out.println("update3");
-            board.grid[pos.x][pos.y] = 1;
-            //System.out.println("updated position: (" + pos.x + "," + pos.y + ")");
-            //System.out.println("id: " + bike.bikeId);
-            //System.out.println("position: " + pos);
-            //gameLog.UpdatePosition(bike.bikeId, pos);
-            //System.out.println("update4");
-            if (pos.x == 0 || pos.x == 251 || pos.y == 0 || pos.y == 251 || board.grid[pos.x][pos.y] == 2) {
+
+            if (pos.x == 0 || pos.x == size - 1 || pos.y == 0 || pos.y == size - 1 || board.grid[pos.x][pos.y] == 2) {
                 killBike(b);
             }
+            board.grid[pos.x][pos.y] = 1;
             System.out.println("Moved bike " + b.id + " to position " + pos.toString());
         }
     }
@@ -147,37 +144,31 @@ public class AbstractGameEngine implements AbstractGameInterface {
     private void killBike(BikeContainer bc) {
         //gameLog.KillBike(bc.bike.bikeId);
         bikes.remove(bc);
-
     }
 
     public Tuple[] run(int n) {
         System.out.println(this.name);
         int size = this.size;
         Bike[] testBikes = new Bike[numStartingBikes];
-        //System.out.println("run1");
         for (int i = 0; i < testBikes.length; i++) {
             testBikes[i] = bikes.get(i).bike;
         }
         int numBikes = testBikes.length;
         Tuple[] scoreboard = new Tuple[numBikes];
-        //System.out.println("run2");
+
         for (int i = 0; i < scoreboard.length; i++) {
             scoreboard[i] = new Tuple(i, 0);
         }
-        //System.out.println("run3");
+
         for (int i = 0; i < n; i++) {//n complete games
             int winner;//winner's id
-            int turns = 0;
-            //System.out.println("run4");
-            AbstractGameEngine currentGame = new AbstractGameEngine(i, Math.max(250, size), testBikes);//dont want the game board to be too small
+
+            AbstractGameEngine currentGame = new AbstractGameEngine(i, size, testBikes);
             while (currentGame.bikes.size() > 1) {//sometimes a bike will die and the length of the arraylist will decrease
                 //System.out.println("run5");
                 currentGame.update();
-                turns++;
-                //System.out.println("Turns ran " + turns);
-                //System.out.println("run6");
             }
-            // System.out.println("run7");
+
             //there is a winner!
             winner = currentGame.bikes.get(0).bike.bikeId;//there is only one bike left in the arraylist
             System.out.println("The winner is " + winner);
@@ -186,10 +177,8 @@ public class AbstractGameEngine implements AbstractGameInterface {
                 System.out.println(tuple.toString());
                 if (tuple.x == winner) {
                     scoreboard[winner].y++;
-                    //System.out.println(tuple.toString());
                 }
             }
-            //System.out.println("run8");
         }
         //gameLog.runResults(testBikes);
 

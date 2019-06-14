@@ -8,26 +8,26 @@ const VIEW_ANGLE = 45;
 const ASPECT = WIDTH / HEIGHT;
 const NEAR = 0.1;
 const FAR = 10000;
-var out = 100; //how far out camera is, and also how big grid is
+var out = 100; //how far out camera is
 const container = document.querySelector('#container');
 const renderer = new THREE.WebGLRenderer();
 var camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
 const scene = new THREE.Scene();
 
 //CONSTANTS
-var gridSize = out; //sidelength of full grid
-var gridDivisions = 100; //how many squares along a side
+var gridSize = 42; //sidelength of full grid
+var gridDivisions = 42; //how many squares along a side
 var unit = gridDivisions / gridSize; //sidelength of one square on the grid
 var gridCenterColor = 0x66ffd9; //0x444444;
 var gridColor = 0x668cff; //0x888888;
 var wallThickness = 1 * unit; //thickness of light trail
 var bikeRadius = 3 * unit / 8;//bikes are just spheres
 
-var wallgeo = new THREE.CubeGeometry(unit, 2, wallThickness); //one unit of the path geometry
+var wallgeo = new THREE.CubeGeometry(unit, 4, wallThickness); //one unit of the path geometry
 var wallmat = new THREE.MeshLambertMaterial({ color: 0x121212 }); //ambient: 0x121212
 
 var bikemat = new THREE.MeshLambertMaterial({ color: 0xFF2800 });//ferrari red!!!!!!!
-var bikegeo = new THREE.SphereGeometry(bikeRadius, 8, 8);
+var bikegeo = new THREE.SphereGeometry(bikeRadius, 16, 16);
 var bikemesh = new THREE.Mesh(bikegeo, bikemat);
 
 var grid = new THREE.GridHelper(gridSize, gridDivisions, gridCenterColor, gridColor);
@@ -100,21 +100,21 @@ class Bike {
 }
 
 function drawGrid(grid) {
-    var arr = [[1, 2], [3, 4], [5, 6]];
+    var correction = gridSize / 2 - unit / 2;
     for (var i = 0; i < grid.length; i++) {
         for (var j = 0; j < grid[i].length; j++) {
+            console.log(grid[i][j]);
             if (grid[i][j] == 1) {//bikes
                 var mesh = new THREE.Mesh(bikegeo, bikemat);
-                mesh.position.x = grid[i][j] - unit / 2;
-                mesh.position.z = grid[i][j] - unit / 2;
+                mesh.position.x = grid[i][j] - correction;
+                mesh.position.z = grid[i][j] - correction;
                 scene.add(mesh);
             } else if (grid[i][j] == 2) {//walls or trails
                 var mesh = new THREE.Mesh(wallgeo, wallmat);
-                mesh.position.x = grid[i][j] - unit / 2;
-                mesh.position.z = grid[i][j] - unit / 2;
+                mesh.position.x = grid[i][j] - correction;
+                mesh.position.z = grid[i][j] - correction;
                 scene.add(mesh);
             }
-
         }
     }
 }
@@ -223,7 +223,7 @@ function frameStep() {
         .then(data => {
             var cleanData = JSON.parse(data);
             drawGrid(cleanData);
-            console.log(cleanData);
+            //console.log(cleanData);
         })
         .catch(error => {
             console.log(error);

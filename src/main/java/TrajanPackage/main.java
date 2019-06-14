@@ -18,7 +18,7 @@ import static spark.Spark.*;
  */
 public class main {
 
-    public final static int LENGTH = 102;
+    public final static int LENGTH = 42;
     public final static int BIKES = 4;
     private static ArrayList<AbstractGameEngine> runningGames = new ArrayList<>();//pointers to running games
     //public final static TronGameState STATE = new TronGameState(true);
