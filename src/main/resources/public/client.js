@@ -135,6 +135,25 @@ var bikes = []; //store IDs of each bike in the game
 var numbers = [1, 2, 3, 4, 5]; //array with just numbers
 
 class Bike {
+    constructor(ID) {
+        this.ID = ID;
+        this.color = getcolor(ID);
+        this.x;
+        this.y;
+    }
+    update(x, y) {
+        
+    }
+    kill() {
+
+    }
+}
+
+
+
+
+
+class Bike2 {
     constructor(material, x, y, id, lightpath) { //lightpath is a double array
         this.material = material;
         this.mesh = new THREE.Mesh(cubeGeo, this.material);
