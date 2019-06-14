@@ -118,9 +118,10 @@ function drawGrid(grid) {
                 var mesh = new THREE.Mesh(wallgeo, wallmat);
                 mesh.position.x = i - correction;
                 mesh.position.z = j - correction;
-                console.log("0");
+                
                 scene.add(mesh);
             } else if (grid[i][i] == 3) {//trails
+                console.log("0")
                 var mesh = new THREE.Mesh(trailgeo, trailmat);
                 mesh.position.x = i - correction;
                 mesh.position.z = j - correction;

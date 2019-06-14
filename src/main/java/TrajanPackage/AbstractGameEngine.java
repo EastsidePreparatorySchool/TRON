@@ -140,7 +140,6 @@ public class AbstractGameEngine implements AbstractGameInterface {
                 //if you are now on the edge/in a trail, you're dead
                 int square = board.grid[pos.x][pos.y];
                 if (pos.x == 0 || pos.x == size - 1 || pos.y == 0 || pos.y == size - 1 || square == 2 || square == 3) {
-
                     System.out.println("Oops! " + b.id + " crashed!");
                     killBike(b);
                 }
