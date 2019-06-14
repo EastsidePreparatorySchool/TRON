@@ -54,6 +54,7 @@ public class main {
         get("/runGame", "application/json", (req, res) -> runGame(req), new JSONRT());
         //for testing purposes only
         get("/updateBikeTest", "application/json", (req, res) -> updateBikeTest(), new JSONRT());
+        get("/updateBikeTest2", "application/json", (req, res) -> updateBikeTest2(), new JSONRT());
         post("/runGameTest", "application/json", (req, res) -> runGameTest(req), new JSONRT());
         //giveMeTheValue("GameID","games","GameName= " +quote + "Gametest"+ quote);
         System.out.println("teeeeeestttt " + giveMeTheBikeArray("Gametest"));
@@ -195,6 +196,18 @@ public class main {
         testArr[1] = tes2;
 
         return testArr;
+    }
+    
+    private static ArrayList updateBikeTest2() {
+        // ["POSUPDATE", int id, int[] pos]
+        // ["DEATH", int id, null]
+        
+        ArrayList<Object> update = new ArrayList<>();
+        update.add("POSUPDATE");
+        update.add(3);
+        update.add(new int[] {-30, -30});
+        
+        return update;
     }
     //End of testing methods
 
