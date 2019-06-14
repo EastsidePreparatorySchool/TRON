@@ -342,6 +342,8 @@ public class main {
                         case 2:
                             result[0] = "DEATH";
                             result[1] = entry.id;
+                        case 6:
+                            result[0] = "WIN";
                         default:
                             break;
                     }
