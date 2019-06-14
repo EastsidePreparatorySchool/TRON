@@ -68,12 +68,13 @@ public class main {
         String gameName=info[0];
         String bikes=info[1];
         System.out.println(info[1]+"-----");
-        String bikeList[]=bikes.split(":",0);
-        System.out.println(gameName);
+        String bikeList[]=bikes.split(":");
+        System.out.println(gameName + "GAME NAME");
         
         for (int i=0; i<bikeList.length;i++){
-         System.out.println(bikeList[i]);   
+         System.out.println(bikeList[i] +"LENGTHTHTHTHTHT4949494494949");   
         }
+        System.out.println(bikeList.length+"LENGTHTHTHTHTHT");
     newGame(gameName,bikeList);
        return bikeList;
     }
@@ -111,7 +112,7 @@ public class main {
     public static List<Integer> giveMeTheBikeArray(String gameName) {
         List<Integer> bikeList = new ArrayList<Integer>();
         char quote = '"';
-        String gameID = giveMeTheValue("GameID", "games", "GameName= " + quote + gameName + quote);
+        int gameID = giveMeTheValue("GameID", "games", "GameName= " + quote + gameName + quote);
         System.out.println("GAME ID: " + gameID);
         try {
             Statement stmt = conn.createStatement();
@@ -135,23 +136,24 @@ public class main {
         return null;
     }
 
-    public static String giveMeTheValue(String row, String table, String where) {
-        System.out.println("select " + row + " from " + table + " where " + where + ";");
+    public static int giveMeTheValue(String row, String table, String where) {
+        System.out.println("select " + row + " from " + table + " where " + where + ";" +"in the FUNCTION GIEV ME THE VALUE");
         try {
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select " + row + " from " + table + " where " + where + ";");
 
             ResultSetMetaData rsmd = rs.getMetaData();
-            System.out.println(rs.getString(1));
-            System.out.println(rs.getInt(1));
-            return rs.getString(1);
+            System.out.println(rs.getString(1)+"in the FUNCTION GIEV ME THE VALUE");
+            System.out.println(rs.getInt(1)+"in the FUNCTION GIEV ME THE VALUE");
+            
+            return rs.getInt(1);
             //System.out.println(rs);
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
 
-        return null;
+        return 1;
     }
 
     private static Object[] updateBikeTest() {
@@ -197,8 +199,8 @@ public class main {
         
         //this function will take a list of bikes in a string formated in this format - bike1|bike2|bike3|bike4|
         char quote = '"';
-        int GameID = 0;
-        String sqlGame = "INSERT INTO" + quote + "games" + quote + "(NumBikes, GameName) VALUES (" + bikeList.length + quote + ", " + quote + gameName + quote + ");";
+        
+        String sqlGame = "INSERT INTO " + quote + "games" + quote + " (NumBikes, GameName) VALUES (" + bikeList.length  + ", " + quote + gameName + quote + ");";
         System.out.println(sqlGame);
 
         try {
@@ -211,9 +213,11 @@ public class main {
         } catch (Exception e) {
             System.out.println(e);
         }
+       int gameID = giveMeTheValue("GameID", "games", "GameName= " + quote + gameName + quote);
+       System.out.println(gameID+"========");
        for (int i = 0; i < bikeList.length; i++) {
-
-         String sqlBikeClass = "INSERT INTO " + quote + "gameBike" + quote + " (GameID, BikeClassID) VALUES (" + Integer.toString(GameID) + ", " + quote + bikeList[i] + quote + ");";
+        int bikeID = giveMeTheValue("BikeClassId", "bikeclasses", "Name= " + quote + bikeList[i] + quote);
+         String sqlBikeClass = "INSERT INTO " + quote + "gamesbikes" + quote + " (GameID, BikeClassID) VALUES (" + gameID + ", " + quote + bikeID + quote + ");";
            System.out.println(sqlBikeClass);
 
             try {
