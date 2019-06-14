@@ -93,27 +93,20 @@ function listBikes() {
 }
 
 function createGame() {
-    var bikes="";
     var newGameName = document.getElementById("userGameName").value;
-    
+    console.log(newGameName);
+    var bikes="";
     for (i = 0; i < newGameBikeList.length; i++) {
        
         console.log(newGameBikeList[i]);
         
     }
-   
     for (i = 0; i < newGameBikeList.length; i++) {
        
         bikes = bikes + ":"+newGameBikeList[i];
         
     }
-    while(bikes.charAt(0) === ':')
-{
- bikes = bikes.substr(1);
-}
-    
-   
-    console.log(bikes+"bikes");
+    console.log(bikes);
 
     //xmlhttp.setRequestHeader("Content-type", "application/json");
     request({ url: "/createGame?gameNameAndBikes=" + newGameName + "/"+bikes, method: "POST"}) //body:bikes
