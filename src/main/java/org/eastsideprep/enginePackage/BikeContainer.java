@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class BikeContainer {
 
     Bike bike;
-    Tuple currentPosition;
+    Tuple pos;
     int direction;
     int id;
     boolean isAlive;
@@ -26,19 +26,17 @@ public class BikeContainer {
 
         this.bike = b;
         this.id = b.bikeId;
-        this.currentPosition = p;
+        this.pos = p;
         isAlive = true;
         this.velocity = v;
         this.direction = bike.direction;
     }
-
-    void move(Grid g) {
-
-    }
+    
+    public String toString() {return "id=" + id + " isAlive=" + isAlive + " pos=" + "(" + pos.x + ", " + pos.y + ")";};
 
     Tuple kill() {
         this.isAlive = false;
-        return currentPosition;
+        return pos;
     }
 
     //not used yet

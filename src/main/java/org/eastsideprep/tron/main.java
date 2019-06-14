@@ -35,7 +35,7 @@ public class main {
     static final Bike[] PreSetBikes = new Bike[]{new SillyBike(0, new Tuple(50, 50)), new SillyBike(1, new Tuple(51, 51))};
     static AbstractGameEngine PreSetGame = new AbstractGameEngine(0, "engineTest", 250, PreSetBikes);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException{
         char quote = '"';
         staticFiles.location("public/");
 
@@ -57,7 +57,8 @@ public class main {
         post("/runGameTest", "application/json", (req, res) -> runGameTest(req), new JSONRT());
         //giveMeTheValue("GameID","games","GameName= " +quote + "Gametest"+ quote);
         System.out.println("teeeeeestttt " + giveMeTheBikeArray("Gametest"));
-
+        
+        logTest();
     }
 
 //TEST
@@ -79,23 +80,11 @@ public class main {
        return bikeList;
     }
     
-    public static void customTest() {
-        try {
-            AbstractGameEngine testGame = PreSetGame;//see comments at the top to see params
+    public static void logTest() throws InterruptedException  {
+        Bike[] testbikes = new Bike[]{new SillyBike(0, new Tuple(5, 5)), new SillyBike(1, new Tuple(10, 10))};
+        AbstractGameEngine testgame = new AbstractGameEngine(1, "logTest", 15, testbikes);
 
-            String[] nicerResults = new String[testGame.numStartingBikes];
-            System.out.println("nicerResults length: " + nicerResults.length);
-            for (int i = 0; i < rawTestResults.length; i++) {
-                Tuple t = rawTestResults[i];
-                int bikeId = t.x;
-                int numWins = t.y;
-                nicerResults[i] = ("Bike " + bikeId + " win " + numWins + " times! \n");
-                System.out.println(nicerResults[i]);
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-            System.out.println("something crashed and this hElPfUl error message is ~~not~~ going to help you :joy:");
-        }
+        testgame.run();
     }
 
     private static Object[] runGameTest(Request req) {

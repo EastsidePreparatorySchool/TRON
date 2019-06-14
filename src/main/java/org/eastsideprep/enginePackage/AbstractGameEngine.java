@@ -3,9 +3,7 @@ package org.eastsideprep.enginePackage;
 import eastsideprep.org.troncommon.TronLogInterface;
 import eastsideprep.org.troncommon.AbstractGameInterface;
 import eastsideprep.org.troncommon.Tuple;
-import org.eastsideprep.trongamelog.*;
 import java.util.ArrayList;
-import java.util.Random;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -26,8 +24,8 @@ public class AbstractGameEngine implements AbstractGameInterface {
     public String name = "Unnamed";//change this in the constructor if you wish
     public int GameId;
     //private int[][] board;
-    private Grid board;//this is a complex object that contains a int[][] grid
-    private ArrayList<BikeContainer> bikes;
+    private final Grid board;//this is a complex object that contains a int[][] grid
+    private final ArrayList<BikeContainer> bikes;
     public int numStartingBikes;
     //private TronLogInterface gameLog;
 
@@ -39,19 +37,19 @@ public class AbstractGameEngine implements AbstractGameInterface {
         }
         numStartingBikes = bikes.size();
         board = new Grid(size, size);
-
     }
-//not every game needs a name
 
     public AbstractGameEngine(int id, String name, int size, Bike[] bikeArr) {
         this.GameId = id;
         this.name = name;
         this.bikes = new ArrayList<>();
         for (Bike b : bikeArr) {
-            bikes.add(new BikeContainer(b, new Tuple(0, 0), maxSpeed));//placing the bikes at 0,0
+            bikes.add(new BikeContainer(b, b.startingPosition, maxSpeed)); //placing the bikes at 0,0
         }
         numStartingBikes = bikes.size();
         board = new Grid(size, size);
+
+        System.out.println(numStartingBikes + " bikes: " + bikes.get(0).toString() + " " + bikes.get(1).toString());
     }
 
     //each square on the board will have one of 3 ints:
@@ -60,26 +58,33 @@ public class AbstractGameEngine implements AbstractGameInterface {
     //  2 for wall
     @Override
     public void init(TronLogInterface tl) {
-        //this.gameLog = tl;
-        //gameLog.Setup(size);
-        //create 4 bikes at random positions
-        Random rand = new Random();
-
-        for (BikeContainer bc : bikes) {
-            int x = rand.nextInt(249) + 1;//random int between 1 and 250 inclusive
-            int y = rand.nextInt(249) + 1;
-            int vel = rand.nextInt(maxSpeed);
-
-            //place the given bikes at random coords on the board and with a random velocity up to maxSpeed
-            bc.direction = rand.nextInt(3);//four directions: 0,1,2,3
-            bc.currentPosition = new Tuple(x, y);
-            board.grid[x][y] = 1;
-            //gameLog.UpdatePosition(bc.bike.bikeId, new Tuple(x, y));
-        }
+//        //this.gameLog = tl;
+//        //gameLog.Setup(size);
+//        //create 4 bikes at random positions
+//        Random rand = new Random();
+//
+//        for (BikeContainer bc : bikes) {
+//            int x = rand.nextInt(249) + 1;//random int between 1 and 250 inclusive
+//            int y = rand.nextInt(249) + 1;
+//            int vel = rand.nextInt(maxSpeed);
+//
+//            //place the given bikes at random coords on the board and with a random velocity up to maxSpeed
+//            bc.direction = rand.nextInt(3);//four directions: 0,1,2,3
+//            bc.pos = new Tuple(x, y);
+//            board.grid[x][y] = 1;
+//            //gameLog.UpdatePosition(bc.bike.bikeId, new Tuple(x, y));
+//        }
     }
 
-    public int[][] getGrid() {
-        return this.board.grid;
+    public void printGrid() {
+        int[][] g = this.board.grid;
+
+        for (int i = 0; i < g.length; i++) {
+            for (int j = 0; j < g[0].length; j++) {
+                System.out.print(g[i][j]);
+            }
+            System.out.println();
+        }
     }
 
     private void update() {
@@ -88,62 +93,76 @@ public class AbstractGameEngine implements AbstractGameInterface {
         //  add directions to each position
         //  update trails
         //  check if this bike is dead
-        //      if so kill it AND its trail
+        //  if so kill it AND its trail
 
         for (BikeContainer b : bikes) {
-            //System.out.println("update1");
-            Bike bike = b.bike;
-            Tuple pos = b.currentPosition;
-            //System.out.println(pos.x + "," + pos.y);
-            int dir = bike.getDirection(board, pos.x, pos.y, bike.direction);
-            //System.out.println("update2");
-            //System.out.println("direction: " + dir);
 
-            //add a trail at that position
+            Bike bike = b.bike;
+            Tuple pos = b.pos;
+
+            int dir = bike.getDirection(board, pos.x, pos.y, bike.direction);
+            System.out.println(dir);
+            
             b.trail.add(pos);
             board.grid[pos.x][pos.y] = 2;
-            //System.out.println("x: " + pos.x);
-            //System.out.println("y: " + pos.y + "\n -----");
-            //update postions using direction
-            if (dir == 0) {
-                if (pos.x > 1) {//only let it move if its a legal move
+            
+            //directions + movement
+            switch (dir) {
+                case 0:
                     pos.x--;
-                }
-            } else if (dir == 1) {
-                if (pos.y < 250) {
+                    break;
+                case 1:
                     pos.y++;
-                }
-            } else if (dir == 2) {
-                if (pos.x < 250) {
+                    break;
+                case 2:
                     pos.x++;
-                }
-            } else if (dir == 3) {
-                if (pos.y > 1) {
+                    break;
+                case 3:
                     pos.y--;
-                }
+                    break;
+                default:
+                    System.out.println("game update err: didn't move");
+                    break;
             }
-            //System.out.println("update3");
-            board.grid[pos.x][pos.y] = 1;
-            System.out.println("updated position: (" + pos.x + "," + pos.y + ")");
-            System.out.println("id: " + bike.bikeId);
-            //System.out.println("position: " + pos);
-            //gameLog.UpdatePosition(bike.bikeId, pos);
-            //System.out.println("update4");
-            if (pos.x == 0 || pos.x == 251 || pos.y == 0 || pos.y == 251 || board.grid[pos.x][pos.y] == 2) {
+
+            //no mercy
+            if (pos.x == 0 || pos.x == size - 1 || pos.y == 0 || pos.y == size - 1 || board.grid[pos.x][pos.y] == 2) {
+                System.out.println("killed bike#: " + b.id);
                 killBike(b);
+            } else {
+                board.grid[pos.x][pos.y] = 1;
+                System.out.print(b.toString() + " ");
             }
         }
+        System.out.println();
+        printGrid();
     }
 
     private void killBike(BikeContainer bc) {
         //gameLog.KillBike(bc.bike.bikeId);
+        bc.kill();
         bikes.remove(bc);
-
     }
 
-    public Tuple[] run(int n) {
-        System.out.println(this.name);
-        int size = this.size;
+    @Override
+    public void run() throws InterruptedException {
+        System.out.println("running " + this.name + "...");
+
+        int turns = 0;
+        while (bikes.size() > 1) {
+            Thread.sleep(50);
+            turns++;
+            System.out.print("turn " + turns + ": ");
+            update();
+        }
+
+        System.out.println("The winner is: " + bikes.get(0).bike.bikeId + " after " + turns + " turns.");
+    }
+
+    @Override
+    public Tuple[] run(int n) { //this is so sketchy what????
+        System.out.println("running " + this.name + "...");
+        int tsize = this.size;
         Bike[] testBikes = new Bike[numStartingBikes];
         //System.out.println("run1");
         for (int i = 0; i < testBikes.length; i++) {
@@ -160,7 +179,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
             int winner;//winner's id
             int turns = 0;
             //System.out.println("run4");
-            AbstractGameEngine currentGame = new AbstractGameEngine(i, Math.max(250, size), testBikes);//dont want the game board to be too small
+            AbstractGameEngine currentGame = new AbstractGameEngine(i, Math.max(250, tsize), testBikes);//dont want the game board to be too small
             while (currentGame.bikes.size() > 1) {//sometimes a bike will die and the length of the arraylist will decrease
                 //System.out.println("run5");
                 currentGame.update();
