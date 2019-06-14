@@ -146,7 +146,7 @@ function selectBike() {
     var bikeID = document.getElementById("userBikes").value;
     console.log(bikeID);
     newGameBikeList.push(bikeID);
-    
+    document.getElementById("currentBikes").innerHTML+="<br>"+bikeID;
 
 }
 
