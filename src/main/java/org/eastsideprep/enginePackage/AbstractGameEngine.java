@@ -124,8 +124,8 @@ public class AbstractGameEngine implements AbstractGameInterface {
             }
             //System.out.println("update3");
             board.grid[pos.x][pos.y] = 1;
-            //System.out.println("updated position: (" + pos.x + "," + pos.y + ")");
-            //System.out.println("id: " + bike.bikeId);
+            System.out.println("updated position: (" + pos.x + "," + pos.y + ")");
+            System.out.println("id: " + bike.bikeId);
             //System.out.println("position: " + pos);
             //gameLog.UpdatePosition(bike.bikeId, pos);
             //System.out.println("update4");

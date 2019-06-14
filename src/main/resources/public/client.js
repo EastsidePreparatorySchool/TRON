@@ -279,14 +279,19 @@ function updateBikes() { //takes either a "DEATH" (form: [DEATH, int bikeID]) or
         .then(data => { 
             var update = JSON.parse(data); //given a test array with two bike data object
             console.log("bike update: " + update);
-            if (update.length == 3) { //then it is a position update
+
+            // ["POSUPDATE", int id, int[] pos]
+            // ["DEATH", int id, null]
+
+            if (update[0] == "POSUPDATE") {
                 //add position elements to the object
                 var color = getcolor(update[1]); //should return color
                 drawpath(update[2], color);
                 //draw path (with right color)
                 //move bike
-            } else { //then it is a bike death (length 2)
+            } else if (update[0] == "DEATH"){
                 
+
                 //remove bike
                 //remove path
             }

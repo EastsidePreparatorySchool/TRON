@@ -78,6 +78,25 @@ public class main {
     newGame(gameName,bikeList);
        return bikeList;
     }
+    
+    public static void customTest() {
+        try {
+            AbstractGameEngine testGame = PreSetGame;//see comments at the top to see params
+
+            String[] nicerResults = new String[testGame.numStartingBikes];
+            System.out.println("nicerResults length: " + nicerResults.length);
+            for (int i = 0; i < rawTestResults.length; i++) {
+                Tuple t = rawTestResults[i];
+                int bikeId = t.x;
+                int numWins = t.y;
+                nicerResults[i] = ("Bike " + bikeId + " win " + numWins + " times! \n");
+                System.out.println(nicerResults[i]);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            System.out.println("something crashed and this hElPfUl error message is ~~not~~ going to help you :joy:");
+        }
+    }
 
     private static Object[] runGameTest(Request req) {
         MultipartConfigElement multipartConfigElement = new MultipartConfigElement(System.getProperty("java.io.tmpdir"));
@@ -342,12 +361,11 @@ public class main {
                         case 2:
                             result[0] = "DEATH";
                             result[1] = entry.id;
-                        case 6:
-                            result[0] = "WIN";
                         default:
                             break;
                     }
                     done.add(result);
+                    System.out.println("bikeupdate: " + result[0] + " " + result[1] + " " + result[2]);
                 }
                 Object[] array = new Object[list.size()];
                 return done.toArray(array);
