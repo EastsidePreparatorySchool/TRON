@@ -77,23 +77,23 @@ function drawpath(patharray, color) { //change color to ID???
     }
 }
 
-function getcolor (ID) {
-    var index = IDs.findIndex((currentID) => currentID == ID ); //NEED TO HAND COMPARATOR THE ID YOURE LOOKING FOR
+function getcolor(ID) {
+    var index = IDs.findIndex((currentID) => currentID == ID); //NEED TO HAND COMPARATOR THE ID YOURE LOOKING FOR
     return bikeColors[index];
 }
 
 function drawpath2(patharray, ID) { //change color to ID???
     var color = getcolor(ID);
     var pathgeo = new THREE.CubeGeometry(unit, paththickness, unit); //one unit of the path geometry
-    var pathmat = new THREE.MeshLambertMaterial({ color: color }); 
+    var pathmat = new THREE.MeshLambertMaterial({ color: color });
     var pathlength = patharray.length;
 
     var i;
     for (i = 0; i < pathlength; i++) {
         var mesh = new THREE.Mesh(pathgeo, pathmat);
-        mesh.position.x = patharray[i][0] - unit / 2; 
+        mesh.position.x = patharray[i][0] - unit / 2;
         mesh.position.z = patharray[i][1] - unit / 2;
-        scene.add(mesh); 
+        scene.add(mesh);
     }
 }
 
@@ -108,19 +108,19 @@ class Path {
     draw() {
         var color = getcolor(this.ID);
         var pathgeo = new THREE.CubeGeometry(unit, paththickness, unit); //one unit of the path geometry
-        var pathmat = new THREE.MeshLambertMaterial({ color: color }); 
+        var pathmat = new THREE.MeshLambertMaterial({ color: color });
         console.log("draw: " + this.patharray);
         var pathlength = this.patharray.length;
         var i;
         for (i = 0; i < pathlength; i++) {
             var mesh = new THREE.Mesh(pathgeo, pathmat);
-            mesh.position.x = this.patharray[i][0] - unit / 2; 
+            mesh.position.x = this.patharray[i][0] - unit / 2;
             mesh.position.z = this.patharray[i][1] - unit / 2;
-            scene.add(mesh); 
-            var x = this.patharray[i][0] + gridDivisions/2;
-            var y = this.patharray[i][1] + gridDivisions/2;
+            scene.add(mesh);
+            var x = this.patharray[i][0] + gridDivisions / 2;
+            var y = this.patharray[i][1] + gridDivisions / 2;
             console.log("index x: " + x + " and y: " + y);
-            if( allpaths[x] == null ) allpaths[x] = [];
+            if (allpaths[x] == null) allpaths[x] = [];
             allpaths[x][y] = mesh; //add the boi to its coordinate in the path array
         }
     }
@@ -128,8 +128,8 @@ class Path {
         var pathlength = this.patharray.length;
         var i;
         for (i = 0; i < pathlength; i++) {
-            var x = this.patharray[i][0] + gridDivisions/2;
-            var y = this.patharray[i][1] + gridDivisions/2;
+            var x = this.patharray[i][0] + gridDivisions / 2;
+            var y = this.patharray[i][1] + gridDivisions / 2;
             var pathunit = allpaths[x][y];
             scene.remove(pathunit); //remove it from the scene
             allpaths[x][y] = null; //removes it from the storage array
@@ -139,7 +139,7 @@ class Path {
 
 var testpath = [[-10, 9], [-10, 8], [-9, 8], [-9, 7], [-9, 6], [-8, 6], [-7, 6], [-6, 6], [-5, 6], [-4, 6], [-3, 6], [-3, 5], [-2, 5]]; //test path with kinda random points
 
-var path1 = new Path (testpath, 3);
+var path1 = new Path(testpath, 3);
 path1.draw();
 path1.kill();
 
@@ -262,42 +262,39 @@ function initializeBikes() { //function takes a "compact log" from Faye (form: "
         });
 }
 
-
-
-var bikeUpdates;
-
+//var bikeUpdates;
 //make a direction function so I can ask what direction someone is going in and draw their bike correctly
 
 var events; //queue of all events -- use later if rest works
 
-function updateBikes() { //takes either a "DEATH" (form: [DEATH, int bikeID]) or "POSUPDATE" (form: [POSUPDATE, int bikeID, [x, y]])
+function updateBikes() {
     request({ url: "/updateBikes", method: "GET" })
-        .then(data => { 
-            var update = JSON.parse(data); //given a test array with two bike data object
+        .then(data => {
+            var update = JSON.parse(data)
             console.log("bike update: " + update);
-            if (update.length == 3) { //then it is a position update
+
+            // ["POSUPDATE", int id, int[] pos]
+            // ["DEATH", int id, null]
+
+            if (update[0] == "POSUPDATE") {
                 //add position elements to the object
                 var color = getcolor(update[1]); //should return color
                 drawpath(update[2], color);
                 //draw path (with right color)
                 //move bike
-            } else { //then it is a bike death (length 2)
-                
+            } else if (update[0] == "DEATH") {
                 //remove bike
-                //remove path
+                //remove all paths
             }
 
             //maybe have a queue of events (maybe one for each bike?) and step through updates in a nice timed way. first make it work
 
-
             updateBikes(); //call update function again after last update finishes
         })
         .catch(error => {
-            console.log("Bike update error: " + error);
+            console.log("client bikeUpdate error: " + error);
         });
 }
-
-
 
 //------------------------------------------RENDERING AND UPDATING----------------------------------------------------
 
@@ -311,19 +308,11 @@ function animate() {
 
 requestAnimationFrame(animate); // Schedule the first frame.
 
-
-
-
-
-
-
-
 //-----------------------------------------------------GARBAGE---------------------------------------------------------
 
 //nasty sauce things that I'll probably never use again:
 
-/* 
-
+/*
 
 function updateBikeTest2() { //this one without a url request just so I can test it here
     bikes = testbikes; //testbikes;
