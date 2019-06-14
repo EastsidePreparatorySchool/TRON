@@ -19,7 +19,6 @@ import javax.servlet.MultipartConfigElement;
 import spark.Request;
 import static spark.Spark.*;
 
-
 /**
  *
  * @author tespelien and other less cool boios
@@ -62,21 +61,17 @@ public class main {
 
 //TEST
     //testing methods
-    public static String[] newGameTest(Request req){
+    public static String[] newGameTest(Request req) {
         String params = req.queryParams("gameNameAndBikes");
-        String info[]=params.split("/");
-        String gameName=info[0];
-        String bikes=info[1];
-        System.out.println(info[1]+"-----");
-        String bikeList[]=bikes.split(":");
+        String info[] = params.split("/");
+        String gameName = info[0];
+        String bikes = info[1];
+        System.out.println(info[1] + "-----");
+        String bikeList[] = bikes.split(":");
         System.out.println(gameName + "GAME NAME");
-        
-        for (int i=0; i<bikeList.length;i++){
-         System.out.println(bikeList[i] +"LENGTHTHTHTHTHT4949494494949");   
-        }
-        System.out.println(bikeList.length+"LENGTHTHTHTHTHT");
-    newGame(gameName,bikeList);
-       return bikeList;
+
+        newGame(gameName, bikeList);
+        return bikeList;
     }
 
     private static Object[] runGameTest(Request req) {
@@ -137,15 +132,15 @@ public class main {
     }
 
     public static int giveMeTheValue(String row, String table, String where) {
-        System.out.println("select " + row + " from " + table + " where " + where + ";" +"in the FUNCTION GIEV ME THE VALUE");
+        System.out.println("select " + row + " from " + table + " where " + where + ";" + "in the FUNCTION GIEV ME THE VALUE");
         try {
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("select " + row + " from " + table + " where " + where + ";");
 
             ResultSetMetaData rsmd = rs.getMetaData();
-            System.out.println(rs.getString(1)+"in the FUNCTION GIEV ME THE VALUE");
-            System.out.println(rs.getInt(1)+"in the FUNCTION GIEV ME THE VALUE");
-            
+            System.out.println(rs.getString(1) + "in the FUNCTION GIEV ME THE VALUE");
+            System.out.println(rs.getInt(1) + "in the FUNCTION GIEV ME THE VALUE");
+
             return rs.getInt(1);
             //System.out.println(rs);
 
@@ -196,29 +191,26 @@ public class main {
 
     private static String newGame(String gameName, String[] bikeList) {
 
-        
         //this function will take a list of bikes in a string formated in this format - bike1|bike2|bike3|bike4|
         char quote = '"';
-        
-        String sqlGame = "INSERT INTO " + quote + "games" + quote + " (NumBikes, GameName) VALUES (" + bikeList.length  + ", " + quote + gameName + quote + ");";
+
+        String sqlGame = "INSERT INTO " + quote + "games" + quote + " (NumBikes, GameName) VALUES (" + bikeList.length + ", " + quote + gameName + quote + ");";
         System.out.println(sqlGame);
 
         try {
             PreparedStatement sqlcmdGame = conn.prepareStatement(sqlGame);
             sqlcmdGame.execute();
 
-           // GameID = sqlcmdGame.getGeneratedKeys().getInt(1);
-
-          
+            // GameID = sqlcmdGame.getGeneratedKeys().getInt(1);
         } catch (Exception e) {
             System.out.println(e);
         }
-       int gameID = giveMeTheValue("GameID", "games", "GameName= " + quote + gameName + quote);
-       System.out.println(gameID+"========");
-       for (int i = 0; i < bikeList.length; i++) {
-        int bikeID = giveMeTheValue("BikeClassId", "bikeclasses", "Name= " + quote + bikeList[i] + quote);
-         String sqlBikeClass = "INSERT INTO " + quote + "gamesbikes" + quote + " (GameID, BikeClassID) VALUES (" + gameID + ", " + quote + bikeID + quote + ");";
-           System.out.println(sqlBikeClass);
+        int gameID = giveMeTheValue("GameID", "games", "GameName= " + quote + gameName + quote);
+        System.out.println(gameID + "========");
+        for (int i = 0; i < bikeList.length; i++) {
+            int bikeID = giveMeTheValue("BikeClassId", "bikeclasses", "Name= " + quote + bikeList[i] + quote);
+            String sqlBikeClass = "INSERT INTO " + quote + "gamesbikes" + quote + " (GameID, BikeClassID) VALUES (" + gameID + ", " + quote + bikeID + quote + ");";
+            System.out.println(sqlBikeClass);
 
             try {
                 PreparedStatement sqlcmdBike = conn.prepareStatement(sqlBikeClass);
@@ -250,8 +242,17 @@ public class main {
 
             while (rs.next() && count < LENGTH) {
                 for (int j = 1; j <= numberOfColumns; j++) {
-                    res[count][j - 1] = rs.getString(j);
+                    if(rsmd.getColumnName(j).equals("GameId")){
+                   res[count][j - 1] = "<br>"+rsmd.getColumnName(j)+": "+rs.getString(j);     
+                    }
+                    else if (rsmd.getColumnName(j).equals("BikeClassId")){
+                        
+                    res[count][j - 1] = "<br>"+rsmd.getColumnName(j)+": "+rs.getString(j);   
+                    }
+                    else {
+                    res[count][j - 1] = rsmd.getColumnName(j)+": "+rs.getString(j);
                     System.out.println(rs.getString(j) + "======================");
+                    }
                 }
                 count++;
             }

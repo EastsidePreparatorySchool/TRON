@@ -75,7 +75,7 @@ function listBikes() {
                     for (var j = 0; j < res[0].length; j++) {
 
                         if (res[i][j] != null) {
-                            tester = tester + res[i][j] + " ";
+                            tester = tester + res[i][j] + "<br>";
                         }
                     }
 
@@ -93,7 +93,6 @@ function listBikes() {
 }
 
 function createGame() {
-    var bikes="";
     var newGameName = document.getElementById("userGameName").value;
     
     for (i = 0; i < newGameBikeList.length; i++) {
@@ -102,7 +101,7 @@ function createGame() {
         
     }
    
-    for (i = 0; i < newGameBikeList.length; i++) {
+    for (i = 1; i < newGameBikeList.length; i++) {
        
         bikes = bikes + ":"+newGameBikeList[i];
         
@@ -115,8 +114,8 @@ function createGame() {
    
     console.log(bikes+"bikes");
 
-    //xmlhttp.setRequestHeader("Content-type", "application/json");
-    request({ url: "/createGame?gameNameAndBikes=" + newGameName + "/"+bikes, method: "POST"}) //body:bikes
+    
+    request({ url: "/createGame?gameNameAndBikes=" + newGameName + "/"+bikes, method: "POST"}) 
         .then(data => {
             console.log("New game " + data + "has been created. Cool")
         })

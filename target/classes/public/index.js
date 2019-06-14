@@ -44,7 +44,8 @@ function getGames() {
                     for (var j = 0; j < res[0].length; j++) {
                     
                    if (res[i][j] != null){
-                   tester = tester + res[i][j] + " ";
+                   tester = tester + res[i][j] + "<br>";
+                   
                    }
                     }
                     
