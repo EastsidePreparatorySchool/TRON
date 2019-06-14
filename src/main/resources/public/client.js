@@ -93,13 +93,12 @@ class Path {
     constructor(patharray, ID) {
         this.patharray = patharray;
         this.ID = ID;
-        this.color = getcolor(ID); //this is a funky function that probably doesn't work
+        this.color = getcolor(ID); 
     }
     draw() {
-        //var color = getcolor(this.ID);
-        var pathgeo = new THREE.CubeGeometry(unit, paththickness, unit); //one unit of the path geometry
+        var pathgeo = new THREE.CubeGeometry(unit, paththickness, unit); //one unit size of the path geometry
         var pathmat = new THREE.MeshLambertMaterial({ color: this.color }); 
-        console.log("draw: " + this.patharray);
+        //console.log("draw: " + this.patharray);
         var pathlength = this.patharray.length;
         var i;
         for (i = 0; i < pathlength; i++) {
@@ -109,7 +108,7 @@ class Path {
             scene.add(mesh); 
             var x = this.patharray[i][0] + gridDivisions/2;
             var y = this.patharray[i][1] + gridDivisions/2;
-            console.log("index x: " + x + " and y: " + y);
+            //console.log("index x: " + x + " and y: " + y);
             if( allpaths[x] == null ) allpaths[x] = [];
             allpaths[x][y] = mesh; //add the boi to its coordinate in the path array
         }
@@ -195,7 +194,7 @@ var testbikes = [["test1", true, [50, 30], [50, -20]], ["test2", false, [-40, 30
 
 console.log("what I should get from faye: " + testbikes);
 
-function updateBikeTest() { //this is a method to just test parsing a bike array from Faye 
+function initializeBikeTest() { //this is a method to just test parsing a bike array from Faye 
     request({ url: "/updateBikeTest", method: "GET" })
         .then(data => {
             bikes = JSON.parse(data); //given a test array with two bike data object
@@ -274,22 +273,44 @@ function updateBikes() { //takes either a "DEATH" (form: [DEATH, int bikeID]) or
             // ["DEATH", int id, null]
 
             if (update[0] == "POSUPDATE") {
-                //add position elements to the object
-                var color = getcolor(update[1]); //should return color
-                drawpath(update[2], color);
-                //draw path (with right color)
-                //move bike
+                var ID = update[1];
+                var newpoint = update[2];
+                var index = getindex(ID);
+                var path = new Path (newpoint, ID);
+                path.draw();
+                bikes[index].update(newpoint[0], newpoint[1]);
             } else if (update[0] == "DEATH"){
-                
-
-                //remove bike
-                //remove path
+                bikes[getindex(update[1])].kill();
+                allpaths[getindex(update[1])].kill();
             }
+            //updateBikes(); //call update function again after last update finishes
+        })
+        .catch(error => {
+            console.log("Bike update error: " + error);
+        });
+}
 
-            //maybe have a queue of events (maybe one for each bike?) and step through updates in a nice timed way. first make it work
+function updateBikeTest() { //takes either a "DEATH" (form: [DEATH, int bikeID]) or "POSUPDATE" (form: [POSUPDATE, int bikeID, [x, y]])
+    request({ url: "/updateBikes", method: "GET" })
+        .then(data => { 
+            var update = JSON.parse(data); //given a test array with two bike data object
+            console.log("bike update: " + update);
 
+            // ["POSUPDATE", int id, int[] pos]
+            // ["DEATH", int id, null]
 
-            updateBikes(); //call update function again after last update finishes
+            if (update[0] == "POSUPDATE") {
+                var ID = update[1];
+                var newpoint = update[2];
+                var index = getindex(ID);
+                var path = new Path (newpoint, ID);
+                path.draw();
+                bikes[index].update(newpoint[0], newpoint[1]);
+            } else if (update[0] == "DEATH"){
+                bikes[getindex(update[1])].kill();
+                allpaths[getindex(update[1])].kill();
+            }
+            //updateBikes(); //call update function again after last update finishes
         })
         .catch(error => {
             console.log("Bike update error: " + error);
