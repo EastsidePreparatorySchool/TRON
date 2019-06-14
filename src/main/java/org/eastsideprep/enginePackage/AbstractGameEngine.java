@@ -134,6 +134,8 @@ public class AbstractGameEngine implements AbstractGameInterface {
                 System.out.print(b.toString() + " ");
             }
         }
+        
+        
         System.out.println();
         printGrid();
     }

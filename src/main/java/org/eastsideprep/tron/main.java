@@ -82,7 +82,7 @@ public class main {
     }
     
     public static void logTest() throws InterruptedException  {
-        Bike[] testbikes = new Bike[]{new SillyBike(0, new Tuple(5, 5)), new SillyBike(1, new Tuple(10, 10))};
+        Bike[] testbikes = new Bike[]{new BasicBike(0, new Tuple(5, 5)), new BasicBike(1, new Tuple(10, 10))};
         AbstractGameEngine testgame = new AbstractGameEngine(1, "logTest", 15, testbikes);
 
         testgame.run();
