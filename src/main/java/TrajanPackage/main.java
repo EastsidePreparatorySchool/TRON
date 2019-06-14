@@ -26,7 +26,7 @@ public class main {
 
     //preset game (gameId=0) we will use for testing with a SillyBike (bikeId=0) at (100,100)
     private static Bike b1 = new SillyBike(0, new Tuple(50, 50));
-    private static Bike b2 = new SillyBike(0, new Tuple(51, 51));
+    private static Bike b2 = new SillyBike(1, new Tuple(51, 51));
     private static final Bike[] PreSetBikes = new Bike[]{b1, b2};
     static AbstractGameEngine PreSetGame = new AbstractGameEngine(0, "engineTest", 250, PreSetBikes);
 
@@ -49,7 +49,7 @@ public class main {
         //get("/runGame", "application/json", (req, res) -> runGame(req), new JSONRT());
         //for testing purposes only
         get("/updateBikes", "application/json", (req, res) -> updateBikes(req), new JSONRT());
-        get("/getBoard", "application/json", (req, res) -> getBoard(req), new JSONRT());
+        get("/getBoard", "application/json", (req, res) -> getBoard(), new JSONRT());
         post("/runGame", "application/json", (req, res) -> runGame(req), new JSONRT());
         get("/startGame", (req, res) -> startGame());
         //giveMeTheValue("GameID", "games", "GameName= " + quote + "Gametest" + quote);
@@ -89,8 +89,8 @@ public class main {
     }
     private static int clicks = 0;
 
-    private static Object[] getBoard(spark.Request req) {
-        System.out.println("getting whole board...");
+    private static Object[] getBoard() {
+        //System.out.println("getting whole board...");
         //int gameId = Integer.parseInt(req.queryParams("gameId"));
         int gameId = 0;
         if (clicks == 0) {
@@ -103,19 +103,16 @@ public class main {
         return runningGames.get(gameId).board.grid;
     }
 
-    private static String startGame() {
-        System.out.println("starting a new game...");
-        try {
-            AbstractGameEngine age = new AbstractGameEngine(0, 250, PreSetBikes);//no name constructor is better
-            age.init();
-            age.name = "coolname";
-            runningGames.add(age);
-            System.out.println("list of running games: " + runningGames.toString());
-            System.out.println("added a game called: " + runningGames.get(0).name);
-        } catch (Exception e) {
-            System.out.println("error starting game: " + e);
-        }
-        return "Trajan was here";
+    private static Object[] startGame() {
+        System.out.println("Starting a new game...");
+
+        AbstractGameEngine age = new AbstractGameEngine(0, 250, PreSetBikes);//no name constructor is better
+        age.init();
+
+        runningGames.add(age);
+        System.out.println("List of running games: " + runningGames.toString());
+
+        return getBoard();//get the first board when starting
     }
 
     private static Object[] updateBikes(Request req) {

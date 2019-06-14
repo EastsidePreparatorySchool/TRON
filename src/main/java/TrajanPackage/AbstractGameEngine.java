@@ -75,14 +75,14 @@ public class AbstractGameEngine implements AbstractGameInterface {
         board.grid = grid;
         for (BikeContainer bc : bikes) {
 
-            int x = rand.nextInt(5) + 2;//random int between 1 and the max size inclusive
-            int y = rand.nextInt(5) + 2;
+            int x = rand.nextInt(5) + 18;//Placing the bikes towards the center
+            int y = rand.nextInt(5) + 18;
             int vel = rand.nextInt(maxSpeed);
 
             //place the given bikes at random coords on the board and with a random velocity up to maxSpeed
             bc.direction = rand.nextInt(3);//four directions: 0,1,2,3
             bc.currentPosition = new Tuple(x, y);
-            System.out.println("placed a bike at " + bc.currentPosition.toString());
+            System.out.println("Placed a bike at " + bc.currentPosition.toString());
             board.grid[x][y] = 1;
             //gameLog.UpdatePosition(bc.bike.bikeId, new Tuple(x, y));
         }
@@ -99,68 +99,71 @@ public class AbstractGameEngine implements AbstractGameInterface {
         //  update trails
         //  check if this bike is dead
         //      if so kill it AND its trail
+        if (bikes.size() == 1) {
+            System.out.println("Game over, bike " + bikes.get(0).id + " won!");
+        } else if (bikes.size() > 1) {
+            for (BikeContainer b : bikes) {
 
-        for (BikeContainer b : bikes) {
+                Bike bike = b.bike;
+                Tuple pos = b.currentPosition;
 
-            Bike bike = b.bike;
-            Tuple pos = b.currentPosition;
+                int dir = bike.getDirection(board, pos.x, pos.y, bike.direction);
+                //System.out.println("Direction: " + dir);
 
-            int dir = bike.getDirection(board, pos.x, pos.y, bike.direction);
-            System.out.println("Direction: " + dir);
-            //System.out.println("update2");
-            //System.out.println("direction: " + dir);
+                //add a trail at that position
+                b.trail.add(pos);
+                board.grid[pos.x][pos.y] = 3;
 
-            //add a trail at that position
-            b.trail.add(pos);
-            board.grid[pos.x][pos.y] = 2;
-            //System.out.println("x: " + pos.x);
-            //System.out.println("y: " + pos.y + "\n -----");
-            //update postions using direction
-            if (dir == 0) {
-                dir = 2;
+                switch (dir) {
+                    case 0:
+                        if (pos.x > 1) {//only let it move if its a legal move
+                            pos.x--;
+                        }
+                        break;
+                    case 1:
+                        if (pos.y < size - 2) {
+                            pos.y++;
+                        }
+                        break;
+                    case 2:
+                        if (pos.x < size - 2) {
+                            pos.x++;
+                        }
+                        break;
+                    case 3:
+                        if (pos.y > 1) {
+                            pos.y--;
+                        }
+                        break;
+                }
+                System.out.println(pos.toString());
+                //if you are now on the edge/in a trail, you're dead
+                int square = board.grid[pos.x][pos.y];
+                if (pos.x == 0 || pos.x == size - 1 || pos.y == 0 || pos.y == size - 1 || square == 2 || square == 3) {
+
+                    System.out.println("Oops! " + b.id + " crashed!");
+                    killBike(b);
+                }
+                board.grid[pos.x][pos.y] = 1;
+                System.out.println("Moved bike " + b.id + " to position " + pos.toString());
             }
-            if (dir == 0) {
-                pos.x--;
-            } else if (dir == 1) {
-                pos.y++;
-            } else if (dir == 2) {
-                pos.x++;
-            } else if (dir == 3) {
-                pos.y--;
-            }
-            //            switch (dir) {
-            //                case 0:
-            //                    if (pos.x > 1) {//only let it move if its a legal move
-            //                        pos.x--;
-            //                    }
-            //                    break;
-            //                case 1:
-            //                    if (pos.y < size - 2) {
-            //                        pos.y++;
-            //                    }
-            //                    break;
-            //                case 2:
-            //                    if (pos.x < size - 2) {
-            //                        pos.x++;
-            //                    }
-            //                    break;
-            //                case 3:
-            //                    if (pos.y > 1) {
-            //                        pos.y--;
-            //                    }
-            //                    break;
-            //            }
-            if (pos.x == 0 || pos.x == size - 1 || pos.y == 0 || pos.y == size - 1 || board.grid[pos.x][pos.y] == 2) {
-                killBike(b);
-            }
-            board.grid[pos.x][pos.y] = 1;
-            System.out.println("Moved bike " + b.id + " to position " + pos.toString());
         }
     }
 
-    private void killBike(BikeContainer bc) {
+    private void killBike(BikeContainer toKill) {
         //gameLog.KillBike(bc.bike.bikeId);
-        bikes.remove(bc);
+
+        for (BikeContainer b : bikes) {
+            if (b.id == toKill.id) {
+
+                bikes.remove(b);
+                System.out.println("Removing bike from array...");
+            }
+        }
+        for (Tuple pos : toKill.trail) {//clean the board back up, remove the dead trails
+            board.grid[pos.x][pos.y] = 0;
+        }
+        System.out.println("Killed bike " + toKill.id + " at position " + toKill.currentPosition.toString());
     }
 
     public Tuple[] run(int n) {

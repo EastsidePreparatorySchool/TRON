@@ -37,6 +37,7 @@ public class BikeContainer {
 
     Tuple kill() {
         this.isAlive = false;
+        
         return currentPosition;
     }
 

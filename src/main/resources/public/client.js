@@ -23,12 +23,15 @@ var gridColor = 0x668cff; //0x888888;
 var wallThickness = 1 * unit; //thickness of light trail
 var bikeRadius = 3 * unit / 8;//bikes are just spheres
 
-var wallgeo = new THREE.CubeGeometry(unit, 4, wallThickness); //one unit of the path geometry
+var wallgeo = new THREE.CubeGeometry(wallThickness, 4, wallThickness); //one unit of the path geometry
 var wallmat = new THREE.MeshLambertMaterial({ color: 0x121212 }); //ambient: 0x121212
 
 var bikemat = new THREE.MeshLambertMaterial({ color: 0xFF2800 });//ferrari red!!!!!!!
 var bikegeo = new THREE.SphereGeometry(bikeRadius, 16, 16);
 var bikemesh = new THREE.Mesh(bikegeo, bikemat);
+
+var trailgeo = new THREE.CubeGeometry(wallThickness, 2, wallThickness); //one unit of the path geometry
+var trailmat = new THREE.MeshLambertMaterial({ color: 0xFF2800 }); //ambient: 0x121212
 
 var grid = new THREE.GridHelper(gridSize, gridDivisions, gridCenterColor, gridColor);
 scene.add(grid);
@@ -108,14 +111,19 @@ function drawGrid(grid) {
             if (grid[i][j] === 1) {//bikes
                 console.log("bike at (" + i + ", " + j + ")");
                 var mesh = new THREE.Mesh(bikegeo, bikemat);
-                mesh.position.x = j - correction;
-                mesh.position.z = i - correction;
+                mesh.position.x = i - correction;
+                mesh.position.z = j - correction;
                 scene.add(mesh);
-            } else if (grid[i][j] === 2) {//walls or trails
+            } else if (grid[i][j] === 2) {//walls
                 var mesh = new THREE.Mesh(wallgeo, wallmat);
-                mesh.position.x = j - correction;
-                mesh.position.z = i - correction;
-                //console.log("wall at (" + mesh.position.x + ", " + mesh.position.z + ")");
+                mesh.position.x = i - correction;
+                mesh.position.z = j - correction;
+                console.log("0");
+                scene.add(mesh);
+            } else if (grid[i][i] == 3) {//trails
+                var mesh = new THREE.Mesh(trailgeo, trailmat);
+                mesh.position.x = i - correction;
+                mesh.position.z = j - correction;
                 scene.add(mesh);
             }
         }
@@ -220,6 +228,7 @@ function initialize() {
         });
 }
 
+//for testing one frame at a time
 function frameStep() {
     console.log("one frame!");
     request({ url: "/getBoard", method: "GET" })//need to either make this post or use URL params
@@ -239,7 +248,7 @@ function frameContinuous() {
     setInterval(function () {
         request({ url: "/getBoard", method: "GET" })
             .then(data => {
-                var cleanData = data.JSON.parse();
+                var cleanData = JSON.parse(data);
                 console.log(cleanData);
             })
             .catch(error => {
