@@ -18,7 +18,7 @@ import static spark.Spark.*;
  */
 public class main {
 
-    public final static int LENGTH = 252;
+    public final static int LENGTH = 102;
     public final static int BIKES = 4;
     private static ArrayList<AbstractGameEngine> runningGames = new ArrayList<>();//pointers to running games
     //public final static TronGameState STATE = new TronGameState(true);
@@ -93,17 +93,13 @@ public class main {
         //int gameId = Integer.parseInt(req.queryParams("gameId"));
         int gameId = 0;//only 1 game at the moment
         System.out.println("This game is called " + (runningGames.get(gameId).name));//pls dont be null...
-        int[][] board = runningGames.get(gameId).board.grid;
-        //System.out.println(board.length);
-        //synchronized (board) {
-        return board;//return the whole table oof
-        //}
+        return runningGames.get(gameId).board.grid;
     }
 
     private static String startGame() {
         System.out.println("starting a new game...");
         try {
-            AbstractGameEngine age = new AbstractGameEngine(0, 250, PreSetBikes);
+            AbstractGameEngine age = new AbstractGameEngine(0, 250, PreSetBikes);//no name constructor is better
             age.init();
             age.name = "coolname";
             runningGames.add(age);

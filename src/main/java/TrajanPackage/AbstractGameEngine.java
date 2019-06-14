@@ -15,14 +15,14 @@ import java.util.Random;
 public class AbstractGameEngine implements AbstractGameInterface {
 
 //GAME CONSTANTS
-    private final int size = 252;//the edge will be a wall / border
+    private final int size = 102;//the edge will be a wall / border
     private final int maxSpeed = 1;
 
 //IMPORTANT OBJECTS
     public String name = "Unnamed";//change this in the constructor if you wish
     public int GameId;
     //private int[][] board;
-    public Grid board = new Grid(252, 252);//this is a complex object that contains a int[][] grid
+    public Grid board = new Grid(size, size);//this is a complex object that contains a int[][] grid
     private ArrayList<BikeContainer> bikes;
     public int numStartingBikes;
     //private TronLogInterface gameLog;
@@ -36,6 +36,17 @@ public class AbstractGameEngine implements AbstractGameInterface {
         }
         numStartingBikes = bikes.size();
         board = new Grid(size, size);
+        //walls:
+        int[][] grid = new int[size][size];
+        for (int i = 0; i < grid.length; i++) {//first and last column
+            grid[0][i] = 2;
+            grid[size - 1][i] = 2;
+        }
+        for (int i = 0; i < grid[0].length; i++) {//top and bottom row
+            grid[i][0] = 2;
+            grid[i][size - 1] = 2;
+        }
+        board.grid = grid;
     }
 //not every game needs a name
 
@@ -129,6 +140,7 @@ public class AbstractGameEngine implements AbstractGameInterface {
             if (pos.x == 0 || pos.x == 251 || pos.y == 0 || pos.y == 251 || board.grid[pos.x][pos.y] == 2) {
                 killBike(b);
             }
+            System.out.println("Moved bike " + b.id + " to position " + pos.toString());
         }
     }
 

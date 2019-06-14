@@ -21,9 +21,9 @@ var unit = gridDivisions / gridSize; //sidelength of one square on the grid
 var gridCenterColor = 0x66ffd9; //0x444444;
 var gridColor = 0x668cff; //0x888888;
 var wallThickness = 1 * unit; //thickness of light trail
-var bikeRadius = 3 * unit / 4;//bikes are just spheres
+var bikeRadius = 3 * unit / 8;//bikes are just spheres
 
-var wallgeo = new THREE.CubeGeometry(unit, wallThickness, unit); //one unit of the path geometry
+var wallgeo = new THREE.CubeGeometry(unit, 2, wallThickness); //one unit of the path geometry
 var wallmat = new THREE.MeshLambertMaterial({ color: 0x121212 }); //ambient: 0x121212
 
 var bikemat = new THREE.MeshLambertMaterial({ color: 0xFF2800 });//ferrari red!!!!!!!
@@ -103,9 +103,7 @@ function drawGrid(grid) {
     var arr = [[1, 2], [3, 4], [5, 6]];
     for (var i = 0; i < grid.length; i++) {
         for (var j = 0; j < grid[i].length; j++) {
-            console.log(grid[i][j]);
             if (grid[i][j] == 1) {//bikes
-                console.log("found a bike!!")
                 var mesh = new THREE.Mesh(bikegeo, bikemat);
                 mesh.position.x = grid[i][j] - unit / 2;
                 mesh.position.z = grid[i][j] - unit / 2;
