@@ -62,19 +62,6 @@ public class AbstractGameEngine implements AbstractGameInterface {
         //create 4 bikes at random positions
         Random rand = new Random();
 
-        for (BikeContainer bc : bikes) {
-
-            int x = rand.nextInt(3) + 6;//random int between 1 and the max size inclusive
-            int y = rand.nextInt(3) + 6;
-            int vel = rand.nextInt(maxSpeed);
-
-            //place the given bikes at random coords on the board and with a random velocity up to maxSpeed
-            bc.direction = rand.nextInt(3);//four directions: 0,1,2,3
-            bc.currentPosition = new Tuple(x, y);
-            System.out.println("placed a bike at " + bc.currentPosition.toString());
-            board.grid[x][y] = 1;
-            //gameLog.UpdatePosition(bc.bike.bikeId, new Tuple(x, y));
-        }
         //walls:
         int[][] grid = new int[size][size];
         for (int i = 0; i < grid.length; i++) {//first and last column
@@ -86,13 +73,26 @@ public class AbstractGameEngine implements AbstractGameInterface {
             grid[i][size - 1] = 2;
         }
         board.grid = grid;
+        for (BikeContainer bc : bikes) {
+
+            int x = rand.nextInt(5) + 2;//random int between 1 and the max size inclusive
+            int y = rand.nextInt(5) + 2;
+            int vel = rand.nextInt(maxSpeed);
+
+            //place the given bikes at random coords on the board and with a random velocity up to maxSpeed
+            bc.direction = rand.nextInt(3);//four directions: 0,1,2,3
+            bc.currentPosition = new Tuple(x, y);
+            System.out.println("placed a bike at " + bc.currentPosition.toString());
+            board.grid[x][y] = 1;
+            //gameLog.UpdatePosition(bc.bike.bikeId, new Tuple(x, y));
+        }
     }
 
     public int[][] getGrid() {
         return this.board.grid;
     }
 
-    private void update() {
+    public void update() {
         //for each bike:
         //  take directions from container
         //  add directions to each position
@@ -101,11 +101,12 @@ public class AbstractGameEngine implements AbstractGameInterface {
         //      if so kill it AND its trail
 
         for (BikeContainer b : bikes) {
-            //System.out.println("update1");
+
             Bike bike = b.bike;
             Tuple pos = b.currentPosition;
-            //System.out.println(pos.x + "," + pos.y);
+
             int dir = bike.getDirection(board, pos.x, pos.y, bike.direction);
+            System.out.println("Direction: " + dir);
             //System.out.println("update2");
             //System.out.println("direction: " + dir);
 
@@ -116,23 +117,39 @@ public class AbstractGameEngine implements AbstractGameInterface {
             //System.out.println("y: " + pos.y + "\n -----");
             //update postions using direction
             if (dir == 0) {
-                if (pos.x > 1) {//only let it move if its a legal move
-                    pos.x--;
-                }
-            } else if (dir == 1) {
-                if (pos.y < size - 2) {
-                    pos.y++;
-                }
-            } else if (dir == 2) {
-                if (pos.x < size - 2) {
-                    pos.x++;
-                }
-            } else if (dir == 3) {
-                if (pos.y > 1) {
-                    pos.y--;
-                }
+                dir = 2;
             }
-
+            if (dir == 0) {
+                pos.x--;
+            } else if (dir == 1) {
+                pos.y++;
+            } else if (dir == 2) {
+                pos.x++;
+            } else if (dir == 3) {
+                pos.y--;
+            }
+            //            switch (dir) {
+            //                case 0:
+            //                    if (pos.x > 1) {//only let it move if its a legal move
+            //                        pos.x--;
+            //                    }
+            //                    break;
+            //                case 1:
+            //                    if (pos.y < size - 2) {
+            //                        pos.y++;
+            //                    }
+            //                    break;
+            //                case 2:
+            //                    if (pos.x < size - 2) {
+            //                        pos.x++;
+            //                    }
+            //                    break;
+            //                case 3:
+            //                    if (pos.y > 1) {
+            //                        pos.y--;
+            //                    }
+            //                    break;
+            //            }
             if (pos.x == 0 || pos.x == size - 1 || pos.y == 0 || pos.y == size - 1 || board.grid[pos.x][pos.y] == 2) {
                 killBike(b);
             }

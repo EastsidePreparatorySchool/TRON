@@ -87,12 +87,19 @@ public class main {
         }
         return new String[]{"oof"};
     }
+    private static int clicks = 0;
 
     private static Object[] getBoard(spark.Request req) {
         System.out.println("getting whole board...");
         //int gameId = Integer.parseInt(req.queryParams("gameId"));
-        int gameId = 0;//only 1 game at the moment
-        System.out.println("This game is called " + (runningGames.get(gameId).name));//pls dont be null...
+        int gameId = 0;
+        if (clicks == 0) {
+            //only 1 game at the moment
+            System.out.println("This game is called " + (runningGames.get(gameId).name));//pls dont be null...
+            clicks++;
+        } else {
+            runningGames.get(gameId).update();
+        }
         return runningGames.get(gameId).board.grid;
     }
 

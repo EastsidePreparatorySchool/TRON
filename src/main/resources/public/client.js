@@ -60,6 +60,7 @@ camera.position.set(0, out * 1.2, out / 1.5);
 var cameraFocus = new THREE.Vector3(100, 0, 0);
 camera.lookAt(cameraFocus);
 controls.update(); //have to update controls after camera is changed
+scene.background = new THREE.Color(0xcccccc);
 scene.add(camera);
 renderer.setSize(WIDTH, HEIGHT);
 container.appendChild(renderer.domElement);
@@ -100,19 +101,21 @@ class Bike {
 }
 
 function drawGrid(grid) {
+    console.log(grid);
     var correction = gridSize / 2 - unit / 2;
     for (var i = 0; i < grid.length; i++) {
         for (var j = 0; j < grid[i].length; j++) {
-            console.log(grid[i][j]);
-            if (grid[i][j] == 1) {//bikes
+            if (grid[i][j] === 1) {//bikes
+                console.log("bike at (" + i + ", " + j + ")");
                 var mesh = new THREE.Mesh(bikegeo, bikemat);
-                mesh.position.x = grid[i][j] - correction;
-                mesh.position.z = grid[i][j] - correction;
+                mesh.position.x = j - correction;
+                mesh.position.z = i - correction;
                 scene.add(mesh);
-            } else if (grid[i][j] == 2) {//walls or trails
+            } else if (grid[i][j] === 2) {//walls or trails
                 var mesh = new THREE.Mesh(wallgeo, wallmat);
-                mesh.position.x = grid[i][j] - correction;
-                mesh.position.z = grid[i][j] - correction;
+                mesh.position.x = j - correction;
+                mesh.position.z = i - correction;
+                //console.log("wall at (" + mesh.position.x + ", " + mesh.position.z + ")");
                 scene.add(mesh);
             }
         }
