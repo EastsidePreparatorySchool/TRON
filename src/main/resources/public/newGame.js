@@ -1,6 +1,6 @@
 
 var newGameBikeList = [];
-var bikeID = document.getElementById("userInputBike").value;
+var bikeID = document.getElementById("userBikes").value;
 
 function createGameTest() {
     var typeOfTest = document.getElementById("typeTest").value;
@@ -94,6 +94,7 @@ function listBikes() {
 
 function createGame() {
     var newGameName = document.getElementById("userGameName").value;
+    var bikes="";
     
     for (i = 0; i < newGameBikeList.length; i++) {
        
@@ -101,7 +102,7 @@ function createGame() {
         
     }
    
-    for (i = 1; i < newGameBikeList.length; i++) {
+    for (i = 0; i < newGameBikeList.length; i++) {
        
         bikes = bikes + ":"+newGameBikeList[i];
         
@@ -145,8 +146,7 @@ function selectBike() {
     var bikeID = document.getElementById("userBikes").value;
     console.log(bikeID);
     newGameBikeList.push(bikeID);
-   
-   
+    
 
 }
 
